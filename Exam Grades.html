@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>老师端 学生分析班级</title>
+  <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+  <link rel="stylesheet" href="../assets/css/styles.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+  <!-- 引入 AngularJS -->
+  <style>
+    .summary-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      /* 将容器分为四等分 */
+      gap: 20px;
+      /* 设置间距 */
+    }
+
+    .summary-item {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      display: flex;
+      align-items: center;
+    }
+
+    .summary-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 16px;
+    }
+
+    .summary-content {
+      flex: 1;
+      /* margin-top: 40px; */
+    }
+
+    /* 交互动画 */
+    .card-shadow {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card-shadow:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    /* 图表容器 */
+    .chart-container {
+      min-height: 400px;
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 15px;
+    }
+
+    /* 颜色系统 */
+    :root {
+      --primary: #2F5FFE;
+      --secondary: #34C7FE;
+      --accent: #FF6161;
+      --info: #23CF9C;
+    }
+
+    .dropdown-submenu {
+      position: relative;
+    }
+
+    .dropdown-submenu a::after {
+      content: "\25BA";
+      float: right;
+      min-width: 0.25rem;
+      margin-left: 0.5rem;
+    }
+
+    .dropdown-submenu .dropdown-menu {
+      top: 0;
+      left: 100%;
+      margin-top: -1px;
+    }
+
+    /* 错误提示样式 */
+    .error-message {
+      color: red;
+      margin-top: 5px;
+    }
+
+    /* 新增响应式布局 */
+    @media (max-width: 768px) {
+      .grid-cols-4 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .chart-container {
+        min-height: 300px;
+      }
+    }
+
+    /* 统一卡片样式 */
+    .dashboard-card {
+      background: white;
+      border-radius: 12px;
+      /* padding: 20px; */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    /* 图表容器优化 */
+    .chart-container {
+      height: 485px;
+      transition: height 0.3s;
+    }
+
+    .exam-chart {
+      height: 450px;
+      width: 100%;
+    }
+
+    /* 按钮美化 */
+    .filter-btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      /* font-weight: 500; */
+    }
+
+    .btn-export {
+      background: linear-gradient(135deg, #2F5FFE 0%, #34C7FE 100%);
+      color: white;
+    }
+
+    .btn-export:hover {
+      box-shadow: 0 4px 12px rgba(47, 95, 254, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .btn-reset {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      color: #475569;
+      border: 1px solid #e2e8f0;
+    }
+
+    .btn-reset:hover {
+      box-shadow: 0 4px 12px rgba(203, 213, 225, 0.3);
+    }
+  </style>
+</head>
+
+<body ng-app="myApp" ng-controller="ClassAnalysisController">
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-between">
+          <a href="./index.html" class="text-nowrap logo-img">
+            <img src="../assets/images/logos/logo.svg" alt="" />
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
+        </div>
+        <!-- Sidebar navigation-->
+
+        <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程建设</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Course Content.html" style="width:150px" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone" ;"></iconify-icon>
+                <span class="hide-menu" ;>资源上传</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="Knowledge Graph.html" aria-expanded="false">
+
+                <iconify-icon icon="solar:widget-add-line-duotone"></iconify-icon>
+                <span class="hide-menu">构建图谱</span>
+              </a>
+            </li>
+
+
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程管理</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Student Analysis Class Interface.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">班级管理</span>
+              </a>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Homework Release.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">作业发布</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Exam Release.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">考试发布</span>
+              </a>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">学情分析</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Student Analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">行为分析</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Homework Grade Analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">作业成绩</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Exam Grades.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone" style="color:#00a1ff "></iconify-icon>
+                <span class="hide-menu" style="color:#00a1ff ">考试成绩</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="AI Assistant.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">AI助手</span>
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <span style="width: 150px;" class="sidebar-divider lg"></span>
+            </li>
+
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">查看首页</span>
+            </li>
+
+          </ul>
+          <div style="width: 230px;"
+            class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+            <div class="me-2 flex-shrink-0" style="width: 160px;">
+              <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+              <a style="width: 150px;"
+                href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33" target="_blank"
+                class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+            </div>
+            <div class="unlimited-access-img" style="width: 230px;">
+              <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+            </div>
+          </div>
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+    <div class="body-wrapper">
+      <div class="body-wrapper-inner" style="min-height: 100vh; margin: 0;">
+        <div class="bg-white rounded-xl" style="display: flex;height: 100px;">
+          <!-- 年级选择 -->
+          <div class="card" style="flex: 1; min-width: 240px;">
+            <label class="shrink-0 text-sm font-medium text-gray-500 mb-2">选择年级</label>
+            <select id="gradeSelect" class="form-select">
+              <option value="">全部年级</option>
+              <option value="2023">2023级</option>
+              <option value="2022">2022级</option>
+              <option value="2021">2021级</option>
+            </select>
+          </div>
+
+          <!-- 班级选择 -->
+          <div class="card" style="flex: 1; min-width: 240px;">
+            <label class="shrink-0 text-sm font-medium text-gray-500 mb-2">选择班级</label>
+            <select id="classSelect" class="form-select">
+              <option value="all">全部班级</option>
+              <option value="class1">网络1班</option>
+              <option value="class2">网络2班</option>
+              <option value="class3">网络3班</option>
+              <option value="class4">网络4班</option>
+            </select>
+          </div>
+
+          <!-- 操作按钮组 -->
+          <div class="card" style="flex: none; display: flex; ">
+            <button class="filter-btn btn-export">
+              <i class="fa fa-download mr-2"></i>导出报表
+            </button>
+            <button class="filter-btn btn-reset">
+              <i class="fa fa-undo mr-2"></i>重置筛选
+            </button>
+          </div>
+        </div>
+
+
+        <!-- 图表区域优化 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" style="margin-top: 0;">
+          <!-- 主成绩趋势图 -->
+          <div class="dashboard-card">
+            <h4 class="text-xl font-semibold mb-6 text-gray-800">考试成绩趋势分析</h4>
+            <div class="chart-container">
+              <div class="exam-chart w-full h-full"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 总结 -->
+        <div class="summary-container">
+          <!-- 平均分 -->
+          <div class="summary-item">
+            <div class="summary-icon bg-primary/10">
+              <i class="fa fa-chart-line text-primary text-xl"></i>
+            </div>
+            <div class="summary-content">
+              <p class="text-sm text-gray-500 mb-1">平均分</p>
+              <div class="flex items-baseline">
+                <span class="text-2xl font-bold mr-2">78.5</span>
+                <span class="text-sm text-success">↑12%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 及格率 -->
+          <div class="summary-item">
+            <div class="summary-icon bg-secondary/10">
+              <i class="fa fa-check-circle text-secondary text-xl"></i>
+            </div>
+            <div class="summary-content">
+              <p class="text-sm text-gray-500 mb-1">及格率</p>
+              <div class="flex items-baseline">
+                <span class="text-2xl font-bold mr-2">86%</span>
+                <span class="text-sm text-warning">↓3%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 最高分 -->
+          <div class="summary-item">
+            <div class="summary-icon bg-accent/10">
+              <i class="fa fa-trophy text-accent text-xl"></i>
+            </div>
+            <div class="summary-content">
+              <p class="text-sm text-gray-500 mb-1">最高分</p>
+              <div class="flex items-baseline">
+                <span class="text-2xl font-bold mr-2">98</span>
+                <span class="text-sm text-muted">/100</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 新增：分数分布 -->
+          <div class="summary-item">
+            <div class="summary-icon bg-info/10">
+              <i class="fa fa-percent text-info text-xl"></i>
+            </div>
+            <div class="summary-content">
+              <p class="text-sm text-gray-500 mb-1">优秀率</p>
+              <div class="flex items-baseline">
+                <span class="text-2xl font-bold mr-2">35%</span>
+                <span class="text-sm text-success">↑8%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/sidebarmenu.js"></script>
+    <script src="../assets/js/app.min.js"></script>
+    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+    <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+    <!-- solar icons -->
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+    <script>
+      (function () {
+        // 修复图表初始化选择器错误
+        var myChart = echarts.init(document.querySelector(".exam-chart")); // 增加点号
+
+
+
+        const seriesBar = new Array(5).fill({
+          type: 'bar',
+          stack: 'total',
+          smooth: true,
+          seriesLayoutBy: 'row',
+          label: {
+            show: true,
+            position: 'inside'
+          }
+        });
+        let lastBarDataIndex = 0
+
+        setTimeout(function () {
+
+          option = {
+            baseOption: {
+              legend: {
+                show: true
+              },
+              tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                  type: 'shadow',
+                  shadowStyle: {
+                    color: 'rgba(0, 0, 0, 0.08)'
+                  }
+                },
+                showContent: false
+              },
+              dataset: {
+                source: [
+                  ['分数段', '第一次月考', '期中考试', '期末考试'],
+                  ['0-59', 25, 35, 22],
+                  ['60-69', 35, 28, 15],
+                  ['70-79', 22, 18, 8],
+                  ['80-89', 8, 5, 3],
+                  ['90-100', 10, 17, 25]
+                ]
+              },
+
+              xAxis: {
+                type: 'category'
+              },
+              yAxis: {
+                gridIndex: 0
+              },
+              series: [
+                ...seriesBar,
+                // 修改饼图配置部分
+                {
+                  type: 'pie',
+                  id: 'pie',
+                  tooltip: {
+                    trigger: 'item',
+                    showContent: true,
+                    formatter: '{b}: {c}人 ({d}%)' // 添加格式化
+                  },
+                  label: {
+                    position: 'center',
+                    show: false
+                  },
+                  labelLine: {
+                    show: false
+                  },
+                  emphasis: {
+                    label: {
+                      show: true,
+                      fontSize: '23',
+                      fontWeight: 'bold',
+                      formatter: '{d}%'
+                    }
+                  },
+                  // 修正encode配置
+                  encode: {
+                    itemName: '分数段',  // 对应数据第一列
+                    value: '第一次月考'   // 对应考试列名
+                  },
+                  // 添加位置和尺寸配置
+                  radius: ['30%', '50%'], // 内半径30%，外半径50%
+                  center: ['75%', '35%']  // 位于右侧偏上位置
+                }
+              ]
+            },
+            // 添加移动端适配配置
+            media: [{
+              option: {
+                legend: {
+                  right: 'center',
+                  top: 0,
+                  orient: 'horizontal',
+                  itemWidth: 25,
+                  itemHeight: 14,
+                  itemGap: 10
+                },
+                grid: {
+                  top: '15%',
+                  left: '8%',
+                  bottom: '10%',
+                  right: '50%'
+                },
+                series: [
+                  ...seriesBar,
+                  {
+                    radius: ['20%', '50%'],
+                    center: ['76%', '50%']
+                  }
+                ]
+              }
+            },
+            {
+              query: {
+                // 宽度为容器宽度，并非window宽度
+                maxWidth: 900
+              },
+              option: {
+                legend: {
+                  right: '12%',
+                  top: '62%',
+                  orient: 'vertical',
+                  itemWidth: 20,
+                  itemHeight: 11,
+                  itemGap: 6
+                },
+                grid: {
+                  top: '8%',
+                  left: '15%',
+                  bottom: '55%',
+                  right: '12%'
+                },
+                series: [
+                  ...seriesBar,
+                  {
+                    radius: ['25%', '45%'],
+                    center: ['35%', '72%'],
+                    emphasis: {
+                      label: {
+                        fontSize: '18'
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+            ]
+          };
+
+          myChart.on('mouseover', function ({
+            seriesIndex,
+            dataIndex,
+            seriesType
+          }) {
+            if (seriesType === 'bar') {
+              myChart.setOption({
+                series: {
+                  id: 'pie',
+                  label: {
+                    formatter: '{b}'
+                  },
+                  encode: {
+                    value: dataIndex + 1,
+                    tooltip: dataIndex + 1
+                  }
+                }
+              });
+
+              lastBarDataIndex = dataIndex
+
+              //高亮显示饼图
+              myChart.dispatchAction({
+                type: 'highlight',
+                seriesIndex: 5, // 第5个固定是饼图
+                dataIndex: seriesIndex
+              });
+            }
+
+          });
+
+          // 当鼠标离开柱状图每个堆叠项时
+          myChart.on('mouseout', function ({
+            seriesType
+          }) {
+            if (seriesType === 'bar') {
+              myChart.dispatchAction({
+                type: 'downplay',
+                seriesIndex: 5,
+                dataIndex: [0, 1, 2, 3, 4] //鼠标移出时取消全部高亮
+              });
+            }
+          });
+
+          // 当鼠标在饼图时，高亮显示柱状图
+          myChart.on('mousemove', function ({
+            seriesType
+          }) {
+            if (seriesType === 'pie') {
+              myChart.dispatchAction({
+                type: 'showTip',
+                seriesIndex: 0,
+                dataIndex: lastBarDataIndex
+              });
+            }
+          });
+
+          myChart.setOption(option);
+
+        });
+
+
+        // 初始化
+        initChart();
+        window.addEventListener("resize", () => myChart.resize());
+      })();
+    </script>
+
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>老师端 学生分析班级</title>
+    <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+    <link rel="stylesheet" href="../assets/css/styles.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <!-- 引入 AngularJS -->
+    <style>
+        .summary-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            /* 将容器分为四等分 */
+            gap: 20px;
+            /* 设置间距 */
+        }
+
+        .summary-item {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+        }
+
+        .summary-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+        }
+
+        .summary-content {
+            flex: 1;
+            /* margin-top: 40px; */
+        }
+
+        /* 交互动画 */
+        .card-shadow {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card-shadow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        /* 图表容器 */
+        .chart-container {
+            min-height: 400px;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        /* 颜色系统 */
+        :root {
+            --primary: #2F5FFE;
+            --secondary: #34C7FE;
+            --accent: #FF6161;
+            --info: #23CF9C;
+        }
+
+        .dropdown-submenu {
+            position: relative;
+        }
+
+        .dropdown-submenu a::after {
+            content: "\25BA";
+            float: right;
+            min-width: 0.25rem;
+            margin-left: 0.5rem;
+        }
+
+        .dropdown-submenu .dropdown-menu {
+            top: 0;
+            left: 100%;
+            margin-top: -1px;
+        }
+
+        /* 错误提示样式 */
+        .error-message {
+            color: red;
+            margin-top: 5px;
+        }
+
+        /* 新增响应式布局 */
+        @media (max-width: 768px) {
+            .grid-cols-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .chart-container {
+                min-height: 300px;
+            }
+        }
+
+        /* 统一卡片样式 */
+        .dashboard-card {
+            background: white;
+            border-radius: 12px;
+            /* padding: 20px; */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 图表容器优化 */
+        .chart-container {
+            height: 485px;
+            transition: height 0.3s;
+        }
+
+        .exam-chart {
+            height: 450px;
+            width: 100%;
+        }
+
+        /* 按钮美化 */
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            /* font-weight: 500; */
+        }
+
+        .btn-export {
+            background: linear-gradient(135deg, #2F5FFE 0%, #34C7FE 100%);
+            color: white;
+        }
+
+        .btn-export:hover {
+            box-shadow: 0 4px 12px rgba(47, 95, 254, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-reset:hover {
+            box-shadow: 0 4px 12px rgba(203, 213, 225, 0.3);
+        }
+
+        .card1 {
+            border: 1px solid transparent;
+        }
+    </style>
+</head>
+
+<body ng-app="myApp" ng-controller="ClassAnalysisController">
+    <!--  Body Wrapper -->
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed">
+        <aside class="left-sidebar">
+            <!-- Sidebar scroll-->
+            <div>
+              <div class="brand-logo d-flex align-items-center justify-content-between">
+                <a href="./index.html" class="text-nowrap logo-img">
+                  <img src="../assets/images/logos/logo.svg" alt="" />
+                </a>
+                <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+                  <i class="ti ti-x fs-8"></i>
+                </div>
+              </div>
+              <!-- Sidebar navigation-->
+      
+              <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+                <ul id="sidebarnav">
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">课程建设</span>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="Course Content.html" style="width:150px" aria-expanded="false">
+                      <iconify-icon icon="solar:widget-add-line-duotone" ;"></iconify-icon>
+                      <span class="hide-menu" ;>资源上传</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" style="width:150px" href="Knowledge Graph.html" aria-expanded="false">
+      
+                      <iconify-icon icon="solar:widget-add-line-duotone"></iconify-icon>
+                      <span class="hide-menu">构建图谱</span>
+                    </a>
+                  </li>
+      
+      
+                  <li>
+                    <span class="sidebar-divider lg" style="width: 150px;"></span>
+                  </li>
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">课程管理</span>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="Student Analysis Class Interface.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">班级管理</span>
+                    </a>
+                  </li>
+      
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="Homework Release.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">作业发布</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="Exam Release.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">考试发布</span>
+                    </a>
+                  </li>
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">学情分析</span>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="Student Analysis.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">行为分析</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="Homework Grade Analysis.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone" style="color:#00a1ff "></iconify-icon>
+                      <span class="hide-menu" style="color:#00a1ff ">作业成绩</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="Exam Grades.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">考试成绩</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="AI Assistant.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu" >AI助手</span>
+                    </a>
+                  </li>
+      
+      
+      
+      
+                  <li>
+                    <span style="width: 150px;" class="sidebar-divider lg"></span>
+                  </li>
+      
+                  <li>
+                    <span class="sidebar-divider lg" style="width: 150px;"></span>
+                  </li>
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">查看首页</span>
+                  </li>
+      
+                </ul>
+                <div style="width: 230px;"
+                  class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+                  <div class="me-2 flex-shrink-0" style="width: 160px;">
+                    <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+                    <a style="width: 150px;"
+                      href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33" target="_blank"
+                      class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+                  </div>
+                  <div class="unlimited-access-img" style="width: 230px;">
+                    <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+                  </div>
+                </div>
+              </nav>
+              <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+          </aside>
+        <div class="body-wrapper">
+            <div class="body-wrapper-inner" style="min-height: 100vh; margin: 0;">
+                <!-- 控制面板优化 -->
+                <div class="bg-white rounded-xl" style="display: flex;height: 100px;">
+                    <!-- 年级选择 -->
+                    <div class="card" style="flex: 1; min-width: 240px;">
+                        <label class="shrink-0 text-sm font-medium text-gray-500 mb-2">选择年级</label>
+                        <select id="gradeSelect" class="form-select">
+                            <option value="">全部年级</option>
+                            <option value="2023">2023级</option>
+                            <option value="2022">2022级</option>
+                            <option value="2021">2021级</option>
+                        </select>
+                    </div>
+
+                    <!-- 班级选择 -->
+                    <div class="card" style="flex: 1; min-width: 240px;">
+                        <label class="shrink-0 text-sm font-medium text-gray-500 mb-2">选择班级</label>
+                        <select id="classSelect" class="form-select">
+                            <option value="all">全部班级</option>
+                            <option value="class1">网络1班</option>
+                            <option value="class2">网络2班</option>
+                            <option value="class3">网络3班</option>
+                            <option value="class4">网络4班</option>
+                        </select>
+                    </div>
+
+                    <!-- 操作按钮组 -->
+                    <div class="card" style="flex: none; display: flex; gap: 1rem;">
+                        <button class="filter-btn btn-export">
+                            <i class="fa fa-download mr-2"></i>导出报表
+                        </button>
+                        <button class="filter-btn btn-reset">
+                            <i class="fa fa-undo mr-2"></i>重置筛选
+                        </button>
+                    </div>
+                </div>
+
+
+                <!-- 图表区域优化 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" style="margin-top: 0;">
+                    <!-- 主成绩趋势图 -->
+                    <div class="dashboard-card">
+                        <h4 class="text-xl font-semibold mb-6 text-gray-800">作业分析</h4>
+                        <div class="chart-container">
+                            <div class="exam-chart w-full h-full"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 总结 -->
+                <div class="summary-container"
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <!-- 热力图概览 -->
+                    <div class="summary-item"
+                        style="background-color: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); display: flex; align-items: center;">
+                        <div class="summary-icon bg-primary/10"
+                            style="width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; background-color: rgba(59, 130, 242, 0.1);">
+                            <i class="fa fa-chart-area text-primary text-xl"
+                                style="color: #3b82f6; font-size: 1.25rem;"></i>
+                        </div>
+                        <div class="summary-content">
+                            <p class="text-sm text-gray-500 mb-1"
+                                style="margin: 0 0 0.5rem 0; color: #6b7280; font-size: 0.875rem;">热力图概览</p>
+                            <div class="flex items-baseline" style="display: flex; align-items: baseline;">
+                                <span class="text-lg font-bold mr-2"
+                                    style="font-size: 1.125rem; font-weight: 600; margin-right: 0.5rem;"
+                                    id="avgMastery">72%</span>
+                                <span class="text-sm text-gray-500"
+                                    style="font-size: 0.875rem; color: #6b7280;">平均掌握度</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 关键知识点 -->
+                    <div class="summary-item"
+                        style="background-color: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); display: flex; align-items: center;">
+                        <div class="summary-icon bg-secondary/10"
+                            style="width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; background-color: rgba(100, 116, 139, 0.1);">
+                            <i class="fa fa-key text-secondary text-xl" style="color: #64748b; font-size: 1.25rem;"></i>
+                        </div>
+                        <div class="summary-content">
+                            <p class="text-sm text-gray-500 mb-1"
+                                style="margin: 0 0 0.5rem 0; color: #6b7280; font-size: 0.875rem;">关键知识点</p>
+                            <div class="flex flex-col">
+                                <span class="text-sm text-success">优势：<span id="topSection">3.5 IPv6配置
+                                        (92%)</span></span>
+                                <span class="text-sm text-danger mt-1">薄弱：<span id="weakSection">5.3 故障排查
+                                        (58%)</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 学习模式 -->
+                    <div class="summary-item"
+                        style="background-color: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); display: flex; align-items: center;">
+                        <div class="summary-icon bg-accent/10"
+                            style="width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; background-color: rgba(16, 185, 129, 0.1);">
+                            <i class="fa fa-user-graduate text-accent text-xl"
+                                style="color: #10b981; font-size: 1.25rem;"></i>
+                        </div>
+                        <div class="summary-content">
+                            <p class="text-sm text-gray-500 mb-1"
+                                style="margin: 0 0 0.5rem 0; color: #6b7280; font-size: 0.875rem;">学习模式</p>
+                            <div class="flex flex-col">
+                                <span class="text-sm">基础章节平均 <span id="basicAvg">78%</span></span>
+                                <span class="text-sm mt-1">高阶章节平均 <span id="advanceAvg">65%</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 教学改进 -->
+                    <div class="summary-item"
+                        style="background-color: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); display: flex; align-items: center;">
+                        <div class="summary-icon bg-info/10"
+                            style="width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; background-color: rgba(37, 99, 235, 0.1);">
+                            <i class="fa fa-lightbulb text-info text-xl"
+                                style="color: #2563eb; font-size: 1.25rem;"></i>
+                        </div>
+                        <div class="summary-content">
+                            <p class="text-sm text-gray-500 mb-1"
+                                style="margin: 0 0 0.5rem 0; color: #6b7280; font-size: 0.875rem;">教学改进</p>
+                            <div class="flex flex-col">
+                                <span class="text-sm">重点加强：<span id="focusChapter">网络管理</span></span>
+                                <span class="text-sm mt-1">推荐资源：<span id="recommendRes">故障排查实战视频</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+        <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="../assets/js/sidebarmenu.js"></script>
+        <script src="../assets/js/app.min.js"></script>
+        <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+        <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+        <script src="../assets/js/dashboard.js"></script>
+        <!-- solar icons -->
+        <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+        <script>
+            // 考试成绩双图联合
+            (function () {
+                // 1实例化对象
+                var myChart = echarts.init(document.querySelector(".exam-chart"))  // 数据
+
+                var chapters = [
+                    '网络基础',
+                    '路由技术',
+                    'IPv6技术',
+                    '网络安全',
+                    '网络管理',
+                    '网络实验'
+                ];
+
+                var sections = [
+                    ['1.1 网络协议', '1.2 网络模型', '1.3 IP地址', '1.4 传输介质', '1.5 网络设备'],
+                    ['2.1 静态路由', '2.2 动态路由', '2.3 路由协议', '2.4 路由配置', '2.5 路由管理'],
+                    ['3.1 IPv6基础', '3.2 IPv6路由', '3.3 IPv6过渡', '3.4 IPv6安全', '3.5 IPv6配置'],
+                    ['4.1 访问控制', '4.2 防火墙', '4.3 安全协议', '4.4 安全配置', '4.5 安全管理'],
+                    ['5.1 设备配置', '5.2 网络监控', '5.3 故障排查', '5.4 性能优化', '5.5 网络工具'],
+                    ['6.1 实验环境', '6.2 实验配置', '6.3 实验验证', '6.4 实验分析', '6.5 实验报告']
+                ];
+
+                // 生成模拟数据（章节索引，小节索引，掌握度）
+                var data = [];
+                chapters.forEach((_, chapIndex) => {
+                    sections[chapIndex].forEach((_, secIndex) => {
+                        data.push([
+                            chapIndex,
+                            secIndex,
+                            Math.floor(Math.random() * 100)
+                        ]);
+                    });
+                });
+
+                option = {
+                    tooltip: {
+                        formatter: function (params) {
+                            const section = sections[params.value[0]][params.value[1]];
+                            return `${section}<br>掌握度: <strong>${params.value[2]}%</strong>`;
+                        }
+                    },
+                    title: {
+                        text: '知识点掌握热力图',
+                        left: '5%',
+                        top: '0%',
+                    },
+                    grid: {
+                        top: 30,
+                        bottom: 80,
+                        left: 80
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: chapters,
+                        axisLabel: {
+                            interval: 0,
+                            rotate: 45,
+                            fontSize: 14,
+                            color: '#2c3e50'
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: '#90e0ef'
+                            }
+                        }
+                    },
+                    yAxis: {
+                        type: 'category',
+                        // data: ['小节1', '小节2', '小节3', '小节4', '小节5'],
+                        axisLabel: {
+                            fontSize: 12,
+                            color: '#666'
+                        },
+                        splitLine: {
+                            show: true,
+                            lineStyle: {
+                                type: 'dashed',
+                                color: '#eee'
+                            }
+                        }
+                    },
+                    visualMap: {
+                        min: 0,
+                        max: 100,
+                        calculable: true,
+                        orient: 'horizontal',
+                        left: 'center',
+                        bottom: 20,
+                        inRange: {
+                            color: ['#f0f4f8', '#b3d3e6', '#6baed6', '#2171b5']
+                        }
+                    },
+                    series: [{
+                        type: 'heatmap',
+                        data: data,
+                        itemStyle: {
+                            borderColor: '#fff',
+                            borderWidth: 2,
+                            borderRadius: 4
+                        },
+                        label: {
+                            show: true,
+                            color: 'black',
+                            fontSize: 12,
+                            formatter: function (params) {
+                                // const chapter = chapters[params.value[0]];
+                                const section = sections[params.value[0]][params.value[1]];
+                                return `${section}`;
+                            }
+                        },
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 8,
+                                shadowColor: 'rgba(33,113,181,0.3)'
+                            }
+                        }
+                    }]
+                };
+                // 3. 把配置项给实例对象
+                myChart.setOption(option);
+                // 4. 让图表跟随屏幕自动的去适应                  
+                window.addEventListener("resize", function () {
+                    myChart.resize();
+                });
+            })();
+
+        </script>
+        <script>
+            // 数据分析逻辑
+            (function () {
+                // 计算平均值
+                const total = data.reduce((sum, item) => sum + item[2], 0);
+                const average = Math.round(total / data.length);
+                document.getElementById('avgMastery').textContent = `${average}%`;
+
+                // 找出最高和最低知识点
+                const sortedData = [...data].sort((a, b) => b[2] - a[2]);
+                const strongest = sortedData[0];
+                const weakest = sortedData[sortedData.length - 1];
+
+                document.getElementById('topSection').textContent =
+                    `${sections[strongest[0]][strongest[1]]} (${strongest[2]}%)`;
+                document.getElementById('weakSection').textContent =
+                    `${sections[weakest[0]][weakest[1]]} (${weakest[2]}%)`;
+
+                // 计算基础/高阶章节表现
+                const basicChapters = data.slice(0, 15); // 假设前3章为基础
+                const advanceChapters = data.slice(15);  // 后3章为高阶
+                const basicAvg = Math.round(basicChapters.reduce((s, v) => s + v[2], 0) / basicChapters.length);
+                const advanceAvg = Math.round(advanceChapters.reduce((s, v) => s + v[2], 0) / advanceChapters.length);
+                document.getElementById('basicAvg').textContent = `${basicAvg}%`;
+                document.getElementById('advanceAvg').textContent = `${advanceAvg}%`;
+
+                // 找出最需改进章节
+                const chapterScores = chapters.map((_, i) =>
+                    Math.round(data.filter(d => d[0] === i)
+                        .reduce((s, v) => s + v[2], 0) / 5)
+                );
+                const minChapterIndex = chapterScores.indexOf(Math.min(...chapterScores));
+                document.getElementById('focusChapter').textContent = chapters[minChapterIndex];
+
+                // 推荐资源逻辑
+                const recommendMap = {
+                    4: '网络监控工具使用手册',
+                    5: '实验报告撰写规范指南',
+                    // 其他章节推荐资源...
+                };
+                document.getElementById('recommendRes').textContent = recommendMap[minChapterIndex] || '补充学习资料包';
+            })();
+        </script>
+    </div>
+</body>
+
+</html>

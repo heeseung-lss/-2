@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="China">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>老师端 学生分析</title>
+  <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+  <link rel="stylesheet" href="../assets/css/styles.min.css" />
+  <style>
+    /* 按钮样式 */
+    .btn {
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+
+    /* 新增样式 */
+    .filter-box {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .assignment-card[data-grade]::after {
+      content: attr(data-grade) " " attr(data-class);
+      position: absolute;
+      right: 1rem;
+      bottom: 1rem;
+      font-size: 0.8rem;
+      color: #6c757d;
+    }
+
+    /* 模态框样式 */
+    .modal-content {
+      width: 90%;
+      max-width: 500px;
+    }
+
+    /* 考试卡片样式 */
+    .assignment-card {
+      border: 1px solid #e9ecef;
+      border-radius: 0.25rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .file-upload-wrapper {
+      transition: all 0.3s ease;
+      border: 2px dashed #dee2e6;
+    }
+
+    .file-upload-wrapper:hover {
+      border-color: #0d6efd;
+      background-color: rgba(13, 110, 253, 0.05);
+    }
+
+    .assignment-card {
+      border-radius: 8px;
+      padding: 1rem;
+      transition: transform 0.2s;
+    }
+
+    .assignment-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .progress-bar {
+      transition: width 0.5s ease;
+    }
+
+
+    .body-wrapper-inner {
+      display: flex;
+      justify-items: center;
+      /* align-items: center; */
+      flex-direction: row;
+      min-height: 100vh;
+      /* height: 100%; */
+      background: #f0f2f5;
+    }
+
+    /* 新增大盒子样式 */
+    .exam-box {
+      background: #fff;
+      /* height: 100%; */
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(47, 225, 253, 0.08);
+      margin-bottom: 2rem;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .exam-header {
+      background: linear-gradient(135deg, #00a1ff 0%, #0066ff 100%);
+      color: white;
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    .exam-header::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 20px;
+      background: linear-gradient(180deg, rgba(0, 161, 255, 0.2) 0%, transparent 100%);
+    }
+
+    .exam-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* 已发布考试滚动容器 */
+    .published-exams {
+      max-height: 600px;
+      overflow-y: auto;
+      padding: 1rem;
+      background: #f8faff;
+    }
+
+    /* 考试条目盒子 */
+    .exam-item-box {
+      background: white;
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      border: 1px solid #e9f0ff;
+      transition: all 0.3s ease;
+    }
+
+    .exam-item-box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0, 161, 255, 0.1);
+    }
+
+    /* 滚动条样式 */
+    .published-exams::-webkit-scrollbar {
+      width: 8px;
+      background-color: #f5f5f5;
+    }
+
+    .published-exams::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background-color: #00a1ff;
+    }
+
+    /* 统一主色调为科技蓝 */
+    :root {
+      --primary-color: #00a1ff;
+      --secondary-color: #6c757d;
+      --success-color: #20c997;
+    }
+
+    /* 增强表单交互效果 */
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.2rem rgba(0, 161, 255, 0.25);
+    }
+
+    /* 优化考试条目悬停效果 */
+    .exam-item-box {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .exam-item-box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 15px rgba(0, 161, 255, 0.15);
+    }
+
+    /* 统一按钮样式 */
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+      background-color: #0088cc;
+      border-color: #0077b3;
+    }
+
+    /* 优化状态徽章 */
+    .badge.bg-warning {
+      background-color: #fff4e5 !important;
+      color: #663c00 !important;
+    }
+  </style>
+
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <!-- Sidebar Start -->
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-between">
+          <a href="./index.html" class="text-nowrap logo-img">
+            <img src="../assets/images/logos/logo.svg" alt="" />
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
+        </div>
+        <!-- Sidebar navigation-->
+
+        <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程建设</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Course Content.html" style="width:150px" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone" ;"></iconify-icon>
+                <span class="hide-menu" ;>资源上传</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="Knowledge Graph.html" aria-expanded="false">
+
+                <iconify-icon icon="solar:widget-add-line-duotone"></iconify-icon>
+                <span class="hide-menu">构建图谱</span>
+              </a>
+            </li>
+
+
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程管理</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Student Analysis Class Interface.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">班级管理</span>
+              </a>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Homework Release.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone" style="color:#00a1ff "></iconify-icon>
+                <span class="hide-menu" style="color:#00a1ff ">作业发布</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Exam Release.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">考试发布</span>
+              </a>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">学情分析</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Student Analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">行为分析</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Homework Grade Analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">作业成绩</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Exam Grades.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">考试成绩</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="AI Assistant.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">AI助手</span>
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <span style="width: 150px;" class="sidebar-divider lg"></span>
+            </li>
+
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">查看首页</span>
+            </li>
+
+          </ul>
+          <div style="width: 230px;"
+            class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+            <div class="me-2 flex-shrink-0" style="width: 160px;">
+              <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+              <a style="width: 150px;"
+                href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33" target="_blank"
+                class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+            </div>
+            <div class="unlimited-access-img" style="width: 230px;">
+              <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+            </div>
+          </div>
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+    <div class="body-wrapper-inner" style="margin-left: 250px;background-color: #fff;">
+      <div class="container-fluid">
+        <!-- 发布新考试 -->
+        <!-- 添加考试卡片 -->
+        <!-- 发布新考试盒子 -->
+        <!-- 发布新作业盒子 -->
+        <div class="exam-box">
+          <div class="exam-header">
+            <h2 class="exam-title">
+              <iconify-icon icon="mdi:file-document-edit"></iconify-icon>
+              发布新作业
+            </h2>
+
+          </div>
+          <div class="card-body">
+
+            <form class="needs-validation" novalidate>
+              <!-- 考试标题 -->
+              <div class="mb-4">
+                <label for="examTitle" class="form-label fw-bold text-secondary">
+                  <i class="fas fa-heading me-2"></i>作业标题
+                </label>
+                <input type="text" class="form-control form-control-lg" id="examTitle" placeholder="请输入考试标题" required>
+              </div>
+
+              <!-- 时间选择 -->
+              <div class="row mb-4 g-3">
+                <div class="col-md-6">
+                  <label for="startTime" class="form-label fw-bold text-secondary">
+                    <i class="fas fa-clock me-2"></i>开始时间
+                  </label>
+                  <div class="input-group">
+                    <input type="datetime-local" class="form-control flatpickr" id="startTime" required>
+                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label for="endTime" class="form-label fw-bold text-secondary">
+                    <i class="fas fa-hourglass-end me-2"></i>截止时间
+                  </label>
+                  <div class="input-group">
+                    <input type="datetime-local" class="form-control flatpickr" id="endTime" required>
+                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                  </div>
+                  <small class="form-text text-muted">截止时间需晚于开始时间至少1小时</small>
+                </div>
+              </div>
+
+              <!-- 重做次数 -->
+              <div class="mb-4">
+                <label for="retries" class="form-label fw-bold text-secondary">
+                  <i class="fas fa-redo me-2"></i>重做次数
+                </label>
+                <select class="form-control form-control-lg" id="retries" required>
+                  <option value="0">0 次</option>
+                  <option value="1">1 次</option>
+                  <option value="2">2 次</option>
+                  <option value="3">3 次</option>
+                  <option value="4">4 次</option>
+                  <option value="5">5 次</option>
+                </select>
+              </div>
+
+              <!-- 考试时长 -->
+              <div class="mb-4">
+                <label for="examDuration" class="form-label fw-bold text-secondary">
+                  <i class="fas fa-clock me-2"></i>作业时长（分钟）
+                </label>
+                <select class="form-control form-control-lg" id="examDuration" required>
+                  <option value="15">15 分钟</option>
+                  <option value="30">30 分钟</option>
+                  <option value="45">45 分钟</option>
+                  <option value="60">60 分钟</option>
+                  <option value="90">90 分钟</option>
+                  <option value="120">120 分钟</option>
+                </select>
+              </div>
+              <div class="mb-4" style="display: flex;">
+                <select class="form-control form-control-lg" id="gradeSelect" required>
+                  <option value="">请选择年级</option>
+                  <option value="2023">2023级</option>
+                  <option value="2022">2022级</option>
+                  <option value="2021">2021级</option>
+                </select>
+                <select class="form-control form-control-lg" id="gradeSelect" required>
+                  <option value="">请选择班级</option>
+                  <option value="2023">1班</option>
+                  <option value="2022">2班</option>
+                  <option value="2021">3班</option>
+                </select>
+              </div>
+
+              <!-- 文件上传 -->
+              <div class="mb-4">
+                <label class="form-label fw-bold text-secondary">
+                  <i class="fas fa-file-upload me-2"></i>作业文件
+                </label>
+                <div class="file-upload-wrapper border rounded-3 p-3 bg-light">
+                  <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                      <input type="file" class="form-control" id="examFile" accept=".pdf,.doc,.docx,.zip"
+                        max-size="10485760" required>
+                    </div>
+                    <button type="button" class="btn btn-link" data-bs-toggle="tooltip" title="最大支持10MB文件">
+                      <i class="fas fa-info-circle"></i>
+                    </button>
+                  </div>
+                  <div class="mt-2">
+                    <small class="form-text text-muted d-block">
+                      支持格式：PDF (.pdf), Word (.doc/.docx), 压缩包 (.zip)
+                    </small>
+                    <div id="filePreview" class="text-primary small mt-1"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 操作按钮 -->
+              <div class="d-flex justify-content-end gap-2 mt-4">
+                <button type="reset" class="btn btn-outline-secondary px-4">
+                  <i class="fas fa-undo me-2"></i>重置
+                </button>
+                <button type="submit" class="btn btn-primary px-4">
+                  <i class="fas fa-paper-plane me-2"></i>发布作业
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+
+
+        <div class="card mt-4 shadow-sm" id="uploadStatus" style="display:none;">
+          <div class="card-body">
+            <div class="d-flex align-items-center">
+              <div class="flex-grow-1 me-3">
+                <div class="progress" style="height: 8px;">
+                  <div class="progress-bar progress-bar-striped" role="progressbar" style="width: 0%">
+                  </div>
+                </div>
+              </div>
+              <div class="text-muted small">
+                <span class="upload-percent">0</span>%
+              </div>
+            </div>
+            <p class="mt-2 mb-0 text-secondary small">
+              <i class="fas fa-sync fa-spin me-2"></i>文件上传中，请勿关闭页面...
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 展示已经发布考试  -->
+      <!-- 已发布考试盒子 -->
+      <div class="exam-box">
+        <div class="exam-header">
+          <h2 class="exam-title">
+            <iconify-icon icon="mdi:clipboard-list"></iconify-icon>
+            已发布作业
+          </h2>
+
+        </div>
+        <div class="published-exams">
+          <!-- 考试条目容器 -->
+          <div class="exam-item-box">
+            <div class="assignment-card alert alert-hover">
+              <div class="d-flex justify-content-between mb-2">
+                <span class="badge bg-warning">
+                  <i class="fas fa-hourglass-half me-2"></i>进行中
+                </span>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                    data-bs-target="#editExamModal">
+                    <i class="fas fa-edit me-2"></i>修改
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete(this)">
+                    <i class="fas fa-trash me-2"></i>删除
+                  </button>
+                </div>
+              </div>
+              <h6 class="mb-1 text-primary">第三章 栈与队列</h6>
+              <div class="text-muted small mb-2">
+                <i class="fas fa-file me-2"></i>考试文件：exam_3.zip
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="text-muted small">
+                  <i class="fas fa-calendar me-2"></i>
+                  2024-03-01 ~ 2024-03-15
+                </div>
+                <span class="badge bg-primary">
+                  <i class="fas fa-users me-2"></i>已提交 25/30
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="exam-item-box">
+            <div class="assignment-card alert alert-hover">
+              <div class="d-flex justify-content-between mb-2">
+                <span class="badge bg-warning">
+                  <i class="fas fa-hourglass-half me-2"></i>进行中
+                </span>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                    data-bs-target="#editExamModal">
+                    <i class="fas fa-edit me-2"></i>修改
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete(this)">
+                    <i class="fas fa-trash me-2"></i>删除
+                  </button>
+                </div>
+              </div>
+              <h6 class="mb-1 text-primary">第三章 栈与队列</h6>
+              <div class="text-muted small mb-2">
+                <i class="fas fa-file me-2"></i>考试文件：exam_3.zip
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="text-muted small">
+                  <i class="fas fa-calendar me-2"></i>
+                  2024-03-01 ~ 2024-03-15
+                </div>
+                <span class="badge bg-primary">
+                  <i class="fas fa-users me-2"></i>已提交 25/30
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="exam-item-box">
+            <div class="assignment-card alert alert-hover">
+              <div class="d-flex justify-content-between mb-2">
+                <span class="badge bg-warning">
+                  <i class="fas fa-hourglass-half me-2"></i>进行中
+                </span>
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                    data-bs-target="#editExamModal">
+                    <i class="fas fa-edit me-2"></i>修改
+                  </button>
+                  <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete(this)">
+                    <i class="fas fa-trash me-2"></i>删除
+                  </button>
+                </div>
+              </div>
+              <h6 class="mb-1 text-primary">第三章 栈与队列</h6>
+              <div class="text-muted small mb-2">
+                <i class="fas fa-file me-2"></i>考试文件：exam_3.zip
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="text-muted small">
+                  <i class="fas fa-calendar me-2"></i>
+                  2024-03-01 ~ 2024-03-15
+                </div>
+                <span class="badge bg-primary">
+                  <i class="fas fa-users me-2"></i>已提交 25/30
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- 修改考试模态框 -->
+      <div class="modal fade" id="editExamModal" tabindex="1" aria-labelledby="editExamModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editExamModalLabel">修改作业信息</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="editExamForm">
+                <div class="mb-3">
+                  <label for="editExamTitle" class="form-label">作业标题</label>
+                  <input type="text" class="form-control" id="editExamTitle" required>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label for="editStartTime" class="form-label">开始时间</label>
+                    <input type="datetime-local" class="form-control" id="editStartTime" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="editEndTime" class="form-label">截止时间</label>
+                    <input type="datetime-local" class="form-control" id="editEndTime" required>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="editExamDuration" class="form-label">作业时长（分钟）</label>
+                  <input type="number" class="form-control" id="editExamDuration" min="1" required>
+                </div>
+
+                <div class="mb-3">
+                  <label for="editPassingScore" class="form-label">重做次数</label>
+                  <input type="number" class="form-control" id="editRetries" min="0" required>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+              <button type="button" class="btn btn-primary" onclick="saveExamEdit()">保存修改</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <script>
+      // 班级数据
+      const classData = {
+        '2023': ['网络1班', '网络2班', '软件1班'],
+        '2022': ['网络3班', '软件2班', '大数据1班'],
+        '2021': ['网络4班', '软件3班', '人工智能1班']
+      };
+
+      // 已发布作业数据示例
+      let assignments = [{
+        id: 1,
+        title: '第三章 栈与队列',
+        grade: '2023',
+        class: '网络1班',
+        file: 'exam_3.zip',
+        start: '2024-03-01',
+        end: '2024-03-15',
+        submitted: '25/30',
+        status: '进行中'
+      }];
+
+      // 初始化班级选择
+      document.getElementById('gradeSelect').addEventListener('change', function () {
+        const classSelect = document.getElementById('classSelect');
+        const grade = this.value;
+
+        classSelect.innerHTML = '<option value="">请选择班级</option>';
+        classSelect.disabled = !grade;
+
+        if (grade) {
+          classData[grade].forEach(cls => {
+            classSelect.innerHTML += `<option value="${cls}">${cls}</option>`;
+          });
+        }
+      });
+
+      // 初始化筛选器
+      document.getElementById('filterGrade').addEventListener('change', function () {
+        const filterClass = document.getElementById('filterClass');
+        const grade = this.value;
+
+        filterClass.innerHTML = '<option value="">全部班级</option>';
+        filterClass.disabled = !grade;
+
+        if (grade) {
+          classData[grade].forEach(cls => {
+            filterClass.innerHTML += `<option value="${cls}">${cls}</option>`;
+          });
+        }
+        filterAssignments();
+      });
+
+      document.getElementById('filterClass').addEventListener('change', filterAssignments);
+
+      // 筛选作业
+      function filterAssignments() {
+        const grade = document.getElementById('filterGrade').value;
+        const cls = document.getElementById('filterClass').value;
+
+        document.querySelectorAll('.assignment-card').forEach(card => {
+          const cardGrade = card.dataset.grade;
+          const cardClass = card.dataset.class;
+
+          const gradeMatch = !grade || cardGrade === grade;
+          const classMatch = !cls || cardClass === cls;
+
+          card.style.display = gradeMatch && classMatch ? 'block' : 'none';
+        });
+      }
+
+      // 重置筛选
+      function resetFilter() {
+        document.getElementById('filterGrade').value = '';
+        document.getElementById('filterClass').value = '';
+        document.getElementById('filterClass').disabled = true;
+        filterAssignments();
+      }
+
+      // 发布作业时保存数据
+      document.querySelector('.needs-validation').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const newAssignment = {
+          id: Date.now(),
+          title: document.getElementById('examTitle').value,
+          grade: document.getElementById('gradeSelect').value,
+          class: document.getElementById('classSelect').value,
+          // 其他字段...
+        };
+
+        assignments.push(newAssignment);
+        renderAssignments();
+        this.reset();
+      });
+
+      // 渲染作业列表
+      function renderAssignments() {
+        const container = document.querySelector('.published-exams');
+        container.innerHTML = '';
+
+        assignments.forEach(assignment => {
+          const card = document.createElement('div');
+          card.className = 'exam-item-box';
+          card.innerHTML = `
+        <div class="assignment-card alert alert-hover" 
+             data-grade="${assignment.grade}" 
+             data-class="${assignment.class}">
+          <!-- 原有卡片内容 -->
+          <div class="d-flex justify-content-between mb-2">
+            <span class="badge bg-warning">
+              <i class="fas fa-hourglass-half me-2"></i>${assignment.status}
+            </span>
+            <div class="btn-group">
+              <button type="button" class="btn btn-sm btn-outline-primary" 
+                      data-bs-toggle="modal" data-bs-target="#editExamModal">
+                <i class="fas fa-edit me-2"></i>修改
+              </button>
+              <button type="button" class="btn btn-sm btn-outline-danger" 
+                      onclick="confirmDelete(this)">
+                <i class="fas fa-trash me-2"></i>删除
+              </button>
+            </div>
+          </div>
+          <h6 class="mb-1 text-primary">${assignment.title}</h6>
+          <div class="text-muted small mb-2">
+            <i class="fas fa-file me-2"></i>考试文件：${assignment.file}
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="text-muted small">
+              <i class="fas fa-calendar me-2"></i>
+              ${assignment.start} ~ ${assignment.end}
+            </div>
+            <span class="badge bg-primary">
+              <i class="fas fa-users me-2"></i>已提交 ${assignment.submitted}
+            </span>
+          </div>
+        </div>
+      `;
+          container.appendChild(card);
+        });
+      }
+
+      // 初始化渲染
+      renderAssignments();
+    </script>
+    <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/sidebarmenu.js"></script>
+    <script src="../assets/js/app.min.js"></script>
+    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+    <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+    <!-- solar icons -->
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+
+</html>

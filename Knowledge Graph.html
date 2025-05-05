@@ -1,0 +1,1221 @@
+<!doctype html>
+<html lang="China">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>老师端 学生分析</title>
+  <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+  <link rel="stylesheet" href="../assets/css/styles.min.css" />
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+  <!-- 引入Font Awesome图标库 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    .catalog-container {
+      font-family: Arial, sans-serif;
+      flex: 1;
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      overflow-y: auto;
+      /* 添加滚动条以便在内容过多时可以滚动 */
+    }
+
+    .tree-view {
+      list-style: none;
+      padding-left: 20px;
+    }
+
+    .tree-node {
+      position: relative;
+      margin: 8px 0;
+    }
+
+    .node-content {
+      display: flex;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 4px;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+
+    .node-content:hover {
+      background: #f0faff;
+    }
+
+    .toggle-icon {
+      margin-right: 8px;
+      font-size: 12px;
+      width: 16px;
+      text-align: center;
+    }
+
+    .node-title {
+      color: #333;
+    }
+
+    .children-list {
+      display: none;
+      /* 默认隐藏子列表 */
+      padding-left: 20px;
+    }
+
+    .children-list.show {
+      display: block;
+      /* 显示子列表 */
+    }
+
+    .item-actions {
+      margin-left: auto;
+      display: none;
+    }
+
+    .node-content:hover .item-actions {
+      display: block;
+    }
+
+    .edit-btn,
+    .delete-btn {
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      margin-left: 8px;
+      cursor: pointer;
+    }
+
+    .edit-btn {
+      background: #23cf9c;
+      color: white;
+    }
+
+    .delete-btn {
+      background: #ff6161;
+      color: white;
+    }
+
+    .chapter-line {
+      position: absolute;
+      left: -12px;
+      top: 18px;
+      bottom: 0;
+      width: 2px;
+      background: #00a1ff;
+    }
+
+    .knowledge-graph {
+      height: 80vh;
+      min-height: 600px;
+      max-width: 100%;
+    }
+
+    .operation-panel {
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .operation-panel input {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 5px;
+    }
+
+    .operation-panel button {
+      background: #00a1ff;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+
+    .class-book {
+      flex: 1;
+      padding: 20px;
+      background: #fff;
+      border-right: 1px solid #e0e0e0;
+    }
+
+    .knowledge-graph-container {
+      flex: 3;
+      /* min-height: 1200px; */
+      padding: 20px;
+      background: #fff;
+    }
+
+    .catalog-container {
+      flex: 1;
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .operation-panel {
+      margin: 15px 0;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .operation-panel input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #00a1ff;
+      border-radius: 4px;
+      min-width: 150px;
+    }
+
+    .operation-panel button {
+      background: #00a1ff;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .operation-panel button:hover {
+      background: #0088cc;
+      transform: translateY(-1px);
+    }
+
+    .catalog-list {
+      flex: 1;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      background: white;
+    }
+
+    .chapter-item {
+      background: white;
+      margin: 5px 0;
+      border-radius: 4px;
+      border: 1px solid #e9ecef;
+      transition: all 0.3s;
+    }
+
+    .chapter-item.active {
+      border-color: #00a1ff;
+      background: rgba(0, 161, 255, 0.05);
+    }
+
+    .chapter-header {
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .chapter-title {
+      color: #2c3e50;
+      font-weight: 500;
+    }
+
+    .subsection-list {
+      padding-left: 20px;
+      display: none;
+    }
+
+    .subsection-list.show {
+      display: block;
+    }
+
+    .subsection-item {
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #f1f3f5;
+    }
+
+    .subsection-item:hover {
+      background: rgba(0, 161, 255, 0.03);
+    }
+
+    .item-actions {
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .subsection-item:hover .item-actions {
+      opacity: 1;
+    }
+
+    .item-actions button {
+      padding: 4px 8px;
+      margin-left: 8px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-between">
+          <a href="./index.html" class="text-nowrap logo-img">
+            <img src="../assets/images/logos/logo.svg" alt="" />
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
+        </div>
+        <!-- Sidebar navigation-->
+
+        <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程建设</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Course Content.html" style="width:150px" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone" ;"></iconify-icon>
+                <span class="hide-menu" ;>资源上传</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="Knowledge Graph.html" aria-expanded="false">
+
+                <iconify-icon icon="solar:widget-add-line-duotone" style="color:#00a1ff "></iconify-icon>
+                <span class="hide-menu" style="color:#00a1ff ">构建图谱</span>
+              </a>
+            </li>
+
+
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程管理</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Student Analysis Class Interface.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">班级管理</span>
+              </a>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Homework Release.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">作业发布</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Exam Release.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">考试发布</span>
+              </a>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">学情分析</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Student Analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">行为分析</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Homework Grade Analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">作业成绩</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Exam Grades.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">考试成绩</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="AI Assistant.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu" >AI助手</span>
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <span style="width: 150px;" class="sidebar-divider lg"></span>
+            </li>
+
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">查看首页</span>
+            </li>
+
+          </ul>
+          <div style="width: 230px;"
+            class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+            <div class="me-2 flex-shrink-0" style="width: 160px;">
+              <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+              <a style="width: 150px;"
+                href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33" target="_blank"
+                class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+            </div>
+            <div class="unlimited-access-img" style="width: 230px;">
+              <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+            </div>
+          </div>
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+
+      <!-- 顶部导航栏 -->
+      <!-- 顶部导航栏 -->
+
+
+
+      <div class="body-wrapper-inner" style="margin: 0;min-height: 100vh;display: flex;">
+
+
+        <!-- 右侧知识图谱 -->
+        <div class="knowledge-graph-container" style="margin: 0;height: 100%;">
+          <div class="knowledge-graph"></div>
+        </div>
+        <!-- 左侧目录 -->
+        <div class="catalog-container">
+          <h3 style="color: #00a1ff; border-bottom: 2px solid #00a1ff; padding-bottom: 8px;">课程目录</h3>
+
+          <ul class="tree-view">
+            <!-- 第一章 -->
+            <li class="tree-node">
+              <div class="node-content" onclick="toggleChildren(this)">
+                <span class="toggle-icon">▼</span>
+                <span class="node-title">1 网络基础</span>
+                <div class="item-actions">
+                  <button class="edit-btn">编辑</button>
+                  <button class="delete-btn">删除</button>
+                </div>
+                <div class="chapter-line"></div>
+              </div>
+              <ul class="children-list">
+                <li class="tree-node">1.1 网络协议</li>
+                <li class="tree-node">1.2 网络模型</li>
+                <li class="tree-node">1.3 IP地址</li>
+                <li class="tree-node">1.4 传输介质</li>
+                <li class="tree-node">1.5 网络设备</li>
+              </ul>
+            </li>
+
+            <!-- 第二章 -->
+            <li class="tree-node">
+              <div class="node-content" onclick="toggleChildren(this)">
+                <span class="toggle-icon">▼</span>
+                <span class="node-title">2 路由技术</span>
+                <div class="item-actions">
+                  <button class="edit-btn">编辑</button>
+                  <button class="delete-btn">删除</button>
+                </div>
+                <div class="chapter-line"></div>
+              </div>
+              <ul class="children-list show">
+                <li class="tree-node">2.1 静态路由</li>
+                <li class="tree-node">2.2 动态路由</li>
+                <li class="tree-node">2.3 路由协议</li>
+                <li class="tree-node">2.4 路由配置</li>
+                <li class="tree-node">2.5 路由管理</li>
+              </ul>
+            </li>
+
+            <!-- 第三章 -->
+            <li class="tree-node">
+              <div class="node-content" onclick="toggleChildren(this)">
+                <span class="toggle-icon">▼</span>
+                <span class="node-title">3 IPv6技术</span>
+                <div class="item-actions">
+                  <button class="edit-btn">编辑</button>
+                  <button class="delete-btn">删除</button>
+                </div>
+                <div class="chapter-line"></div>
+              </div>
+              <ul class="children-list show">
+                <li class="tree-node">3.1 IPv6基础</li>
+                <li class="tree-node">3.2 IPv6路由</li>
+                <li class="tree-node">3.3 IPv6过渡</li>
+                <li class="tree-node">3.4 IPv6安全</li>
+                <li class="tree-node">3.5 IPv6配置</li>
+              </ul>
+            </li>
+            <!-- 第四章 -->
+            <li class="tree-node">
+              <div class="node-content" onclick="toggleChildren(this)">
+                <span class="toggle-icon">▼</span>
+                <span class="node-title">4 网络安全</span>
+                <div class="item-actions">
+                  <button class="edit-btn">编辑</button>
+                  <button class="delete-btn">删除</button>
+                </div>
+                <div class="chapter-line"></div>
+              </div>
+              <ul class="children-list show">
+                <li class="tree-node">4.1 访问控制</li>
+                <li class="tree-node">4.2 防火墙</li>
+                <li class="tree-node">4.3 安全协议</li>
+                <li class="tree-node">4.4 安全配置</li>
+                <li class="tree-node">4.5 安全管理</li>
+              </ul>
+            </li>
+            <!-- 第五章 -->
+            <li class="tree-node">
+              <div class="node-content" onclick="toggleChildren(this)">
+                <span class="toggle-icon">▼</span>
+                <span class="node-title">5 网络管理</span>
+                <div class="item-actions">
+                  <button class="edit-btn">编辑</button>
+                  <button class="delete-btn">删除</button>
+                </div>
+                <div class="chapter-line"></div>
+              </div>
+              <ul class="children-list show">
+                <li class="tree-node">5.1 设备配置</li>
+                <li class="tree-node">5.2 网络监控</li>
+                <li class="tree-node">5.3 故障排查</li>
+                <li class="tree-node">5.4 性能优化</li>
+                <li class="tree-node">5.5 网络工具</li>
+              </ul>
+            </li>
+            <!-- 第六章 -->
+            <li class="tree-node">
+              <div class="node-content" onclick="toggleChildren(this)">
+                <span class="toggle-icon">▼</span>
+                <span class="node-title">6 网络实验</span>
+                <div class="item-actions">
+                  <button class="edit-btn">编辑</button>
+                  <button class="delete-btn">删除</button>
+                </div>
+                <div class="chapter-line"></div>
+              </div>
+              <ul class="children-list show">
+                <li class="tree-node">6.1 实验环境</li>
+                <li class="tree-node">6.2 实验配置</li>
+                <li class="tree-node">6.3 实验验证</li>
+                <li class="tree-node">6.4 实验分析</li>
+                <li class="tree-node">6.5 实验报告</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <script>
+          function toggleChildren(element) {
+            const parentNode = element.closest('.tree-node');
+            const childrenList = parentNode.querySelector('.children-list');
+            const toggleIcon = element.querySelector('.toggle-icon');
+
+            // 切换显示状态
+            childrenList.classList.toggle('show');
+            // 旋转箭头图标
+            toggleIcon.classList.toggle('collapsed');
+
+            // 关闭其他展开的列表
+            document.querySelectorAll('.tree-node').forEach(node => {
+              if (node !== parentNode) {
+                node.querySelector('.children-list').classList.remove('show');
+                node.querySelector('.toggle-icon').classList.add('collapsed');
+              }
+            });
+          }
+
+          // 点击页面其他区域关闭下拉
+          document.addEventListener('click', (e) => {
+            if (!e.target.closest('.tree-node')) {
+              document.querySelectorAll('.children-list').forEach(list => {
+                list.classList.remove('show');
+              });
+              document.querySelectorAll('.toggle-icon').forEach(icon => {
+                icon.classList.add('collapsed');
+              });
+            }
+          });
+        </script>
+
+
+        <!-- 知识图谱 -->
+        <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+        <script>
+          // 知识图谱
+          // 知识图谱模块
+          (function () {
+            // 1. 实例化对象
+            var myChart = echarts.init(document.querySelector(".knowledge-graph "));
+
+            mockGraphData = [
+              {
+                id: 0,
+                name: "解析法",
+                category: "未掌握 需重点关注",
+                value: 5,
+              },
+              {
+                id: 1,
+                name: "诱导公式",
+                value: 21,
+                category: "未掌握 需重点关注",
+              },
+              {
+                id: 2,
+                name: "函数的概念",
+                category: "未掌握 需重点关注",
+                value: 29,
+              },
+              {
+                id: 3,
+                name: "图像法",
+                category: "未掌握 需重点关注",
+                value: 15,
+              },
+              {
+                id: 4,
+                name: "三角函数的概念和性质",
+                category: "未掌握 需重点关注",
+                value: 12,
+              },
+              {
+                id: 5,
+                name: "正弦函数的概念",
+                category: "未掌握 需重点关注",
+                value: 15,
+              },
+              {
+                id: 6,
+                name: "函数的性质",
+                category: "未掌握 需重点关注",
+                value: 13,
+              },
+              {
+                id: 7,
+                name: "三角函数的概念",
+                category: "部分掌握",
+                value: 30,
+              },
+              {
+                id: 8,
+                name: "余弦函数的概念",
+                category: "部分掌握",
+                value: 45,
+              },
+              {
+                id: 9,
+                name: "函数的性质",
+                category: "部分掌握",
+                value: 55,
+              },
+              {
+                id: 10,
+                name: "解析法",
+                category: "基本掌握",
+                value: 75,
+              },
+              {
+                id: 11,
+                name: "同三角函数的基本",
+                category: "基本掌握",
+                value: 93,
+              },
+              {
+                id: 12,
+                name: "函数的性质",
+                category: "基本掌握",
+                value: 90,
+              },
+              {
+                id: 13,
+                name: "函数的值域",
+                category: "熟练掌握",
+                value: 10,
+              },
+              {
+                id: 14,
+                name: "函数的定义域",
+                category: "熟练掌握",
+                value: 10,
+              },
+              {
+                id: 15,
+                name: "函数的表示",
+                category: "熟练掌握",
+                value: 10,
+              },
+              {
+                id: 16,
+                name: "三角函数",
+                category: "熟练掌握",
+                value: 10,
+              },
+              {
+                id: 17,
+                name: "函数的概念与表示",
+                category: "熟练掌握",
+                value: 10,
+              },
+              {
+                id: 18,
+                name: "函数的概念与性质",
+                category: "熟练掌握",
+                value: 10,
+              },
+              {
+                id: 19,
+                name: "函数",
+                category: "熟练掌握",
+                value: 10,
+              },
+            ];
+            mockLink = [
+              {
+                source: "11",
+                target: "1",
+                type: "相关关系",
+              },
+              {
+                source: "7",
+                target: "8",
+                type: "相关关系",
+              },
+              {
+                source: "7",
+                target: "5",
+                type: "相关关系",
+              },
+              {
+                source: "7",
+                target: "19",
+                type: "相关关系",
+              },
+              {
+                source: "5",
+                target: "8",
+                type: "前置关系",
+              },
+              {
+                source: "4",
+                target: "7",
+                type: "前置关系",
+              },
+              {
+                source: "4",
+                target: "19",
+                type: "相关关系",
+              },
+              {
+                source: "16",
+                target: "4",
+                type: "前置关系",
+              },
+              {
+                source: "4",
+                target: "9",
+                type: "相关关系",
+              },
+              {
+                source: "3",
+                target: "9",
+                type: "前置关系",
+              },
+              {
+                source: "3",
+                target: "6",
+                type: "相关关系",
+              },
+              {
+                source: "18",
+                target: "17",
+                type: "相关关系",
+              },
+              {
+                source: "17",
+                target: "15",
+                type: "相关关系",
+              },
+              {
+                source: "17",
+                target: "10",
+                type: "相关关系",
+              },
+              {
+                source: "14",
+                target: "10",
+                type: "前置关系",
+              },
+              {
+                source: "13",
+                target: "10",
+                type: "相关关系",
+              },
+              {
+                source: "2",
+                target: "13",
+                type: "前置关系",
+              },
+            ];
+            const rawData = mockGraphData.map((item) => {
+              if (item.category === "未掌握 需重点关注") {
+                return {
+                  ...item,
+                  itemStyle: {
+                    normal: {
+                      color: "#ff575f",
+                    },
+                  },
+                  // label: {
+                  //   textBorderColor: "#ff575f",
+                  // },
+                };
+              } else if (item.category === "部分掌握") {
+                return {
+                  ...item,
+                  itemStyle: {
+                    normal: {
+                      color: "#ffca56",
+                    },
+                  },
+                };
+              } else if (item.category === "基本掌握") {
+                return {
+                  ...item,
+                  itemStyle: {
+                    normal: {
+                      color: "#00ccc1",
+                    },
+                  },
+                };
+              } else if (item.category === "熟练掌握") {
+                return {
+                  ...item,
+                  itemStyle: {
+                    normal: {
+                      color: "#4f9ef5",
+                    },
+                  },
+                };
+              } else if (item.category === "前置节点") {
+                return {
+                  ...item,
+                  symbolSize: [80, 80],
+                  itemStyle: {
+                    normal: {
+                      color: "#f4b7be",
+                    },
+                  },
+                  label: {
+                    show: true,
+                    position: 'inside',
+                    color: "#000",
+                    textBorderWidth: 1,
+                    formatter: "{a|{b}}",
+                    rich: {
+                      a: {
+                        color: "#000",
+                        lineHeight: 30,
+                      },
+
+                    },
+                  },
+                };
+              } else if (item.category === "本次未考核") {
+                return {
+                  ...item,
+                  itemStyle: {
+                    normal: {
+                      color: "#ffffff",
+                      borderWidth: 2,
+                      borderColor: "#ec808d",
+                    },
+                  },
+                  label: {
+                    show: true,
+                    position: 'inside',
+                    color: "#000",
+                    textBorderWidth: 1,
+                    formatter: ["{b|历史掌\n握程度\n{c}%}", "{a|{b}}"].join("\n"),
+                    rich: {
+                      a: {
+                        color: "#000",
+                        lineHeight: 30,
+                      },
+                      b: {
+
+                        color: "#000",
+                        align: "center",
+                        lineHeight: 15,
+                      },
+                    },
+                    offset: [0, 20]
+                  },
+                };
+              } else {
+                return {
+                  ...item,
+                  itemStyle: {
+                    normal: {
+                      color: "#4f9ef5",
+                    },
+                  },
+                };
+              }
+            });
+            const rawLink = mockLink.map((item) => {
+              if (item.type === "相关关系") {
+                return {
+                  ...item,
+                  tooltip: { formatter: "相关关系" },
+                };
+              } else if (item.type === "前置关系") {
+                return {
+                  ...item,
+                  tooltip: { formatter: "前置关系" },
+                  symbolSize: [10, 10],
+                };
+              } else if (item.type === "包含关系") {
+                return {
+                  ...item,
+                  tooltip: { formatter: "包含关系" },
+                  lineStyle: { type: "dashed" },
+                };
+              } else {
+                return {
+                  ...item,
+                };
+              }
+            });
+            option = {
+              title: {
+                text: "知识图谱",
+                subtext: "Default layout",
+                top: "bottom",
+                left: "right",
+              },
+              color: ["#ff575f", "#ffca56", "#00ccc1", "#4f9ef5"],
+              tooltip: {
+                trigger: "item",
+                formatter: "{b}  {c}%",
+              },
+              legend: {
+                selectedMode: "true",
+                orient: "vertical",
+                top: 10,
+                show: true,
+                data: [
+                  {
+                    name: "未掌握 需重点关注",
+                  },
+                  {
+                    name: "部分掌握",
+                  },
+                  {
+                    name: "基本掌握",
+                  },
+                  {
+                    name: "熟练掌握",
+                  },
+                ],
+                left: 10,
+                // itemStyle:{color: 'inherit'},
+                // selector: [
+                //   {
+                //     type: "inverse",
+                //     title: "反选",
+                //   },
+                // ],
+              },
+
+              animationDuration: 1000,
+              animationEasingUpdate: "quinticInOut",
+              series: [
+                {
+                  name: "",
+                  type: "graph",
+                  layout: "force",
+                  edgeSymbol: ["none", "arrow"],
+                  edgeSymbolSize: [0, 0],
+                  draggable: false,
+                  zoom: 1, // 数据多的情况下控制显示区域大小
+                  // itemStyle: {
+                  //   normal: {
+                  //     // borderWidth: 2
+                  //   },
+                  // },
+                  symbolSize: [60, 60],
+                  force: {
+                    // 布局配置
+                    repulsion: 600,
+                    edgeLength: 120,
+                    layoutAnimation: true,
+                    friction: 0.6
+                  },
+                  data: rawData,
+                  links: rawLink,
+                  categories: [
+                    {
+                      name: "未掌握 需重点关注",
+                    },
+                    {
+                      name: "部分掌握",
+                    },
+                    {
+                      name: "基本掌握",
+                    },
+                    {
+                      name: "熟练掌握",
+                    },
+                    {
+                      name: "前置节点",
+                    },
+                    {
+                      name: "本次未考核",
+                    },
+                  ],
+                  roam: true, // 是否开启平移缩放
+                  // edgeLabel: {
+                  //   normal: {
+                  //     show: true,
+                  //     formatter: function (x: any) {
+                  //       return x.data.name;
+                  //     },
+                  //   },
+                  // },
+                  label: {
+                    normal: {
+                      show: true,
+                      // position: ["125%", "100%"],
+                      position: "inside",
+                      color: "#fff",
+                      textBorderWidth: 1,
+                      formatter: ["{b|{c}%}", "{a|{b}}"].join("\n"),
+                      rich: {
+                        a: {
+                          color: "#000",
+                          height: 0,
+                          // lineHeight: 10
+                        },
+                        b: {
+                          color: "#fff",
+                          align: "center",
+                          lineHeight: 80,
+                        },
+                      },
+                    },
+                  },
+                  lineStyle: {
+                    normal: {
+                      color: "#000",
+                      curveness: 0.3,
+                      type: "solid",
+                    },
+                  },
+                  emphasis: {
+                    focus: "adjacency",
+                    lineStyle: {
+                      width: 5,
+                    },
+                  },
+                },
+              ],
+            };
+
+
+
+
+            // 3. 把配置项
+            myChart.setOption(option);
+            // 获取输入框内容
+            function getInputs() {
+              var name = document.getElementById("input1").value.trim();
+              var value = parseInt(document.getElementById("input2").value.trim(), 10);
+              return { name, value };
+            }
+
+            // 增加节点
+            document.getElementById("add-btn").addEventListener("click", function () {
+              var { name, value } = getInputs();
+              if (name && !isNaN(value)) {
+                var newNode = {
+                  id: mockGraphData.length,
+                  name: name,
+                  category: "未掌握 需重点关注",
+                  value:
+                    value
+                };
+                mockGraphData
+                  .push(newNode);
+                initChart();
+              } else {
+                alert("请输入有效的节点名称和值！");
+              }
+            });
+
+            // 删除节点
+            document.getElementById("delete-btn").addEventListener("click", function () {
+              var { name } = getInputs();
+              if (name) {
+                mockGraphData
+                  = mockGraphData.filter(node => node.name !== name);
+                initChart();
+              } else {
+                alert("请输入要删除的节点名称！");
+              }
+            });
+
+            // 修改节点
+            document.getElementById("fix-btn").addEventListener("click", function () {
+              var { name, value } = getInputs();
+              if (name && !isNaN(value)) {
+                var node = mockGraphData.find(node => node.name === name);
+                if (node) {
+                  node
+                    .value = value;
+                  initChart();
+                } else {
+                  alert("未找到指定的节点！");
+                }
+              } else {
+                alert("请输入有效的节点名称和值！");
+              }
+            });
+
+
+            // 初始化图表
+            initChart();
+            // 4. 让图表跟随屏幕自动的去适应
+            window.addEventListener("resize", function () {
+              myChart.resize();
+            });
+          })();
+
+        </script>
+        <!-- 修改等事件 -->
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            let selectedNode = null;
+
+            // 折叠/展开章节
+            document.querySelectorAll('.chapter-header').forEach(header => {
+              header.addEventListener('click', function () {
+                const list = this.nextElementSibling;
+                list.classList.toggle('show');
+                this.querySelector('.toggle-icon').textContent =
+                  list.classList.contains('show') ? '▼' : '▶';
+              });
+            });
+
+            // 选择节点
+            document.querySelectorAll('.chapter-item, .subsection-item').forEach(item => {
+              item.addEventListener('click', function (e) {
+                if (e.target.tagName === 'BUTTON') return;
+
+                document.querySelectorAll('.chapter-item, .subsection-item').forEach(i => {
+                  i.classList.remove('active');
+                });
+                this.classList.add('active');
+                selectedNode = this;
+              });
+            });
+
+            // 添加小节
+            document.getElementById('add-btn').addEventListener('click', function () {
+              if (!selectedNode) return alert('请先选择章节');
+              const name = document.getElementById('node-name').value;
+              if (!name) return alert('请输入节点名称');
+
+              const isChapter = selectedNode.classList.contains('chapter-item');
+              const targetList = isChapter ?
+                selectedNode.querySelector('.subsection-list') :
+                selectedNode.closest('.subsection-list');
+
+              const newItem = document.createElement('li');
+              newItem.className = 'subsection-item';
+              newItem.innerHTML = `
+                      <span>${name}</span>
+                      <div class="item-actions">
+                          <button class="edit-btn">编辑</button>
+                          <button class="delete-btn">删除</button>
+                      </div>
+                  `;
+              targetList.appendChild(newItem);
+            });
+
+            // 删除节点
+            document.getElementById('delete-btn').addEventListener('click', function () {
+              if (!selectedNode) return alert('请选择要删除的节点');
+              if (selectedNode.classList.contains('chapter-item') &&
+                confirm('确定要删除整个章节及其所有内容吗？')) {
+                selectedNode.remove();
+              } else if (confirm('确定要删除该节点吗？')) {
+                selectedNode.remove();
+              }
+              selectedNode = null;
+            });
+
+            // 修改名称
+            document.getElementById('modify-btn').addEventListener('click', function () {
+              if (!selectedNode) return alert('请选择要修改的节点');
+              const newName = prompt('输入新名称',
+                selectedNode.querySelector('span').textContent);
+              if (newName) {
+                selectedNode.querySelector('span').textContent = newName;
+              }
+            });
+
+            // 委托处理子节点操作
+            document.querySelector('.catalog-list').addEventListener('click', function (e) {
+              if (e.target.classList.contains('delete-btn')) {
+                if (confirm('确定要删除吗？')) {
+                  e.target.closest('li').remove();
+                }
+              }
+              if (e.target.classList.contains('edit-btn')) {
+                const span = e.target.closest('li').querySelector('span');
+                const newName = prompt('输入新名称', span.textContent);
+                if (newName) span.textContent = newName;
+              }
+            });
+          });
+        </script>
+
+      </div>
+
+
+
+      <!-- 引入 ECharts 文件 -->
+
+      <!-- 引入 vintage 主题 -->
+      <scrip src="theme/vintage.js">
+        </script>
+
+        <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+        <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="../assets/js/sidebarmenu.js"></script>
+        <script src="../assets/js/app.min.js"></script>
+        <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+        <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+        <script src="../assets/js/dashboard.js"></script>
+        <!-- solar icons -->
+        <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+
+</html>

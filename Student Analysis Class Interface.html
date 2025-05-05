@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>老师端 学生分析班级</title>
+  <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+  <link rel="stylesheet" href="../assets/css/styles.min.css" />
+  <!-- 引入 AngularJS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+  <style>
+    .dropdown-submenu {
+      position: relative;
+    }
+
+    .dropdown-submenu a::after {
+      content: "\25BA";
+      float: right;
+      min-width: 0.25rem;
+      margin-left: 0.5rem;
+    }
+
+    .dropdown-submenu .dropdown-menu {
+      top: 0;
+      left: 100%;
+      margin-top: -1px;
+    }
+
+    /* 错误提示样式 */
+    .error-message {
+      color: red;
+      margin-top: 5px;
+    }
+
+    .card1 {
+      padding: 1.5rem;
+      background: white;
+      border-radius: 8px;
+      /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .select-group {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-grow: 1;
+      max-width: 400px;
+      /* 控制最大宽度 */
+    }
+
+    #selectGrade {
+      width: 200px;
+      /* 固定宽度 */
+      transition: all 0.3s;
+    }
+
+    .btn-success {
+      white-space: nowrap;
+      padding: 0.5rem 1.25rem;
+    }
+
+    /* 响应式适配 */
+    @media (max-width: 768px) {
+      .card1 {
+        flex-wrap: wrap;
+      }
+
+      .select-group {
+        max-width: 100%;
+        flex: 1 0 100%;
+      }
+
+      #selectGrade {
+        width: 100%;
+      }
+
+      .btn-success {
+        width: 100%;
+        margin-top: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body ng-app="myApp" ng-controller="ClassAnalysisController">
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-between">
+          <a href="./index.html" class="text-nowrap logo-img">
+            <img src="../assets/images/logos/logo.svg" alt="" />
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
+        </div>
+        <!-- Sidebar navigation-->
+
+        <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程建设</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Course Content.html" style="width:150px" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone" ;"></iconify-icon>
+                <span class="hide-menu" ;>资源上传</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="Knowledge Graph.html" aria-expanded="false">
+
+                <iconify-icon icon="solar:widget-add-line-duotone"></iconify-icon>
+                <span class="hide-menu">构建图谱</span>
+              </a>
+            </li>
+
+
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程管理</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Student Analysis Class Interface.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone" style="color:#00a1ff "></iconify-icon>
+                <span class="hide-menu" style="color:#00a1ff ">班级管理</span>
+              </a>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Homework Release.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">作业发布</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Exam Release.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">考试发布</span>
+              </a>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">学情分析</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Student Analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">行为分析</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Homework Grade Analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">作业成绩</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Exam Grades.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">考试成绩</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="AI Assistant.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">AI助手</span>
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <span style="width: 150px;" class="sidebar-divider lg"></span>
+            </li>
+
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">查看首页</span>
+            </li>
+
+          </ul>
+          <div style="width: 230px;"
+            class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+            <div class="me-2 flex-shrink-0" style="width: 160px;">
+              <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+              <a style="width: 150px;"
+                href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33" target="_blank"
+                class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+            </div>
+            <div class="unlimited-access-img" style="width: 230px;">
+              <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+            </div>
+          </div>
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper">
+      <div class="body-wrapper-inner" style="min-height: 100vh; margin: 0;">
+        <div class="container ">
+          <!-- 年级选择下拉列表 -->
+
+          <div class="container">
+            <div class="card1">
+              <div class="select-group">
+                <label for="selectGrade" class="form-label mb-0">选择年级：</label>
+                <select id="selectGrade" class="form-select" style="width: 180px;">
+                  <option value="">请选择年级</option>
+                  <option value="2023">2023级</option>
+                  <option value="2022">2022级</option>
+                  <option value="2021">2021级</option>
+                </select>
+              </div>
+
+              <!-- 触发按钮 -->
+              <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#importClassModal">
+                <i class="bi bi-upload me-2"></i>
+                导入新班级
+              </button>
+              <!-- 导入新班级的模态窗口 -->
+              <div class="modal fade" id="importClassModal" tabindex="-1" aria-labelledby="importClassModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                      <h5 class="modal-title" id="importClassModalLabel">导入新班级</h5>
+                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <form name="importForm" novalidate>
+                        <!-- 班级名称 -->
+                        <div class="mb-3">
+                          <label for="className" class="form-label">班级名称 <span class="text-danger">*</span></label>
+                          <input type="text" id="className" class="form-control" ng-model="newClass.name"
+                            ng-class="{'is-invalid': importForm.className.$touched && importForm.className.$invalid}"
+                            required>
+                          <div class="invalid-feedback">
+                            请输入有效的班级名称
+                          </div>
+                        </div>
+
+                        <!-- 年级选择 -->
+                        <div class="mb-3">
+                          <label for="grade" class="form-label">年级 <span class="text-danger">*</span></label>
+                          <select id="grade" class="form-select" ng-model="newClass.grade"
+                            ng-class="{'is-invalid': importForm.grade.$touched && importForm.grade.$invalid}" required>
+                            <option value="">请选择年级</option>
+                            <option value="2023">2023级</option>
+                            <option value="2022">2022级</option>
+                            <option value="2021">2021级</option>
+                          </select>
+                          <div class="invalid-feedback">
+                            请选择年级
+                          </div>
+                        </div>
+
+                        <!-- 课程选择 -->
+                        <div class="mb-3">
+                          <label for="course" class="form-label">课程名称 <span class="text-danger">*</span></label>
+                          <input type="text" id="course" class="form-control" ng-model="newClass.course"
+                            ng-class="{'is-invalid': importForm.course.$touched && importForm.course.$invalid}"
+                            required>
+                          <div class="invalid-feedback">
+                            请输入课程名称
+                          </div>
+                        </div>
+
+                        <!-- 文件上传 -->
+                        <div class="mb-4">
+                          <label for="studentFile" class="form-label">学生名单 <span class="text-danger">*</span></label>
+                          <div class="input-group">
+                            <input type="file" id="studentFile" class="form-control" accept=".csv,.xlsx"
+                              ng-model="newClass.file"
+                              ng-class="{'is-invalid': importForm.studentFile.$touched && importForm.studentFile.$invalid}"
+                              required>
+                            <button class="btn btn-outline-secondary" type="button" ng-click="downloadTemplate()">
+                              <i class="bi bi-download"></i> 下载模板
+                            </button>
+                          </div>
+                          <div class="invalid-feedback">
+                            请上传有效的学生名单文件（CSV/XLSX）
+                          </div>
+                          <small class="form-text text-muted">最大文件大小：5MB，支持格式：.csv, .xlsx</small>
+                        </div>
+
+                        <!-- 状态提示 -->
+                        <div class="alert alert-danger" ng-show="importError">
+                          <i class="bi bi-exclamation-circle"></i> {{ importError }}
+                        </div>
+                        <div class="alert alert-success" ng-show="importSuccess">
+                          <i class="bi bi-check-circle"></i> {{ importSuccess }}
+                        </div>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                      <button type="button" class="btn btn-primary" ng-click="importClass()"
+                        ng-disabled="importForm.$invalid || isImporting">
+                        <span ng-if="!isImporting">确认导入</span>
+                        <span ng-if="isImporting">
+                          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                          正在导入...
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <script>
+                app.controller('ClassAnalysisController', function ($scope, $timeout) {
+                  // 初始化新班级对象
+                  $scope.newClass = {
+                    name: '',
+                    grade: '',
+                    course: '',
+                    file: null
+                  };
+
+                  // 导入状态
+                  $scope.isImporting = false;
+                  $scope.importError = '';
+                  $scope.importSuccess = '';
+
+                  // 下载模板
+                  $scope.downloadTemplate = function () {
+                    // 这里添加实际下载逻辑
+                    console.log('下载学生名单模板');
+                  };
+
+                  // 导入班级
+                  $scope.importClass = function () {
+                    // 重置状态
+                    $scope.importError = '';
+                    $scope.importSuccess = '';
+                    $scope.isImporting = true;
+
+                    // 模拟异步操作
+                    $timeout(function () {
+                      // 检查文件有效性
+                      const file = $scope.newClass.file;
+                      if (file) {
+                        const validTypes = ['csv', 'xlsx'];
+                        const extension = file.name.split('.').pop().toLowerCase();
+
+                        if (!validTypes.includes(extension)) {
+                          $scope.importError = '仅支持 CSV 和 XLSX 格式的文件';
+                          $scope.isImporting = false;
+                          return;
+                        }
+
+                        if (file.size > 5 * 1024 * 1024) {
+                          $scope.importError = '文件大小不能超过5MB';
+                          $scope.isImporting = false;
+                          return;
+                        }
+                      }
+
+                      // 创建新班级对象
+                      const newClass = {
+                        title: $scope.newClass.name,
+                        grade: $scope.newClass.grade,
+                        course: $scope.newClass.course,
+                        status: '进行中',
+                        studentCount: 0,
+                        studentFile: file ? file.name : '未上传'
+                      };
+
+                      // 添加到班级列表
+                      $scope.cards.push(newClass);
+
+                      // 显示成功信息
+                      $scope.importSuccess = '班级导入成功！';
+
+                      // 重置表单
+                      $scope.newClass = { name: '', grade: '', course: '', file: null };
+                      $scope.importForm.$setPristine();
+                      $scope.importForm.$setUntouched();
+
+                      // 关闭加载状态
+                      $scope.isImporting = false;
+
+                      // 2秒后自动关闭模态框
+                      $timeout(function () {
+                        $('#importClassModal').modal('hide');
+                      }, 2000);
+
+                    }, 1500); // 模拟1.5秒延迟
+                  };
+                });
+              </script>
+            </div>
+          </div>
+          <!-- 班级卡片展示 -->
+          <div class="card-group row g-4">
+            <!-- 动态显示的班级卡片 -->
+            <div ng-repeat="card in filteredCards" class="col-12 col-md-6 col-xl-4">
+              <div class="card h-100 shadow-sm">
+                <div class="card-header"
+                  ng-class="{'bg-primary': card.grade === '2023', 'bg-warning': card.grade === '2022', 'bg-danger': card.grade === '2021'}">
+                  <h5 class="mb-0">{{ card.title }}</h5>
+                </div>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between mb-3">
+                    <span class="badge"
+                      ng-class="{'bg-info': card.grade === '2023', 'bg-secondary': card.grade === '2022', 'bg-dark': card.grade === '2021'}">{{
+                      card.grade }}级</span>
+                    <span class="badge bg-success">{{ card.status }}</span>
+                  </div>
+                  <ul class="list-unstyled">
+                    <li class="mb-2">
+                      <iconify-icon icon="solar:book-linear" class="me-2"></iconify-icon>
+                      {{ card.course }}
+                    </li>
+                    <li class="mb-2">
+                      <iconify-icon icon="solar:users-group-rounded-linear" class="me-2"></iconify-icon>
+                      学生人数：{{ card.studentCount }}
+                    </li>
+                    <li class="mb-2">
+                      <iconify-icon icon="solar:document-linear" class="me-2"></iconify-icon>
+                      作业：{{ card.inProgressAssignments }}个进行中，{{ card.completedAssignments }}个已完成
+                    </li>
+                    <li class="mb-2">
+                      <iconify-icon icon="solar:clock-circle-linear" class="me-2"></iconify-icon>
+                      考试：{{ card.upcomingExams }}场未开始，{{ card.completedExams }}场已完成
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+          <!-- 导入新班级的模态窗口 -->
+          <div class="modal fade" id="importClassModal" tabindex="-1" aria-labelledby="importClassModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="importClassModalLabel">导入新班级</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <!-- 导入新班级的表单 -->
+                  <form>
+                    <div class="mb-3">
+                      <label for="className" class="form-label">班级名称：</label>
+                      <input type="text" id="className" ng-model="newClassName" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="grade" class="form-label">年级：</label>
+                      <select id="grade" ng-model="newClassGrade" class="form-select" required>
+                        <option value="">请选择年级</option>
+                        <option value="2023">2023级</option>
+                        <option value="2022">2022级</option>
+                        <option value="2021">2021级</option>
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label for="course" class="form-label">课程名称：</label>
+                      <input type="text" id="course" ng-model="newClassCourse" class="form-control" required>
+                    </div>
+                    <!-- 文件上传字段 -->
+                    <div class="mb-3">
+                      <label for="file" class="form-label">上传学生名单：</label>
+                      <input type="file" id="file" ng-model="newClassFile" class="form-control" required>
+                      <small class="form-text text-muted">请上传学生名单（支持 .csv 或 .xlsx 文件）。</small>
+                    </div>
+                    <!-- 显示错误提示 -->
+                    <div class="error-message" ng-if="importError">{{ importError }}</div>
+                    <button type="button" class="btn btn-primary" ng-click="importClass()">确认导入</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <script>
+            var app = angular.module('myApp', []);
+            app.controller('ClassAnalysisController', function ($scope) {
+              // 初始化数据模型
+              $scope.gradeOptions = [
+                { value: '2023', label: '2023级' },
+                { value: '2022', label: '2022级' },
+                { value: '2021', label: '2021级' }
+              ];
+
+              // 班级卡片数据
+              $scope.cards = [
+                // ... 班级卡片数据（省略）
+              ];
+
+              // 文件相关变量
+              $scope.newClassFile = null; // 用于存储文件信息
+
+              // 选择的年级
+              $scope.selectedGrade = '';
+              $scope.filteredCards = [];
+
+              // 初始化加载所有卡片
+              $scope.filterCards = function () {
+                if ($scope.selectedGrade === '') {
+                  $scope.filteredCards = $scope.cards;
+                } else {
+                  $scope.filteredCards = $scope.cards.filter(function (card) {
+                    return card.grade === $scope.selectedGrade;
+                  });
+                }
+              };
+
+              // 导入新班级的逻辑
+              $scope.newClassName = '';
+              $scope.newClassGrade = '';
+              $scope.newClassCourse = '';
+              $scope.importError = ''; // 错误提示
+
+              $scope.importClass = function () {
+                // 检查必填字段是否完整
+                if (!$scope.newClassName || !$scope.newClassGrade || !$scope.newClassCourse || !$scope.newClassFile) {
+                  $scope.importError = '请填写所有必填字段并上传学生名单文件.';
+                  return;
+                }
+
+                // 检查文件扩展名（这里假设只支持 .csv 和 .xlsx）
+                const validFileTypes = ['csv', 'xlsx'];
+                const fileExtension = $scope.newClassFile.name.split('.').pop().toLowerCase();
+                if (!validFileTypes.includes(fileExtension)) {
+                  $scope.importError = '仅支持上传 .csv 或 .xlsx 文件.';
+                  return;
+                }
+
+                // 构造新的班级卡片数据
+                const newCard = {
+                  grade: $scope.newClassGrade,
+                  title: $scope.newClassName,
+                  status: '进行中',
+                  course: $scope.newClassCourse,
+                  studentCount: 0,
+                  inProgressAssignments: 0,
+                  completedAssignments: 0,
+                  upcomingExams: 0,
+                  completedExams: 0,
+                  studentFile: $scope.newClassFile.name // 存储文件名
+                };
+
+                // 将新班级添加到卡片列表中
+                $scope.cards.push(newCard);
+
+                // 重置导入表单
+                $scope.newClassName = '';
+                $scope.newClassGrade = '';
+                $scope.newClassCourse = '';
+                $scope.newClassFile = null; // 清空文件字段
+                $scope.importError = ''; // 清空错误提示
+
+                // 关闭模态窗口
+                $('#importClassModal').modal('hide');
+              };
+            });
+
+          </script>
+        </div>
+
+      </div>
+    </div>
+    <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/sidebarmenu.js"></script>
+    <script src="../assets/js/app.min.js"></script>
+    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+    <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+    <!-- solar icons -->
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+    <script>
+      // 处理下拉菜单逻辑
+      document.querySelectorAll('.dropdown-submenu .dropdown-toggle').forEach(element => {
+        element.addEventListener('click', function (e) {
+          e.preventDefault();
+          // 处理下拉菜单展开逻辑
+        });
+      });
+
+      var app = angular.module('myApp', []);
+      app.controller('ClassAnalysisController', ['$scope', function ($scope) {
+        // 初始化数据模型
+        $scope.gradeOptions = [
+          { value: '2023', label: '2023级' },
+          { value: '2022', label: '2022级' },
+          { value: '2021', label: '2021级' }
+        ];
+
+        // 班级卡片数据
+        $scope.cards = [
+          {
+            grade: '2023',
+            title: '期末考试',
+            status: '进行中',
+            course: '网络技术互联课程',
+            studentCount: 35,
+            inProgressAssignments: 3,
+            completedAssignments: 5,
+            upcomingExams: 1,
+            completedExams: 3
+          },
+          {
+            grade: '2022',
+            title: '2022级网络技术互联2班',
+            status: '进行中',
+            course: '网络技术互联课程',
+            studentCount: 40,
+            inProgressAssignments: 2,
+            completedAssignments: 5,
+            upcomingExams: 0,
+            completedExams: 4
+          },
+          {
+            grade: '2021',
+            title: '2021级网络技术互联3班',
+            status: '进行中',
+            course: '网络技术互联课程',
+            studentCount: 38,
+            inProgressAssignments: 1,
+            completedAssignments: 4,
+            upcomingExams: 1,
+            completedExams: 2
+          }
+        ];
+
+        // 选择的年级
+        $scope.selectedGrade = '';
+        $scope.filteredCards = [];
+
+        // 初始化加载所有卡片
+        $scope.filterCards = function () {
+          if ($scope.selectedGrade === '') {
+            $scope.filteredCards = $scope.cards;
+          } else {
+            $scope.filteredCards = $scope.cards.filter(function (card) {
+              return card.grade === $scope.selectedGrade;
+            });
+          }
+        };
+
+        // 初始化加载所有卡片
+        $scope.filterCards();
+
+        // 导入新班级的逻辑
+        $scope.newClassName = '';
+        $scope.newClassGrade = '';
+        $scope.newClassCourse = '';
+        $scope.importError = '';
+
+        $scope.importClass = function () {
+          if ($scope.newClassName && $scope.newClassGrade && $scope.newClassCourse) {
+            // 构造新的班级卡片数据
+            const newCard = {
+              grade: $scope.newClassGrade,
+              title: $scope.newClassName,
+              status: '进行中',
+              course: $scope.newClassCourse,
+              studentCount: 0,
+              inProgressAssignments: 0,
+              completedAssignments: 0,
+              upcomingExams: 0,
+              completedExams: 0
+            };
+
+            // 将新班级添加到卡片列表中
+            $scope.cards.push(newCard);
+
+            // 重置导入表单
+            $scope.newClassName = '';
+            $scope.newClassGrade = '';
+            $scope.newClassCourse = '';
+            $scope.importError = '';
+
+            // 关闭模态窗口
+            $('#importClassModal').modal('hide');
+          } else {
+            $scope.importError = '请填写所有必填字段';
+          }
+        };
+      }]);
+    </script>
+</body>
+
+</html>

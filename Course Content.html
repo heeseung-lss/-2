@@ -1,0 +1,831 @@
+<!doctype html>
+<html lang="China">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>学生端主页</title>
+    <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+    <link rel="stylesheet" href="../assets/css/styles.min.css" />
+    <!-- <link rel="stylesheet" href="/src/teacher_html/myEcharts/css/index.css"> -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        /* 基础布局 */
+
+        /* 主内容区 (左侧) */
+        .content-section {
+            flex: 1;
+            min-width: 60%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* 右侧面板 */
+        .right-panel {
+
+            min-width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* 章节标题样式 */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .section-header h4 {
+            font-size: 1.25rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* 资源项卡片式设计 */
+        .resource-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .resource-column {
+            width: 100px;
+            flex-shrink: 0;
+        }
+
+        .resource-column h5 {
+            color: #2F5FFE;
+            font-size: 1rem;
+            padding: 0.5rem;
+            background: #f0f6ff;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .resource-item {
+            flex: 1;
+            display: flex;
+            min-width: 100px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .resource-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(47, 95, 254, 0.1);
+        }
+
+        .resource-item-details h6 {
+            color: #2c3e50;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        /* 操作按钮样式 */
+        .action-button {
+            padding: 6px;
+            border: none;
+            background: none;
+            color: #6c757d;
+            transition: all 0.2s;
+        }
+
+        .action-button:hover {
+            color: #2F5FFE;
+            transform: scale(1.1);
+        }
+
+        .delete-btn:hover {
+            color: #dc3545 !important;
+        }
+
+        /* 上传表单美化 */
+        .upload-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .form-control,
+        .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #2F5FFE;
+            box-shadow: 0 0 0 3px rgba(47, 95, 254, 0.15);
+        }
+
+        /* 大纲列表设计 */
+        .chapter-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .chapter-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            gap: 0.75rem;
+        }
+
+        .chapter-item:hover {
+            background: #f8f9fa;
+        }
+
+        .chapter-item.active {
+            background: #2F5FFE;
+            color: white;
+        }
+
+        .chapter-number {
+            width: 70px;
+            flex-shrink: 0;
+            font-weight: 500;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .body-wrapper-inner {
+                flex-direction: column;
+            }
+
+            .right-panel {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .upload-section {
+                width: 100%;
+            }
+
+            .content-section {
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .resource-row {
+                flex-direction: column;
+            }
+
+            .resource-column {
+                width: auto;
+                text-align: left;
+            }
+        }
+
+        .body-wrapper-inner {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: row;
+            /* 修改为横向排列 */
+        }
+
+        .left-panel {
+            flex: 3;
+            /* 左边面板占 3 份 */
+            padding: 20px;
+        }
+
+        .right-panel {
+            flex: 1;
+            /* 右边面板占 1 份 */
+            padding: 20px;
+            /* background-color: #f4f4f4; */
+            /* 可选，添加背景色区分 */
+        }
+
+        /* 模块特定样式 - 蓝色调变化 */
+        .ppt-section {
+            flex: 1;
+            background-color: rgba(0, 123, 255, 0.02);
+            border-color: rgba(0, 123, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-section {
+            flex: 1;
+            background-color: rgba(0, 123, 255, 0.03);
+            border-color: rgba(0, 123, 255, 0.15);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .upload-section {
+            background-color: rgba(0, 123, 255, 0.04);
+            border-color: rgba(0, 123, 255, 0.2);
+        }
+
+        .outline-section {
+            background-color: rgba(0, 123, 255, 0.05);
+            border-color: rgba(0, 123, 255, 0.25);
+        }
+    </style>
+
+</head>
+
+<body>
+    <!--  Body Wrapper -->
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed">
+        <aside class="left-sidebar">
+            <!-- Sidebar scroll-->
+            <div>
+                <div class="brand-logo d-flex align-items-center justify-content-between">
+                    <a href="./index.html" class="text-nowrap logo-img">
+                        <img src="../assets/images/logos/logo.svg" alt="" />
+                    </a>
+                    <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+                        <i class="ti ti-x fs-8"></i>
+                    </div>
+                </div>
+                <!-- Sidebar navigation-->
+
+                <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+                    <ul id="sidebarnav">
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">课程建设</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="Course Content.html" style="width:150px"
+                                aria-expanded="false">
+                                <iconify-icon icon="solar:widget-add-line-duotone"
+                                    style="color:#00a1ff "></iconify-icon>
+                                <span class="hide-menu" style="color:#00a1ff ">资源上传</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" style="width:150px" href="Knowledge Graph.html"
+                                aria-expanded="false">
+
+                                <iconify-icon icon="solar:widget-add-line-duotone"></iconify-icon>
+                                <span class="hide-menu">构建图谱</span>
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <span class="sidebar-divider lg" style="width: 150px;"></span>
+                        </li>
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">课程管理</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="Student Analysis Class Interface.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">班级管理</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="Homework Release.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">作业发布</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="Exam Release.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">考试发布</span>
+                            </a>
+                        </li>
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">学情分析</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="Student Analysis.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">行为分析</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="Homework Grade Analysis.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">作业成绩</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="Exam Grades.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">考试成绩</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="AI Assistant.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">AI助手</span>
+                            </a>
+                        </li>
+
+
+
+
+                        <li>
+                            <span style="width: 150px;" class="sidebar-divider lg"></span>
+                        </li>
+
+                        <li>
+                            <span class="sidebar-divider lg" style="width: 150px;"></span>
+                        </li>
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">查看首页</span>
+                        </li>
+
+                    </ul>
+                    <div style="width: 230px;"
+                        class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+                        <div class="me-2 flex-shrink-0" style="width: 160px;">
+                            <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+                            <a style="width: 150px;"
+                                href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33"
+                                target="_blank" class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+                        </div>
+                        <div class="unlimited-access-img" style="width: 230px;">
+                            <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+                        </div>
+                    </div>
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </aside>
+        <!--  Sidebar End -->
+        <!--  Main wrapper -->
+        <div class="body-wrapper">
+            <div class="body-wrapper-inner" style="margin: 0;min-height: 100vh;">
+                <div class="left-panel" style="margin-top: 30px;display: flex;flex-direction: column;">
+                    <!-- PPT 资源区 -->
+                    <div class="content-section" id="pptSection">
+                        <div class="section-header">
+                            <h4><i class="fa fa-file-powerpoint-o"></i> PPT 资源</h4>
+                            <div>
+                                <button class="btn btn-primary btn-sm" id="openPptUploadModal">
+                                    <i class="fa fa-plus"></i> 上传 PPT
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="resource-container" id="pptResourceContainer">
+                            <!-- 动态生成的PPT资源将在这里显示 -->
+                        </div>
+                    </div>
+
+                    <!-- 视频资源区 -->
+                    <div class="content-section" id="videoSection">
+                        <div class="section-header">
+                            <h4><i class="fa fa-video-camera"></i> 视频资源</h4>
+                            <div>
+                                <button class="btn btn-primary btn-sm" id="openVideoUploadModal">
+                                    <i class="fa fa-plus"></i> 上传视频
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="resource-container" id="videoResourceContainer">
+                            <!-- 动态生成的视频资源将在这里显示 -->
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="right-panel" style="margin-top: 0;">
+                    <!-- 书本大纲区 -->
+                    <div class="content-section outline-section">
+                        <div class="section-header">
+                            <h4><i class="fa fa-book"></i> 书本大纲</h4>
+                        </div>
+                        <div class="chapter-list" id="chapterList">
+                            <!-- 动态生成的章节列表将在这里显示 -->
+                        </div>
+                    </div>
+                    <!-- 上传题库区 -->
+                    <div class="upload-section">
+                        <h4><i class="fa fa-upload"></i> 上传题库</h4>
+                        <form id="quizUploadForm" style="margin-top: 20px;">
+                            <div class="mb-3">
+                                <label class="form-label">题库标题</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">所属章节</label>
+                                <select class="form-select" required>
+                                    <option value="">选择章节</option>
+                                    <option value="1">章节 01：网络互联基础</option>
+                                    <option value="2">章节 02：IP 地址与子网划分</option>
+                                    <option value="3">章节 03：网络设备基础</option>
+                                    <option value="4">章节 04：局域网技术</option>
+                                    <option value="5">章节 05：广域网技术</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">上传文件</label>
+                                <input type="file" class="form-control" accept=".zip, .rar, .pdf">
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-check"></i> 提交上传
+                            </button>
+                        </form>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 上传 PPT 弹窗 -->
+    <div class="modal" id="pptUploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>上传 PPT</h4>
+                <span class="close-btn" id="closePptModal">&times;</span>
+            </div>
+            <form id="uploadPptForm">
+                <div class="mb-3">
+                    <label class="form-label">PPT 标题</label>
+                    <input type="text" class="form-control" id="pptTitle" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">所属章节</label>
+                    <select class="form-select" id="pptChapter" required>
+                        <option value="">选择章节</option>
+                        <option value="1">章节 01：网络基础</option>
+                        <option value="2">章节 02：路由技术</option>
+                        <option value="3">章节 03：IPv6技术</option>
+                        <option value="4">章节 04：网络安全</option>
+                        <option value="5">章节 05：网络管理</option>
+                        <option value="6">章节 06：网络实验</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">上传文件</label>
+                    <input type="file" class="form-control" id="pptFile" accept=".ppt, .pptx" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelPptUpload">取消</button>
+                    <button type="submit" class="btn btn-primary">上传</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 上传视频弹窗 -->
+    <div class="modal" id="videoUploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>上传视频</h4>
+                <span class="close-btn" id="closeVideoModal">&times;</span>
+            </div>
+            <form id="uploadVideoForm">
+                <div class="mb-3">
+                    <label class="form-label">视频标题</label>
+                    <input type="text" class="form-control" id="videoTitle" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">所属章节</label>
+                    <select class="form-select" id="videoChapter" required>
+                        <option value="">选择章节</option>
+                        <option value="1">章节 01：网络基础</option>
+                        <option value="2">章节 02：路由技术</option>
+                        <option value="3">章节 03：IPv6技术</option>
+                        <option value="4">章节 04：网络安全</option>
+                        <option value="5">章节 05：网络管理</option>
+                        <option value="6">章节 06：网络实验</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">上传文件</label>
+                    <input type="file" class="form-control" id="videoFile" accept=".mp4, .avi, .mov" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelVideoUpload">取消</button>
+                    <button type="submit" class="btn btn-primary">上传</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/sidebarmenu.js"></script>
+    <script src="../assets/js/app.min.js"></script>
+    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+    <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+
+    <!-- solar icons -->
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 章节数据
+            const chapters = [
+                {
+                    id: 1,
+                    name: "网络基础",
+                    sections: [
+                        { id: 1.1, name: "网络协议" },
+                        { id: 1.2, name: "网络模型" },
+                        { id: 1.3, name: "IP地址" },
+                        { id: 1.4, name: "传输介质" },
+                        { id: 1.5, name: "网络设备" }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: "路由技术",
+                    sections: [
+                        { id: 2.1, name: "静态路由" },
+                        { id: 2.2, name: "动态路由" },
+                        { id: 2.3, name: "路由协议" },
+                        { id: 2.4, name: "路由配置" },
+                        { id: 2.5, name: "路由管理" }
+                    ]
+                },
+                {
+                    id: 3,
+                    name: "IPv6技术",
+                    sections: [
+                        { id: 3.1, name: "IPv6基础" },
+                        { id: 3.2, name: "IPv6路由" },
+                        { id: 3.3, name: "IPv6过渡" },
+                        { id: 3.4, name: "IPv6安全" },
+                        { id: 3.5, name: "IPv6配置" }
+                    ]
+                },
+                {
+                    id: 4,
+                    name: "网络安全",
+                    sections: [
+                        { id: 4.1, name: "访问控制" },
+                        { id: 4.2, name: "防火墙" },
+                        { id: 4.3, name: "安全协议" },
+                        { id: 4.4, name: "安全配置" },
+                        { id: 4.5, name: "安全管理" }
+                    ]
+                },
+                {
+                    id: 5,
+                    name: "网络管理",
+                    sections: [
+                        { id: 5.1, name: "设备配置" },
+                        { id: 5.2, name: "网络监控" },
+                        { id: 5.3, name: "故障排查" },
+                        { id: 5.4, name: "性能优化" },
+                        { id: 5.5, name: "网络工具" }
+                    ]
+                },
+                {
+                    id: 6,
+                    name: "网络实验",
+                    sections: [
+                        { id: 6.1, name: "实验环境" },
+                        { id: 6.2, name: "实验配置" },
+                        { id: 6.3, name: "实验验证" },
+                        { id: 6.4, name: "实验分析" },
+                        { id: 6.5, name: "实验报告" }
+                    ]
+                }
+            ];
+
+            // PPT 资源数据（示例数据）
+            const pptResources = {
+                1: [
+                    { name: "网络设备选型指南.pptx", lastUpdated: "2024-03-22", size: "8.2MB" },
+                    { name: "网络拓扑设计.pptx", lastUpdated: "2024-03-22", size: "5.7MB" }
+                ],
+                2: [
+                    { name: "IP 地址规划.pptx", lastUpdated: "2024-04-05", size: "4.9MB" }
+                ]
+            };
+
+            // 视频资源数据（示例数据）
+            const videoResources = {
+                1: [
+                    { name: "VLAN 划分实操演示.mp4", duration: "22:15", resolution: "1080P" }
+                ],
+                2: [
+                    { name: "静态路由配置.mp4", duration: "18:45", resolution: "1080P" }
+                ]
+            };
+
+            // 渲染章节列表
+            const chapterListElement = document.getElementById('chapterList');
+            chapters.forEach(chapter => {
+                const chapterItem = document.createElement('div');
+                chapterItem.className = 'chapter-item';
+                chapterItem.dataset.chapterId = chapter.id;
+                chapterItem.innerHTML = `
+                        <i class="fa fa-angle-right"></i>
+                        <span class="chapter-number">章节 ${chapter.id}</span>
+                        <span class="chapter-name">${chapter.name}</span>
+                    `;
+                chapterListElement.appendChild(chapterItem);
+
+                // 为章节项添加点击事件
+                chapterItem.addEventListener('click', function () {
+                    // 移除所有章节项的active类
+                    document.querySelectorAll('.chapter-item').forEach(item => {
+                        item.classList.remove('active');
+                        item.querySelector('i').className = 'fa fa-angle-right';
+                    });
+
+                    // 为当前点击的章节项添加active类
+                    this.classList.add('active');
+                    this.querySelector('i').className = 'fa fa-check';
+
+                    // 显示对应章节的内容
+                    const chapterId = parseInt(this.dataset.chapterId);
+                    showChapterContent(chapterId);
+                });
+            });
+
+            // 初始显示第一个章节的内容
+            showChapterContent(1);
+
+            // 显示章节内容
+            function showChapterContent(chapterId) {
+                // 清空资源容器
+                document.getElementById('pptResourceContainer').innerHTML = '';
+                document.getElementById('videoResourceContainer').innerHTML = '';
+
+                // 获取章节数据
+                const chapter = chapters.find(c => c.id === chapterId);
+                if (!chapter) return;
+
+                // 添加章节标题
+                const pptSection = document.getElementById('pptSection');
+                const videoSection = document.getElementById('videoSection');
+                pptSection.querySelector('h4').innerHTML = `<i class="fa fa-file-powerpoint-o"></i> ${chapter.name} - PPT 资源`;
+                videoSection.querySelector('h4').innerHTML = `<i class="fa fa-video-camera"></i> ${chapter.name} - 视频资源`;
+
+                // 渲染PPT资源
+                const pptResourceContainer = document.getElementById('pptResourceContainer');
+                const chapterPptResources = pptResources[chapterId] || [];
+                if (chapterPptResources.length === 0) {
+                    const noResourceItem = document.createElement('div');
+                    noResourceItem.className = 'resource-item';
+                    noResourceItem.innerHTML = `<div class="resource-item-details"><h6>暂无PPT资源</h6></div>`;
+                    pptResourceContainer.appendChild(noResourceItem);
+                } else {
+                    chapterPptResources.forEach(ppt => {
+                        const resourceItem = document.createElement('div');
+                        resourceItem.className = 'resource-item';
+                        resourceItem.innerHTML = `
+                                <div class="resource-item-details">
+                                    <h6>${ppt.name}</h6>
+                                    <small class="text-muted">最后更新：${ppt.lastUpdated} | 大小：${ppt.size}</small>
+                                </div>
+                                <div class="resource-item-actions">
+                                    <button class="action-button"><i class="fa fa-pencil"></i></button>
+                                    <button class="action-button delete-btn"><i class="fa fa-trash"></i></button>
+                                </div>
+                            `;
+                        pptResourceContainer.appendChild(resourceItem);
+                    });
+                }
+
+                // 渲染视频资源
+                const videoResourceContainer = document.getElementById('videoResourceContainer');
+                const chapterVideoResources = videoResources[chapterId] || [];
+                if (chapterVideoResources.length === 0) {
+                    const noResourceItem = document.createElement('div');
+                    noResourceItem.className = 'resource-item';
+                    noResourceItem.innerHTML = `<div class="resource-item-details"><h6>暂无视频资源</h6></div>`;
+                    videoResourceContainer.appendChild(noResourceItem);
+                } else {
+                    chapterVideoResources.forEach(video => {
+                        const resourceItem = document.createElement('div');
+                        resourceItem.className = 'resource-item';
+                        resourceItem.innerHTML = `
+                                <div class="resource-item-details">
+                                    <h6>${video.name}</h6>
+                                    <small class="text-muted">时长：${video.duration} | 分辨率：${video.resolution}</small>
+                                </div>
+                                <div class="resource-item-actions">
+                                    <button class="action-button"><i class="fa fa-pencil"></i></button>
+                                    <button class="action-button delete-btn"><i class="fa fa-trash"></i></button>
+                                </div>
+                            `;
+                        videoResourceContainer.appendChild(resourceItem);
+                    });
+                }
+            }
+
+            // 上传 PPT 弹窗功能
+            const pptUploadModal = document.getElementById('pptUploadModal');
+            const openPptUploadModal = document.getElementById('openPptUploadModal');
+            const closePptModal = document.getElementById('closePptModal');
+            const cancelPptUpload = document.getElementById('cancelPptUpload');
+            const uploadPptForm = document.getElementById('uploadPptForm');
+
+            openPptUploadModal.addEventListener('click', () => {
+                pptUploadModal.style.display = 'block';
+            });
+
+            closePptModal.addEventListener('click', () => {
+                pptUploadModal.style.display = 'none';
+            });
+
+            cancelPptUpload.addEventListener('click', () => {
+                pptUploadModal.style.display = 'none';
+            });
+
+            uploadPptForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const pptTitle = document.getElementById('pptTitle').value;
+                const pptChapter = document.getElementById('pptChapter').value;
+                const pptFile = document.getElementById('pptFile').files[0];
+
+                // 在实际应用中，这里应该是一个文件上传的 API 调用
+                console.log('上传 PPT:', { pptTitle, pptChapter, pptFile });
+
+                // 模拟上传成功后关闭弹窗
+                pptUploadModal.style.display = 'none';
+                alert('PPT 上传成功！');
+            });
+
+            // 上传视频弹窗功能
+            const videoUploadModal = document.getElementById('videoUploadModal');
+            const openVideoUploadModal = document.getElementById('openVideoUploadModal');
+            const closeVideoModal = document.getElementById('closeVideoModal');
+            const cancelVideoUpload = document.getElementById('cancelVideoUpload');
+            const uploadVideoForm = document.getElementById('uploadVideoForm');
+
+            openVideoUploadModal.addEventListener('click', () => {
+                videoUploadModal.style.display = 'block';
+            });
+
+            closeVideoModal.addEventListener('click', () => {
+                videoUploadModal.style.display = 'none';
+            });
+
+            cancelVideoUpload.addEventListener('click', () => {
+                videoUploadModal.style.display = 'none';
+            });
+
+            uploadVideoForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const videoTitle = document.getElementById('videoTitle').value;
+                const videoChapter = document.getElementById('videoChapter').value;
+                const videoFile = document.getElementById('videoFile').files[0];
+
+                // 在实际应用中，这里应该是一个文件上传的 API 调用
+                console.log('上传视频:', { videoTitle, videoChapter, videoFile });
+
+                // 模拟上传成功后关闭弹窗
+                videoUploadModal.style.display = 'none';
+                alert('视频上传成功！');
+            });
+
+            // 点击弹窗外部关闭弹窗
+            window.addEventListener('click', (e) => {
+                if (e.target === pptUploadModal) {
+                    pptUploadModal.style.display = 'none';
+                }
+                if (e.target === videoUploadModal) {
+                    videoUploadModal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+</body>
+
+</html>

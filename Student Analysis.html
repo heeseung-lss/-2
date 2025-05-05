@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>老师端 学生行为分析</title>
+  <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+  <link rel="stylesheet" href="../assets/css/styles.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+  <style>
+    .container {
+      display: flex;
+      /* max-width: 1400px; */
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .left-panel {
+      flex: 3;
+      height: 800px;
+      margin-right: 20px;
+    }
+
+    .right-panel {
+      flex: 1;
+
+      height: 800px;
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .filter-panel {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .filter-panel select {
+      padding: 8px 15px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+
+    .chart-container {
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress-info {
+      margin-top: 20px;
+    }
+
+    .metric-box {
+      padding: 15px;
+      background-color: white;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .radial-progress {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: conic-gradient(#6eacea 0% var(--value),
+          #e9ecef var(--value) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .radial-progress::before {
+      content: var(--value) "%";
+      position: absolute;
+      width: 70%;
+      height: 70%;
+      background-color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+  </style>
+
+</head>
+
+<body ng-app="myApp" ng-controller="ClassAnalysisController">
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-between">
+          <a href="./index.html" class="text-nowrap logo-img">
+            <img src="../assets/images/logos/logo.svg" alt="" />
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
+        </div>
+        <!-- Sidebar navigation-->
+
+        <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程建设</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Course Content.html" style="width:150px" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone"></iconify-icon>
+                <span class="hide-menu">资源上传</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="Knowledge Graph.html" aria-expanded="false">
+
+                <iconify-icon icon="solar:widget-add-line-duotone"></iconify-icon>
+                <span class="hide-menu">构建图谱</span>
+              </a>
+            </li>
+
+
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程管理</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Student Analysis Class Interface.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">班级管理</span>
+              </a>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Homework Release.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">作业发布</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Exam Release.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">考试发布</span>
+              </a>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">学情分析</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Student Analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone" style="color:#00a1ff "></iconify-icon>
+                <span class="hide-menu" style="color:#00a1ff ">行为分析</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Homework Grade Analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">作业成绩</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="Exam Grades.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">考试成绩</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="AI Assistant.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">AI助手</span>
+              </a>
+            </li>
+
+
+
+
+            <li>
+              <span style="width: 150px;" class="sidebar-divider lg"></span>
+            </li>
+
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">查看首页</span>
+            </li>
+
+          </ul>
+          <div style="width: 230px;"
+            class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+            <div class="me-2 flex-shrink-0" style="width: 160px;">
+              <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+              <a style="width: 150px;"
+                href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33" target="_blank"
+                class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+            </div>
+            <div class="unlimited-access-img" style="width: 230px;">
+              <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+            </div>
+          </div>
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+    <div class="body-wrapper" style="display: flex;min-height: 100vh;">
+
+      <!-- 统计章节进度 -->
+
+      <!-- 左侧面板：知识图谱 -->
+      <div class="left-panel">
+        <div class="filter-panel">
+          <select id="grade-select">
+            <option value="">选择年级</option>
+            <option value="1">一年级</option>
+            <option value="2">二年级</option>
+            <option value="3">三年级</option>
+          </select>
+          <select id="class-select">
+            <option value="">选择班级</option>
+            <option value="1">一班</option>
+            <option value="2">二班</option>
+            <option value="3">三班</option>
+          </select>
+          <button id="apply-filter" class="btn btn-primary">应用筛选</button>
+        </div>
+        <div class="chart-container" id="chart-container" style="height: 750px;"></div>
+      </div>
+
+      <!-- 右侧面板：学生行为分析 -->
+      <div class="right-panel">
+        <div class="progress-info">
+          <h5>学生行为分析</h5>
+          <hr>
+
+          <h6>出勤率</h6>
+          <div class="progress" style="height: 20px; margin-bottom: 15px;">
+            <div class="progress-bar bg-success" style="width: 95%">95%</div>
+          </div>
+
+          <h6>平均每周参与时长</h6>
+          <div class="metric-box">
+            <div class="h5 mb-0 text-primary">7.2小时</div>
+            <div class="text-muted small">较上月增加 0.8小时</div>
+          </div>
+
+          <h6>作业提交及时率</h6>
+          <div class="progress" style="height: 20px; margin-bottom: 15px;">
+            <div class="progress-bar bg-info" style="width: 82%">82%</div>
+          </div>
+
+          <h6>互动参与度</h6>
+          <div class="metric-box">
+            <div class="h5 mb-0 text-primary">78%</div>
+            <div class="text-muted small">课堂讨论和在线互动</div>
+          </div>
+
+          <h6>资源访问频率</h6>
+          <div class="progress" style="height: 20px; margin-bottom: 15px;">
+            <div class="progress-bar bg-warning" style="width: 65%">65%</div>
+          </div>
+
+          <h6>学习活跃度</h6>
+          <div class="metric-box">
+            <div class="h5 mb-0 text-primary">中等</div>
+            <div class="text-muted small">日均学习天数：4天</div>
+          </div>
+
+          <div class="text-center" style="margin-top: 20px;">
+            <button class="btn btn-primary btn-sm">查看更多行为分析</button>
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+  </div>
+  <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+  <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/js/sidebarmenu.js"></script>
+  <script src="../assets/js/app.min.js"></script>
+  <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+  <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+  <script src="../assets/js/dashboard.js"></script>
+  <!-- solar icons -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // 初始化 ECharts 实例
+      const chartDom = document.getElementById('chart-container');
+      const chartInstance = echarts.init(chartDom);
+
+      // 章节节点数据，随机设置掌握情况
+      const mockGraphData = [
+        // 网络基础
+        {
+          id: "0",
+          name: "网络基础",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "0_1",
+          name: "网络协议",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "0_2",
+          name: "网络模型",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "0_3",
+          name: "IP地址",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "0_4",
+          name: "传输介质",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "0_5",
+          name: "网络设备",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+
+        // 路由技术
+        {
+          id: "1",
+          name: "路由技术",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "1_1",
+          name: "静态路由",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "1_2",
+          name: "动态路由",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "1_3",
+          name: "路由协议",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "1_4",
+          name: "路由配置",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "1_5",
+          name: "路由管理",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+
+        // IPv6技术
+        {
+          id: "2",
+          name: "IPv6技术",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "2_1",
+          name: "IPv6基础",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "2_2",
+          name: "IPv6路由",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "2_3",
+          name: "IPv6过渡",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "2_4",
+          name: "IPv6安全",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "2_5",
+          name: "IPv6配置",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+
+        // 网络安全
+        {
+          id: "3",
+          name: "网络安全",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "3_1",
+          name: "访问控制",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "3_2",
+          name: "防火墙",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "3_3",
+          name: "安全协议",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "3_4",
+          name: "安全配置",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "3_5",
+          name: "安全管理",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+
+        // 网络管理
+        {
+          id: "4",
+          name: "网络管理",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "4_1",
+          name: "设备配置",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "4_2",
+          name: "网络监控",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "4_3",
+          name: "故障排查",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "4_4",
+          name: "性能优化",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "4_5",
+          name: "网络工具",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+
+        // 网络实验
+        {
+          id: "5",
+          name: "网络实验",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "5_1",
+          name: "实验环境",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "5_2",
+          name: "实验配置",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "5_3",
+          name: "实验验证",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "5_4",
+          name: "实验分析",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+        {
+          id: "5_5",
+          name: "实验报告",
+          category: Math.random() > 0.5 ? "未掌握 需重点关注" : Math.random() > 0.5 ? "部分掌握" : Math.random() > 0.5 ? "基本掌握" : "熟练掌握",
+          value: Math.floor(Math.random() * 100),
+        },
+      ];
+
+      // 节点关系数据
+      const mockLink = [
+        // 网络基础章节内部关系
+        { source: "0", target: "0_1", type: "包含关系" },
+        { source: "0", target: "0_2", type: "包含关系" },
+        { source: "0", target: "0_3", type: "包含关系" },
+        { source: "0", target: "0_4", type: "包含关系" },
+        { source: "0", target: "0_5", type: "包含关系" },
+
+        // 路由技术章节内部关系
+        { source: "1", target: "1_1", type: "包含关系" },
+        { source: "1", target: "1_2", type: "包含关系" },
+        { source: "1", target: "1_3", type: "包含关系" },
+        { source: "1", target: "1_4", type: "包含关系" },
+        { source: "1", target: "1_5", type: "包含关系" },
+
+        // IPv6技术章节内部关系
+        { source: "2", target: "2_1", type: "包含关系" },
+        { source: "2", target: "2_2", type: "包含关系" },
+        { source: "2", target: "2_3", type: "包含关系" },
+        { source: "2", target: "2_4", type: "包含关系" },
+        { source: "2", target: "2_5", type: "包含关系" },
+
+        // 网络安全章节内部关系
+        { source: "3", target: "3_1", type: "包含关系" },
+        { source: "3", target: "3_2", type: "包含关系" },
+        { source: "3", target: "3_3", type: "包含关系" },
+        { source: "3", target: "3_4", type: "包含关系" },
+        { source: "3", target: "3_5", type: "包含关系" },
+
+        // 网络管理章节内部关系
+        { source: "4", target: "4_1", type: "包含关系" },
+        { source: "4", target: "4_2", type: "包含关系" },
+        { source: "4", target: "4_3", type: "包含关系" },
+        { source: "4", target: "4_4", type: "包含关系" },
+        { source: "4", target: "4_5", type: "包含关系" },
+
+        // 网络实验章节内部关系
+        { source: "5", target: "5_1", type: "包含关系" },
+        { source: "5", target: "5_2", type: "包含关系" },
+        { source: "5", target: "5_3", type: "包含关系" },
+        { source: "5", target: "5_4", type: "包含关系" },
+        { source: "5", target: "5_5", type: "包含关系" },
+
+        // 不同章节之间的相关关系示例
+        { source: "0_1", target: "2_3", type: "相关关系" },
+        { source: "0_5", target: "1_5", type: "相关关系" },
+        { source: "3_2", target: "3_4", type: "相关关系" },
+        { source: "4_1", target: "5_2", type: "相关关系" },
+      ];
+
+      // 数据处理逻辑，根据category设置节点样式
+      const rawData = mockGraphData.map((item) => {
+        if (item.category === "未掌握 需重点关注") {
+          return {
+            ...item,
+            itemStyle: {
+              normal: {
+                color: "#ff575f", // 红色
+              },
+            },
+            label: {
+              show: true,
+              position: 'inside',
+              color: "#000",
+              textBorderWidth: 2,
+              formatter: "{c}%\n{b}",
+              rich: {
+                a: {
+                  color: "#000",
+                  lineHeight: 30,
+                },
+
+              },
+            },
+          };
+        } else if (item.category === "部分掌握") {
+          return {
+            ...item,
+            itemStyle: {
+              normal: {
+                color: "#ffca56", // 黄色
+              },
+            },
+            label: {
+              show: true,
+              position: 'inside',
+              color: "#000",
+              textBorderWidth: 2,
+              formatter: "{c}%\n{b}",
+              rich: {
+                a: {
+                  color: "#000",
+                  lineHeight: 30,
+                },
+
+              },
+            },
+          };
+        } else if (item.category === "基本掌握") {
+          return {
+            ...item,
+            itemStyle: {
+              normal: {
+                color: "#00ccc1", // 青色
+              },
+            },
+            label: {
+              show: true,
+              position: 'inside',
+              color: "#000",
+              textBorderWidth: 2,
+              formatter: "{c}%\n{b}",
+              rich: {
+                a: {
+                  color: "#000",
+                  lineHeight: 30,
+                },
+
+              },
+            },
+          };
+        } else if (item.category === "熟练掌握") {
+          return {
+            ...item,
+            itemStyle: {
+              normal: {
+                color: "#4f9ef5", // 蓝色
+              },
+            },
+            label: {
+              show: true,
+              position: 'inside',
+              color: "#000",
+              textBorderWidth: 2,
+              formatter: "{c}%\n{b}",
+              rich: {
+                a: {
+                  color: "#000",
+                  lineHeight: 30,
+                },
+
+              },
+            },
+          };
+        } else {
+          return {
+            ...item,
+            itemStyle: {
+              normal: {
+                color: "#4f9ef5", // 默认蓝色
+              },
+            },
+            label: {
+              show: true,
+              position: 'inside',
+              color: "#000",
+              textBorderWidth: 2,
+              formatter: "{c}%\n{b}",
+              rich: {
+                a: {
+                  color: "#000",
+                  lineHeight: 30,
+                },
+
+              },
+            },
+          };
+        }
+      });
+
+      // 关系处理逻辑
+      const rawLink = mockLink.map((item) => {
+        if (item.type === "相关关系") {
+          return {
+            ...item,
+            tooltip: { formatter: "相关关系" },
+          };
+        } else if (item.type === "前置关系") {
+          return {
+            ...item,
+            tooltip: { formatter: "前置关系" },
+            symbolSize: [10, 10],
+          };
+        } else if (item.type === "包含关系") {
+          return {
+            ...item,
+            tooltip: { formatter: "包含关系" },
+            lineStyle: { type: "dashed" },
+          };
+        } else {
+          return {
+            ...item,
+          };
+        }
+      });
+
+      // 图表配置
+      const option = {
+        title: {
+          text: "进度图谱",
+          subtext: "学习进度展示",
+          top: "bottom",
+          left: "right",
+        },
+        tooltip: {
+          trigger: "item",
+          formatter: "{b}  掌握程度：{c}%",
+        },
+        legend: {
+          selectedMode: "true",
+          orient: "vertical",
+          top: 10,
+          show: true,
+          data: [
+            {
+              name: "未掌握 需重点关注",
+            },
+            {
+              name: "部分掌握",
+            },
+            {
+              name: "基本掌握",
+            },
+            {
+              name: "熟练掌握",
+            },
+          ],
+          left: 10,
+        },
+        animationDuration: 1000,
+        animationEasingUpdate: "quinticInOut",
+        series: [
+          {
+            name: "",
+            type: "graph",
+            layout: "force",
+            edgeSymbol: ["none", "arrow"],
+            edgeSymbolSize: [0, 0],
+            draggable: false,
+            zoom: 1,
+            symbolSize: [60, 60],
+            force: {
+              repulsion: 600,
+              edgeLength: 120,
+              layoutAnimation: true,
+              friction: 0.6,
+            },
+            data: rawData,
+            links: rawLink,
+            categories: [
+              {
+                name: "未掌握 需重点关注",
+              },
+              {
+                name: "部分掌握",
+              },
+              {
+                name: "基本掌握",
+              },
+              {
+                name: "熟练掌握",
+              },
+            ],
+            roam: true,
+            lineStyle: {
+              normal: {
+                color: "#000",
+                curveness: 0.3,
+                type: "solid",
+              },
+            },
+            emphasis: {
+              focus: "adjacency",
+              lineStyle: {
+                width: 5,
+              },
+            },
+          },
+        ],
+      };
+
+      // 渲染图表
+      chartInstance.setOption(option);
+
+      // 当浏览器窗口大小改变时，自适应图表大小
+      window.addEventListener("resize", function () {
+        chartInstance.resize();
+      });
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+
+
+</html>
