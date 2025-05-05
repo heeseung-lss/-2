@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="China">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>学生端主页</title>
+    <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+    <link rel="stylesheet" href="../assets/css/styles.min.css" />
+    <!-- <link rel="stylesheet" href="/src/teacher_html/myEcharts/css/index.css"> -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        /* 全局蓝色调变量 */
+        :root {
+            --primary-color: #007BFF;
+            --secondary-color: #0056b3;
+            --light-blue: #e7f5ff;
+            --card-bg: #ffffff;
+            --border-color: #ddd;
+        }
+
+        /* 标题样式 */
+        .title {
+            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 0.8rem;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background-color: var(--card-bg);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+
+        /* 新增CSS样式 */
+        .section {
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .certification-table {
+            box-shadow: 0 0 0 1px #007bff;
+            /* 修复边框显示不完整问题 */
+        }
+
+        .certification-table td,
+        .certification-table th {
+            box-sizing: border-box;
+            word-break: break-word;
+            /* 处理长文本换行 */
+            vertical-align: top;
+            /* 顶部对齐 */
+            min-width: 80px;
+            /* 最小列宽 */
+        }
+
+        /* 自动列宽配置（可选） */
+        .certification-table th:nth-child(1) {
+            width: 12%;
+        }
+
+        /* 认证名称 */
+        .certification-table th:nth-child(2) {
+            width: 8%;
+        }
+
+        /* 等级 */
+        .certification-table th:nth-child(3) {
+            width: 18%;
+        }
+
+        /* 考试内容 */
+        .certification-table th:nth-child(4) {
+            width: 10%;
+        }
+
+        /* 难度级别 */
+        .certification-table th:nth-child(5) {
+            width: 10%;
+        }
+
+        /* 考试费用 */
+        .certification-table th:nth-child(6) {
+            width: 15%;
+        }
+
+        /* 推荐人群 */
+        .certification-table th:nth-child(7) {
+            width: 10%;
+        }
+
+        /* 市场价值 */
+        .certification-table th:nth-child(8) {
+            width: 17%;
+        }
+
+        /* 推荐学习资源 */
+    </style>
+
+</head>
+
+<body>
+    <!--  Body Wrapper -->
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed">
+        <aside class="left-sidebar">
+            <!-- Sidebar scroll-->
+            <div>
+                <div class="brand-logo d-flex align-items-center justify-content-between">
+                    <a href="./index.html" class="text-nowrap logo-img">
+                        <img src="../assets/images/logos/logo.svg" alt="" />
+                    </a>
+                    <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+                        <i class="ti ti-x fs-8"></i>
+                    </div>
+                </div>
+                <!-- Sidebar navigation-->
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+                    <ul id="sidebarnav">
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">个人空间</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" style="width:150px" href="index.html" aria-expanded="false">
+                                <iconify-icon icon="solar:widget-add-line-duotone">
+                                </iconify-icon>
+                                <span class="hide-menu">学习进度</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" style="width:150px" href="personal_profile.html"
+                                aria-expanded="false">
+                                <iconify-icon icon="solar:widget-add-line-duotone">
+                                </iconify-icon>
+                                <span class="hide-menu">个人画像</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" style="width:150px" href="message_board.html" aria-expanded="false">
+                                <iconify-icon icon="solar:widget-add-line-duotone">
+                                </iconify-icon>
+                                <span class="hide-menu">留言板</span>
+                            </a>
+                        </li>
+                        <li>
+                            <span class="sidebar-divider lg" style="width: 150px;"></span>
+                        </li>
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">AI助教</span>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="ai_qa.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                                <span class="hide-menu">AI问答</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="ai_exercise.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                                <span class="hide-menu">AI出题</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="error_analysis.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                                <span class="hide-menu">习题分析</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" style="width:150px" href="work.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+
+                                <span class="hide-menu">智能岗位</span>
+                            </a>
+                        </li>
+
+                        <!-- 三 -->
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">课程导读</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="pre_school_preparation.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">学前准备</span>
+                            </a>
+                        </li>
+
+
+                        <!-- 三 -->
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">课程学习</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="knowledge_graph.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">知识图谱</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="course_analysis.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">课程资源</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="homework.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">我的作业</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="exam.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">我的考试</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="laboratory.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">我的实验</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <span style="width: 150px;" class="sidebar-divider lg"></span>
+                        </li>
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">学后助手</span>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="practice_project.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                                <span class="hide-menu">实践项目</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="authentication.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone" style="color:#00a1ff ;"> </iconify-icon>
+                                <span class="hide-menu" style="color:#00a1ff ;">考试认证</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="contest_notice.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                                <span class="hide-menu">比赛通知</span>
+                            </a>
+                        </li>
+
+                        <!-- </li> -->
+
+                        <li>
+                            <span class="sidebar-divider lg" style="width: 150px;"></span>
+                        </li>
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">查看首页</span>
+                        </li>
+
+                    </ul>
+                    <div style="width: 230px;"
+                        class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+                        <div class="me-2 flex-shrink-0" style="width: 160px;">
+                            <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+                            <a style="width: 150px;"
+                                href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33"
+                                target="_blank" class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+                        </div>
+                        <div class="unlimited-access-img" style="width: 230px;">
+                            <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+                        </div>
+                    </div>
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </aside>
+
+
+        <div class="body-wrapper">
+            <div class="body-wrapper-inner" style=" margin: 0; ">
+                <h2 class="title mb-4">智能岗位推荐</h2>
+                <div class="section" style="margin-top: 20px; width: 100%;">
+                    <table class="certification-table"
+                        style="width: 100%; height: 100%; border-collapse: collapse; border: 1px solid #007bff; table-layout: fixed;">
+                        <thead>
+                            <tr style="background-color: #e0f2ff;color: #0056b3;">
+                                <th style="border: 1px solid #007bff; padding: 12px; text-align: left;">认证名称</th>
+                                <th style="border: 1px solid #007bff; padding: 12px; text-align: left;">等级</th>
+                                <th style="border: 1px solid #007bff; padding: 12px; text-align: left;">考试内容</th>
+                                <th style="border: 1px solid #007bff; padding: 12px; text-align: left;">难度级别</th>
+                                <th style="border: 1px solid #007bff; padding: 12px; text-align: left;">考试费用</th>
+                                <th style="border: 1px solid #007bff; padding: 12px; text-align: left;">推荐人群</th>
+                                <th style="border: 1px solid #007bff; padding: 12px; text-align: left;">市场价值</th>
+                                <th style="border: 1px solid #007bff; padding: 12px; text-align: left;">推荐学习资源</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="border: 1px solid #007bff; padding: 12px;">华为认证ICT工程师 (HCIA)</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">初级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">网络基础、路由与交换技术、华为设备基础操作</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">初级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">¥2000-3000</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">网络工程初学者、具备基础网络知识的人员</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">入门级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">《华为HCIA认证培训教程》、在线课程、官方文档</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #007bff; padding: 12px;">华为认证ICT高级工程师 (HCIP)</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">中级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">高级路由与交换技术、网络设计与优化、故障排除</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">中级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">¥3000-4000</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">具有一定工作经验和深入学习某一领域的技术人员</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">中级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">《华为HCIP认证深度解析》、在线高级课程、实验手册</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #007bff; padding: 12px;">华为认证ICT专家 (HCIE)</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">高级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">复杂网络环境的架构设计、高级路由协议、网络安全、数据中心技术
+                                </td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">高级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">¥4000-5000</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">在特定领域具备卓越技术能力和经验的专家</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">高级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">《华为HCIE认证实战指南》、专家视频讲座、实验室实践</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #007bff; padding: 12px;">思科认证网络工程师 (CCNA)</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">初级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">基础网络知识、路由和交换技术</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">初级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">¥1500-2500</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">网络工程初学者、寻求基础技能提升的专业人士</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">入门级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">《思科CCNA认证官方指南》、在线学习平台、模拟实验室</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #007bff; padding: 12px;">思科认证网络专家 (CCNP)</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">中级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">更深入的网络知识和高级技能，包括大型网络设计、实施和故障排除
+                                </td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">中级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">¥2500-3500</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">已经具备一定工作经验和深入学习某一领域的技术人员</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">中级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">《思科CCNP认证深度解析》、专业培训课程、案例研究</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #007bff; padding: 12px;">字节跳动网络工程师认证</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">初级到高级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">包括网络基础知识、数据中心网络、云计算网络</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">中级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">企业内部</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">字节跳动内部员工及合作伙伴</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">高级</td>
+                                <td style="border: 1px solid #007bff; padding: 12px;">字节跳动内部培训资料、实战项目、专家指导</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+
+
+    <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/sidebarmenu.js"></script>
+    <script src="../assets/js/app.min.js"></script>
+    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+    <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+
+    <!-- solar icons -->
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+
+
+
+</body>
+
+</html>

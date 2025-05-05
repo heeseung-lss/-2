@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> 课程解析 </title>
+  <!-- <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" /> -->
+  <link rel="stylesheet" href="../assets/css/styles.min.css" />
+  <!-- <link rel="icon" href="https://img.alicdn.com/tfs/TB1_ZXuNcfpK1RjSZFOXXa6nFXa-32.ico" type="image/x-icon" /> -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+
+</head>
+
+<style>
+  /* 修改.container-fluid的flex布局 */
+
+  :root {
+    --primary-gradient: linear-gradient(135deg, #6c5ce7 0%, #a363d9 100%);
+    --secondary-gradient: linear-gradient(45deg, #00b894, #55efc4);
+    --danger-gradient: linear-gradient(45deg, #ff7675, #d63031);
+    --tag-bg: rgba(108, 92, 231, 0.1);
+
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --text-color: #34495e;
+  }
+
+
+
+  .class-body {
+    position: relative;
+    /* 新增 */
+    z-index: 1;
+    /* 确保在页面最上层 */
+    min-width: 0;
+    /* 移除最小宽度限制，让图表可以占满盒子 */
+    height: 500px;
+    background: #fff;
+    border-radius: 12px;
+    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); */
+    overflow: hidden;
+    margin-left: 5px;
+  }
+
+  .left-panel {
+    flex: 1;
+    /* min-width: 420px; */
+    background: #fff;
+    border-radius: 16px;
+    /* box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); */
+    /* padding: 20px; */
+    /* margin-right: 20px; */
+
+  }
+
+  .right-panel {
+    flex: 1.5;
+    /* min-width: 680px; */
+    /* gap: 25px; */
+  }
+
+  /* 移除原来的margin设置 */
+  .left-panel,
+  .right-panel {
+    margin: 0px !important;
+  }
+
+  /* 调整卡片内边距 */
+  .card {
+    background: #ffffff;
+    border-radius: 12px;
+    /* box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08); */
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+  }
+
+  /* 课程图表优化 */
+  .class-body {
+    height: 100%;
+    padding: 15px;
+  }
+
+
+
+
+
+  /* 课程信息卡片 */
+  .course-header {
+    /* display: grid; */
+    display: flex;
+    flex-direction: row;
+    /* grid-template-columns: 1fr auto; */
+    gap: 20px;
+    padding-bottom: 1.5rem;
+    /* border-bottom: 2px solid #eee; */
+  }
+
+  .course-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-end;
+  }
+
+  .card-title {
+    font-size: 2rem;
+    color: #2d3436;
+    margin: 0;
+  }
+
+  /* 进度条样式 */
+  .progress-container {
+    width: 240px;
+    height: 10px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
+  }
+
+  .progress-bar {
+    background: linear-gradient(90deg, var(--secondary-color), #5dade2);
+    transition: width 0.4s ease;
+  }
+
+  /* 资源网格布局 */
+  .resource-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .resource-card {
+    position: relative;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .resource-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  /* 学习路径样式 */
+  .path-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    position: relative;
+  }
+
+  .path-steps:before {
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: 20px;
+    right: 20px;
+    height: 3px;
+    background: #eee;
+    z-index: 0;
+  }
+
+  .step {
+    position: relative;
+    z-index: 1;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  /* 讲师信息卡片 */
+  .instructor-card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 20px;
+    align-items: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  /* 响应式优化 */
+  @media (max-width: 1200px) {
+    .body-wrapper-inner {
+      flex-direction: column;
+    }
+
+    .left-panel,
+    .right-panel {
+      min-width: 100%;
+      height: auto;
+    }
+
+    .path-steps {
+      grid-template-columns: 1fr;
+    }
+
+    .course-header {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .resource-link {
+    color: #2d3436;
+    transition: color 0.3s ease;
+  }
+
+  .resource-link:hover {
+    color: #6c5ce7;
+    text-decoration: underline;
+  }
+
+  /* 难度标签颜色 */
+  .difficulty.初级 {
+    background: #00b894;
+    color: white;
+  }
+
+  .difficulty.中级 {
+    background: #fdcb6e;
+    color: #2d3436;
+  }
+
+  .difficulty.高级 {
+    background: #d63031;
+    color: white;
+  }
+
+  /* 页面过渡动画 */
+  .page-transition {
+    animation: fadeOut 0.5s ease forwards;
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+    }
+  }
+
+  /* 课程标签样式 */
+  .course-tags .tag {
+    background: var(--tag-bg);
+    color: #6c5ce7;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    margin-right: 8px;
+  }
+
+
+  /* 按钮样式增强 */
+  .btn.primary {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 8px;
+  }
+
+  /* 图表节点颜色优化 */
+  .echarts-node {
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+  }
+
+  @media (max-width: 768px) {
+    .resource-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .instructor-card {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+  }
+
+  .title {}
+</style>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-between">
+          <a href="./index.html" class="text-nowrap logo-img">
+            <img src="../assets/images/logos/logo.svg" alt="" />
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
+        </div>
+        <!-- Sidebar navigation-->
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">个人空间</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="index.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">学习进度</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="personal_profile.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">个人画像</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="message_board.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">留言板</span>
+              </a>
+            </li>
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">AI助教</span>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="ai_qa.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">AI问答</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="ai_exercise.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">AI出题</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="error_analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">习题分析</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="work.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+
+                <span class="hide-menu">智能岗位</span>
+              </a>
+            </li>
+
+            <!-- 三 -->
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程导读</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="pre_school_preparation.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone" style="color:#00a1ff ;"></iconify-icon>
+                <span class="hide-menu" style="color:#00a1ff ;">学前准备</span>
+              </a>
+            </li>
+
+
+            <!-- 三 -->
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程学习</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="knowledge_graph.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">知识图谱</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="course_analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">课程资源</span>
+              </a>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="homework.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">我的作业</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="exam.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">我的考试</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="laboratory.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">我的实验</span>
+              </a>
+            </li>
+
+            <li>
+              <span style="width: 150px;" class="sidebar-divider lg"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">学后助手</span>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="practice_project.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">实践项目</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="authentication.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">考试认证</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="contest_notice.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">比赛通知</span>
+              </a>
+            </li>
+
+            <!-- </li> -->
+
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">查看首页</span>
+            </li>
+
+          </ul>
+          <div style="width: 230px;"
+            class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+            <div class="me-2 flex-shrink-0" style="width: 160px;">
+              <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+              <a style="width: 150px;"
+                href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33" target="_blank"
+                class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+            </div>
+            <div class="unlimited-access-img" style="width: 230px;">
+              <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+            </div>
+          </div>
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+
+    <style>
+      /* 新增全局样式 */
+      :root {
+        --primary-gradient: linear-gradient(135deg, #2c3e50, #4a5568);
+        --secondary-gradient: linear-gradient(135deg, #3498db, #5d88ff);
+        --accent-gradient: linear-gradient(135deg, #e74c3c, #f368e0);
+        --card-bg: rgba(255, 255, 255, 0.95);
+        --border-color: rgba(0, 0, 0, 0.075);
+      }
+
+      /* 卡片容器增强 */
+      .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-bottom: 2rem;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(52, 152, 219, 0.15);
+      }
+
+      /* 标题样式优化 */
+      .title {
+        color: var(--primary-gradient);
+        font-size: 2rem;
+        border-bottom: 3px solid var(--secondary-gradient);
+        padding-bottom: 0.8rem;
+        margin-bottom: 2rem;
+        position: relative;
+        background: linear-gradient(90deg, #fff 95%, var(--primary-gradient) 95%);
+      }
+
+      /* 技术模块增强 */
+      .tech-module {
+        padding: 3rem 2rem;
+        background: linear-gradient(145deg, #f8f9fa, #fff);
+        border-radius: 15px;
+        margin: 2rem 0;
+      }
+
+      /* 知识卡片增强 */
+      .card-1 {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+      }
+
+      /* 进度条样式 */
+      .progress-bar {
+        background: linear-gradient(135deg, #3498db, #5d88ff);
+        transition: width 0.5s ease, background 0.3s ease;
+      }
+
+      /* 技术原理深度剖析增强 */
+      .accordion-flush .accordion-collapse {
+        border: 1px solid rgba(52, 152, 219, 0.1);
+        border-radius: 8px;
+      }
+
+      /* 技术前沿模块增强 */
+      .tech-front-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+        transition: transform 0.3s ease;
+      }
+
+      .tech-front-card:hover {
+        transform: perspective(1000px) rotateX(5deg);
+      }
+
+      /* 代码块样式 */
+      .code-snippet {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        font-family: 'Fira Code', monospace;
+        overflow-x: auto;
+        border: 1px solid #eee;
+      }
+
+      /* 图标增强 */
+      .iconify-icon {
+        transition: transform 0.2s ease;
+      }
+
+      .iconify-icon:hover {
+        transform: scale(1.1);
+      }
+
+      /* 响应式调整 */
+      @media (max-width: 768px) {
+        .tech-module {
+          padding: 2rem 1rem;
+        }
+
+        .card-1 {
+          flex-direction: column-reverse;
+        }
+      }
+
+      <style>.security-progress {
+        --protocol-icon-size: 32px;
+      }
+
+      .protocol-card {
+        background: var(--bs-white);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+      }
+
+      .protocol-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+      }
+
+      .protocol-header {
+        padding: 1rem;
+        cursor: pointer;
+        background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 1) 100%);
+      }
+
+      .protocol-icon {
+        width: var(--protocol-icon-size);
+        height: var(--protocol-icon-size);
+        margin-right: 1rem;
+      }
+
+      .protocol-danger .protocol-icon {
+        color: var(--bs-danger);
+      }
+
+      .protocol-warning .protocol-icon {
+        color: var(--bs-warning);
+      }
+
+      .protocol-success .protocol-icon {
+        color: var(--bs-success);
+      }
+
+      .protocol-info h6 {
+        font-weight: 600;
+        color: var(--bs-dark);
+      }
+
+      .protocol-info small {
+        font-size: 0.8em;
+        opacity: 0.8;
+      }
+
+      .protocol-progress .progress {
+        overflow: visible;
+        background: rgba(0, 0, 0, 0.08);
+        border-radius: 20px;
+      }
+
+      .progress-bar {
+        position: relative;
+        border-radius: 20px;
+        overflow: visible;
+      }
+
+      .progress-label {
+        position: absolute;
+        right: 8px;
+        color: white;
+        font-size: 0.75em;
+        font-weight: 500;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
+
+      .protocol-detail {
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        padding: 1rem;
+      }
+
+      .protocol-stats .badge {
+        margin: 2px;
+        font-size: 0.75em;
+        padding: 4px 8px;
+      }
+    </style>
+
+
+    <!-- 新增课程模块 -->
+    <div class="body-wrapper">
+      <div class="body-wrapper-inner" style=" padding: 20px; margin: 0; min-height: 100vh;">
+        <h2 class="title">网络互联技术 - 深度课程体系</h2>
+        <div class="container-fluid " style="display: flex;margin: 0;">
+
+          <div class="left-panel">
+            <div class="class-body" style="height: 100%;">
+              <script>
+                (function () {
+                  // 初始化图表
+                  const myChart = echarts.init(document.querySelector(".class-body"));
+                  const defaultCourseName = "网络互联技术";
+
+                  // 图表配置
+                  const option = {
+                    title: { text: "课程体系", left: "center" },
+                    tooltip: { trigger: "item" },
+                    animationDuration: 1000,
+                    animationEasingUpdate: "quinticInOut",
+                    series: [
+                      {
+                        type: "graph",
+                        layout: "none",
+                        symbolSize: 90,
+                        roam: true,
+                        label: { show: true, fontSize: 14 },
+                        edgeSymbol: ["circle", "arrow"],
+                        edgeSymbolSize: [6, 12],
+                        lineStyle: { width: 3, curveness: 0.1 },
+                        data: [
+                          { name: "计算机网络基础", x: 100, y: 350, itemStyle: { color: "#6c5ce7" } },
+                          { name: "Linux基础", x: 400, y: 350, itemStyle: { color: "#00b894" } },
+                          {
+                            name: "网络互联技术",
+                            x: 250,
+                            y: 150,
+                            itemStyle: { color: "#e84393" },
+                            symbolSize: 100
+                          },
+                          { name: "网络工程", x: 250, y: 0, itemStyle: { color: "#0984e3" } },
+                          {
+                            name: "网络协议基础",
+                            x: 250,
+                            y: 380,
+                            itemStyle: { color: "#d63031" }
+                          }
+                        ],
+                        links: [
+                          { source: "网络工程", target: "网络互联技术" },
+                          { source: "网络互联技术", target: "计算机网络基础" },
+                          { source: "网络互联技术", target: "网络协议基础" },
+                          { source: "网络互联技术", target: "Linux基础" }
+                        ]
+                      }
+                    ]
+                  };
+
+                  myChart.setOption(option);
+
+                  // 窗口resize处理
+                  const resizeHandler = () => myChart.resize();
+                  window.addEventListener("resize", resizeHandler);
+
+                  // 节点点击事件
+                  myChart.on("click", (params) => {
+                    if (params.dataType === "node") {
+                      updateCourseDetails(params.name);
+                    }
+                  });
+
+                  // 课程详情数据
+                  var courseDetails = {
+                    "计算机网络基础": {
+                      introduction:
+                        "《计算机网络基础》是网络工程专业的核心入门课程，主要介绍计算机网络的基本概念、体系结构、协议模型以及网络通信的基本原理。通过本课程的学习，学生将掌握网络的基本组成和工作原理，为后续深入学习网络技术打下坚实基础。",
+                      highlights: [
+                        "理论与实践相结合，深入浅出讲解网络原理",
+                        "丰富的实验案例，帮助学生巩固理论知识",
+                        "紧跟技术发展趋势，涵盖最新网络技术动态"
+                      ],
+                      resources: [
+                        {
+                          title: "《计算机网络：自顶向下方法》",
+                          link: "https://example.com/book1",
+                          experiment: "实验：搭建简单局域网"
+                        }
+                      ]
+                    },
+                    "Linux基础": {
+                      introduction:
+                        "《Linux基础》课程主要介绍Linux操作系统的基本概念、安装与配置、文件系统管理、Shell编程以及常用命令的使用。通过实践操作，学生将熟练掌握Linux系统的日常使用和基本管理技能。",
+                      highlights: [
+                        "基于真实应用场景的教学内容",
+                        "手把手实验指导，零基础也能快速上手",
+                        "涵盖主流Linux发行版的特点与应用"
+                      ],
+                      resources: [
+                        {
+                          title: "《Linux命令学习手册》",
+                          link: "https://example.com/book2",
+                          experiment: "实验：配置Linux Web服务器"
+                        }
+                      ]
+                    },
+                    "网络互联技术": {
+                      introduction:
+                        "《网络互联技术》是网络工程的核心课程，它涵盖了网络拓扑设计、网络设备配置与管理等多个方面。通过本课程的学习，你将掌握如何构建高效、稳定的网络系统，为成为一名优秀的网络工程师打下坚实的基础。",
+                      highlights: [
+                        "真实企业级项目案例贯穿始终",
+                        "全真实设备实验环境，提升实践能力",
+                        "从零开始构建完整网络解决方案"
+                      ],
+                      resources: [
+                        {
+                          title: "《网络互联技术与实训》",
+                          link: "https://example.com/book3",
+                          experiment: "实验：网络拓扑设计实战"
+                        }
+                      ]
+                    },
+                    "网络工程": {
+                      introduction:
+                        "《网络工程》课程聚焦于网络系统的设计、实施和管理，涵盖网络规划、设备选型、布线方案制定、安全策略部署等内容。学生将通过项目驱动的学习方式，完成一个完整的网络工程实践项目。",
+                      highlights: [
+                        "项目驱动教学，积累工程实践经验",
+                        "综合运用多种网络技术，提升系统思维",
+                        "与行业标准接轨，提升就业竞争力"
+                      ],
+                      resources: [
+                        {
+                          title: "《CCNA路由与交换认证指南》",
+                          link: "https://example.com/book4",
+                          experiment: "实验：VLAN配置全流程"
+                        }
+                      ]
+                    },
+                    "网络协议基础": {
+                      introduction:
+                        "《网络协议基础》课程深入讲解了计算机网络中常用的协议及其工作原理，包括HTTP、HTTPS、DNS、TCP、UDP等。学生将通过本课程理解网络通信的底层机制，并能够进行简单的协议分析和调试。",
+                      highlights: [
+                        "协议原理与实际应用案例相结合",
+                        "实战oriented的实验设计，提升分析能力",
+                        "深入浅出讲解复杂协议原理"
+                      ],
+                      resources: [
+                        {
+                          title: "《图解TCP/IP》",
+                          link: "https://example.com/book5",
+                          experiment: "实验：Wireshark抓包分析协议通信"
+                        }
+                      ]
+                    }
+                  };
+
+                  // 更新课程详情
+                  function updateCourseDetails(courseName) {
+                    const details = courseDetails[courseName];
+                    if (!details) return;
+
+                    const topPanelHTML = `
+                      <div class="course-header">
+                        <div>
+                          <h1 class="course-title">${courseName}</h1>
+                          <div class="course-tags">
+                            <span class="tag">网络工程</span>
+                            <span class="tag">中级难度</span>
+                            <span class="tag">实践课程</span>
+                          </div>
+                        </div>
+                        <div class="course-meta">
+                          <div class="progress-container">
+                            <div class="progress-bar" style="width: 45%"></div>
+                          </div>
+                          <div class="course-stats">
+                            <div class="stat-item">
+                              <i class="bi bi-people"></i>
+                              <span>256人在学</span>
+                            </div>
+                            <div class="stat-item">
+                              <i class="bi bi-star"></i>
+                              <span>4.2/5.0</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+              
+                      <div class="course-content">
+                        <div class="row">
+                          <!-- 左侧：课程简介 -->
+                          <div class="col-md-6 course-intro">
+                            <h3 style="color: #0056b3;">课程简介</h3>
+                            <p style="color: black;">${details.introduction}</p>
+                          </div>
+              
+                          <!-- 右侧：课程亮点 -->
+                          <div class="col-md-6 key-points">
+                            <h3 style="color: black;">课程亮点</h3>
+                            <ul>
+                              ${details.highlights.map(
+                      (highlight) => `<li style="color: black;">${highlight}</li>`
+                    )}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    `;
+
+                    const bottomPanelHTML = `
+                      <div class="filter-options">
+                        <button class="btn active" data-type="all">
+                          <i class="bi bi-collection"></i> 全部
+                        </button>
+                        <button class="btn" data-type="doc">
+                          <i class="bi bi-file-text"></i> 文档
+                        </button>
+                        <button class="btn" data-type="video">
+                          <i class="bi bi-camera-reels"></i> 视频
+                        </button>
+                        <button class="btn" data-type="lab">
+                          <i class="bi bi-cpu"></i> 实验
+                        </button>
+                      </div>
+              
+                      <div class="resource-grid">
+                        ${details.resources.map(
+                      (res) => `
+                            <div class="resource-card ${res.type}">
+                              <div class="resource-icon">
+                                <i class="bi bi-file-text"></i>
+                              </div>
+                              <div class="resource-content">
+                                <h4>${res.title}</h4>
+                                <p class="description">${res.experiment}</p>
+                                <div class="resource-meta">
+                                  <span class="duration">2小时</span>
+                                  <span class="difficulty">中等</span>
+                                </div>
+                                <div class="resource-actions">
+                                  <a href="${res.link}" class="btn primary">开始学习</a>
+                                  <button class="btn icon-btn">
+                                    <i class="bi bi-bookmark"></i>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          `
+                    )}
+                      </div>
+                    `;
+
+                    document.querySelector(".top-panel .card-body").innerHTML = topPanelHTML;
+                    document.querySelector(".bottom-panel .card-body").innerHTML = bottomPanelHTML;
+                  }
+
+                  // 初始化默认课程
+                  window.addEventListener("load", () => {
+                    updateCourseDetails(defaultCourseName);
+                    myChart.resize();
+                  });
+
+                  window.addEventListener("beforeunload", () => {
+                    window.removeEventListener("resize", resizeHandler);
+                  });
+                })();
+              </script>
+            </div>
+          </div>
+
+          <div class="right-panel">
+            <div class="top-panel">
+              <div class="card">
+                <div class="card-body">
+                  <!-- 动态更新的课程介绍 -->
+                </div>
+              </div>
+            </div>
+            <div class="bottom-panel">
+              <div class="card">
+                <div class="card-body">
+                  <!-- 动态更新的推荐资源 -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+  <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/js/sidebarmenu.js"></script>
+  <script src="../assets/js/app.min.js"></script>
+  <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+  <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+  <script src="../assets/js/dashboard.js"></script>
+  <!-- solar icons -->
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+
+</html>

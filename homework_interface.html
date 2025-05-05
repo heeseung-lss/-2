@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作业界面</title>
+    <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+    <link rel="stylesheet" href="../assets/css/styles.min.css" />
+    <style>
+        /* 原有的 CSS 样式 */
+        .body-wrapper {
+            display: flex;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            min-height: 100vh;
+            overflow-y: auto;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        #questions {
+            flex: 1;
+            padding: 20px;
+        }
+
+        #paginationNav {
+            padding: 20px;
+            background: #f8f9fa;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .question-container {
+            margin-bottom: 20px;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 60px;
+            width: 100%;
+            align-items: center;
+            min-width: 800px;
+            max-width: 1000px;
+            box-sizing: border-box;
+        }
+
+        .question-title {
+            align-items: center;
+            font-size: 1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .choice-option {
+            margin-bottom: 5px;
+        }
+
+        .fill-input {
+            width: 100%;
+            padding: 5px;
+            margin-top: 5px;
+        }
+
+        .coding-textarea {
+            width: 100%;
+            height: 200px;
+            padding: 5px;
+            margin-top: 5px;
+        }
+
+        .pagination {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .pagination .page-item {
+            margin: 3px 0;
+        }
+
+        .pagination .page-item:first-child {
+            margin-bottom: 10px;
+        }
+
+        .pagination .page-item:last-child {
+            margin-top: 10px;
+        }
+
+        .page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            text-decoration: none;
+            color: #007bff;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .page-link:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* 收藏图标容器 */
+        /* 原有的 CSS 样式 */
+        .container {
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .container:active {
+            transform: scale(0.9);
+        }
+
+        .container input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .container svg {
+            width: 24px;
+            height: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            fill: rgba(158, 158, 158, 0.5);
+            stroke: #9e9e9e;
+            stroke-width: 1px;
+        }
+
+        .container:hover svg {
+            transform: scale(1.15);
+            fill: #ffd70080;
+            stroke: #ffa000;
+        }
+
+        .container input:checked~svg {
+            fill: #FFD700;
+            stroke: #FFA000;
+            animation: star-pop 0.4s ease;
+        }
+
+        .container input:checked~svg:hover {
+            fill: #FFD700;
+            stroke: #FFA000;
+        }
+
+        @keyframes star-pop {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(0.8);
+            }
+
+            75% {
+                transform: scale(1.15);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+
+        .submit-btn {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            align-items: right;
+        }
+
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .info-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            padding: 20px;
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+
+<body>
+    <!--  Body Wrapper -->
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed">
+        <aside class="left-sidebar">
+            <!-- Sidebar scroll-->
+            <div>
+              <div class="brand-logo d-flex align-items-center justify-content-between">
+                <a href="./index.html" class="text-nowrap logo-img">
+                  <img src="../assets/images/logos/logo.svg" alt="" />
+                </a>
+                <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+                  <i class="ti ti-x fs-8"></i>
+                </div>
+              </div>
+              <!-- Sidebar navigation-->
+              <!-- Sidebar navigation-->
+              <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+                <ul id="sidebarnav">
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">个人空间</span>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" style="width:150px" href="index.html" aria-expanded="false">
+                      <iconify-icon icon="solar:widget-add-line-duotone" >
+                      </iconify-icon>
+                      <span class="hide-menu" >学习进度</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" style="width:150px" href="personal_profile.html" aria-expanded="false">
+                      <iconify-icon icon="solar:widget-add-line-duotone">
+                      </iconify-icon>
+                      <span class="hide-menu">个人画像</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" style="width:150px" href="message_board.html" aria-expanded="false">
+                      <iconify-icon icon="solar:widget-add-line-duotone">
+                      </iconify-icon>
+                      <span class="hide-menu">留言板</span>
+                    </a>
+                  </li>
+                  <li>
+                    <span class="sidebar-divider lg" style="width: 150px;"></span>
+                  </li>
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">AI助教</span>
+                  </li>
+      
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="ai_qa.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">AI问答</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="ai_exercise.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">AI出题</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="error_analysis.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">习题分析</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" style="width:150px" href="work.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+      
+                      <span class="hide-menu">智能岗位</span>
+                    </a>
+                  </li>
+      
+                  <!-- 三 -->
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">课程导读</span>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="pre_school_preparation.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">学前准备</span>
+                    </a>
+                  </li>
+      
+      
+                  <!-- 三 -->
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">课程学习</span>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="knowledge_graph.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">知识图谱</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="course_analysis.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">课程资源</span>
+                    </a>
+                  </li>
+      
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="homework.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">我的作业</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="exam.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">我的考试</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="laboratory.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">我的实验</span>
+                    </a>
+                  </li>
+      
+                  <li>
+                    <span style="width: 150px;" class="sidebar-divider lg"></span>
+                  </li>
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">学后助手</span>
+                  </li>
+      
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="practice_project.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">实践项目</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="authentication.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">考试认证</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="contest_notice.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">比赛通知</span>
+                    </a>
+                  </li>
+      
+                  <!-- </li> -->
+      
+                  <li>
+                    <span class="sidebar-divider lg" style="width: 150px;"></span>
+                  </li>
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">查看首页</span>
+                  </li>
+      
+                </ul>
+                <div style="width: 230px;"
+                  class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+                  <div class="me-2 flex-shrink-0" style="width: 160px;">
+                    <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+                    <a style="width: 150px;"
+                      href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33" target="_blank"
+                      class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+                  </div>
+                  <div class="unlimited-access-img" style="width: 230px;">
+                    <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+                  </div>
+                </div>
+              </nav>
+              <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+          </aside>
+
+        <div class="body-wrapper" style="background-color: #fff;">
+            <!-- 作业信息区域 -->
+            <div class="info-container">
+                <span>作业名字: <span id="assignmentName">网络互联技术作业</span></span>
+                <span>重做次数: <span id="redoCount">2</span></span>
+                <span>题目总数: <span id="questionCount">0</span></span>
+                <span>总分: <span id="totalScore">100</span></span>
+            </div>
+            <!-- 题目展示区域 -->
+            <div id="questions"></div>
+            <!-- 添加提交作业按钮 -->
+            <button class="submit-btn" id="submitAnswers">提交</button>
+        </div>
+    </div>
+    <script>
+        // 模拟网络互联技术题目数据
+        const questions = [
+            {
+                type: 'choice',
+                title: '1. 以下哪种协议用于将域名解析为IP地址？',
+                options: ['A. HTTP', 'B. DNS', 'C. FTP', 'D. SMTP']
+            },
+            {
+                type: 'choice',
+                title: '2. 在OSI参考模型中，负责建立、维护和管理会话的是哪一层？',
+                options: ['A. 网络层', 'B. 传输层', 'C. 会话层', 'D. 表示层']
+            },
+            {
+                type: 'fill',
+                title: '3. 路由器工作在OSI参考模型的________层。'
+            },
+            {
+                type: 'fill',
+                title: '4. TCP/IP协议族中，提供面向连接的传输服务的协议是________。'
+            },
+            {
+                type: 'choice',
+                title: '5. 下列哪项不是网络拓扑结构？',
+                options: ['A. 总线型', 'B. 星型', 'C. 关系型', 'D. 环型']
+            },
+            {
+                type: 'choice',
+                title: '6. 在TCP/IP协议中，IP协议工作在哪个层次？',
+                options: ['A. 应用层', 'B. 传输层', 'C. 网络层', 'D. 数据链路层']
+            },
+            {
+                type: 'fill',
+                title: '7. 以太网使用的介质访问控制方法是________。'
+            },
+            {
+                type: 'fill',
+                title: '8. 子网掩码的作用是用来划分________和主机地址。'
+            },
+            {
+                type: 'choice',
+                title: '9. 以下哪个协议用于远程登录？',
+                options: ['A. SSH', 'B. SNMP', 'C. DHCP', 'D. ARP']
+            },
+            {
+                type: 'choice',
+                title: '10. 下列关于VLAN的说法，错误的是？',
+                options: ['A. 可以隔离广播域', 'B. 可以增强网络安全性', 'C. 只能在同一交换机上划分', 'D. 可以提高网络灵活性']
+            }
+        ];
+
+        // 更新作业信息的函数
+        function updateAssignmentInfo() {
+            const questionCountElement = document.getElementById('questionCount');
+            const totalScoreElement = document.getElementById('totalScore');
+
+            questionCountElement.textContent = questions.length;
+            // 假设每题 100 / 题目总数 分
+            const totalScore = 100;
+            totalScoreElement.textContent = totalScore;
+        }
+
+        // 渲染题目到页面的函数
+        function renderQuestions() {
+            const questionsDiv = document.getElementById('questions');
+            questions.forEach((question, index) => {
+                const questionContainer = document.createElement('div');
+                questionContainer.classList.add('question-container');
+
+                const questionTitle = document.createElement('div');
+                questionTitle.classList.add('question-title');
+                questionTitle.innerHTML = question.title;
+
+                questionContainer.appendChild(questionTitle);
+
+                if (question.type === 'choice') {
+                    question.options.forEach((option) => {
+                        const choiceOption = document.createElement('div');
+                        choiceOption.classList.add('choice-option');
+                        const radioInput = document.createElement('input');
+                        radioInput.type = 'radio';
+                        radioInput.name = `question-${index}`;
+                        radioInput.value = option;
+                        const optionLabel = document.createElement('label');
+                        optionLabel.textContent = option;
+                        choiceOption.appendChild(radioInput);
+                        choiceOption.appendChild(optionLabel);
+                        questionContainer.appendChild(choiceOption);
+                    });
+                } else if (question.type === 'fill') {
+                    const fillInput = document.createElement('input');
+                    fillInput.classList.add('fill-input');
+                    questionContainer.appendChild(fillInput);
+                }
+                questionsDiv.appendChild(questionContainer);
+            });
+        }
+
+        // 获取提交按钮元素
+        const submitButton = document.getElementById('submitAnswers');
+        // 为提交按钮添加点击事件监听器
+        submitButton.addEventListener('click', function () {
+            const isSubmit = confirm('确定要提交作业吗？');
+            if (isSubmit) {
+                // 这里可以添加提交作业的逻辑（例如发送数据到服务器等）
+                // 目前只是简单地实现跳转回上一页
+                window.history.back();
+            }
+        });
+
+        // 初始化页面
+        updateAssignmentInfo();
+        renderQuestions();
+    </script>
+    <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/sidebarmenu.js"></script>
+    <script src="../assets/js/app.min.js"></script>
+    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+    <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+
+</html>

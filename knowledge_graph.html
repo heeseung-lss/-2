@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>知识图谱</title>
+  <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+  <link rel="stylesheet" href="../assets/css/styles.min.css" />
+  <style>
+    /* 修改知识图谱容器的样式 */
+    .knowledge-graph {
+      width: 100%;
+      /* 宽度占满父容器 */
+      height: 100%;
+      /* 高度占满父容器 */
+      min-height: 800px;
+      /* 最小高度，可根据需要调整 */
+    }
+
+    /* 确保父容器的样式也设置为占满整个区域 */
+    .tab-pane {
+      /* display: flex; */
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+      /* min-width: 700px; */
+    }
+
+    .tab-content {
+
+      overflow: hidden;
+    }
+
+    #contact {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+  </style>
+  <!-- <link rel="stylesheet" href="src\assets\css\icons\class.css"> -->
+
+
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-between">
+          <a href="./index.html" class="text-nowrap logo-img">
+            <img src="../assets/images/logos/logo.svg" alt="" />
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
+        </div>
+        <!-- Sidebar navigation-->
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">个人空间</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="index.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">学习进度</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="personal_profile.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">个人画像</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="message_board.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">留言板</span>
+              </a>
+            </li>
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">AI助教</span>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="ai_qa.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">AI问答</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="ai_exercise.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">AI出题</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="error_analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">习题分析</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="work.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+
+                <span class="hide-menu">智能岗位</span>
+              </a>
+            </li>
+
+            <!-- 三 -->
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程导读</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="pre_school_preparation.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">学前准备</span>
+              </a>
+            </li>
+
+
+            <!-- 三 -->
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程学习</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="knowledge_graph.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone" style="color:#00a1ff ;"></iconify-icon>
+                <span class="hide-menu" style="color:#00a1ff ;">知识图谱</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="course_analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">课程资源</span>
+              </a>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="homework.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">我的作业</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="exam.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">我的考试</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="laboratory.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">我的实验</span>
+              </a>
+            </li>
+
+            <li>
+              <span style="width: 150px;" class="sidebar-divider lg"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">学后助手</span>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="practice_project.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">实践项目</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="authentication.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">考试认证</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="contest_notice.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">比赛通知</span>
+              </a>
+            </li>
+
+            <!-- </li> -->
+
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">查看首页</span>
+            </li>
+
+          </ul>
+          <div style="width: 230px;"
+            class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+            <div class="me-2 flex-shrink-0" style="width: 160px;">
+              <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+              <a style="width: 150px;"
+                href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33" target="_blank"
+                class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+            </div>
+            <div class="unlimited-access-img" style="width: 230px;">
+              <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+            </div>
+          </div>
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+    <!--  Sidebar End -->
+    <!--  Main wrapper -->
+    <div class="body-wrapper" style="min-height: 100vh; margin-top: 0;">
+      <div class="body-wrapper"
+        style="display: flex; padding: 40px; margin-left: 10px; background-color: #fff; text-align: left;">
+
+        <!-- 左侧主内容区 -->
+        <div class="left-panel" style="flex: 4; min-width: 300px;">
+          <!-- 知识图谱 -->
+          <div class="knowledge-graph" style="width:100%; height: 600px;">
+            <!-- 此处可添加ECharts等可视化组件 -->
+          </div>
+        </div>
+
+        <!-- 右侧课程目录及资源区 -->
+        <div class="right-panel"
+          style="flex: 1; min-width: 100px; background: #fff; border-radius: 8px; padding: 20px; margin-left: 20px;">
+
+          <!-- 课程目录 -->
+          <div class="catalog-container">
+            <h3 style="color: #00a1ff; border-bottom: 2px solid #00a1ff; padding-bottom: 8px;">课程资源</h3>
+
+            <!-- 新增资源类型切换 -->
+            <div class="resource-tabs mb-3">
+              <button class="btn btn-sm btn-outline-primary active" data-resource="catalog">目录</button>
+              <button class="btn btn-sm btn-outline-primary" data-resource="video">视频</button>
+              <button class="btn btn-sm btn-outline-primary" data-resource="ppt">课件</button>
+            </div>
+
+            <!-- 目录结构 -->
+            <ul class="catalog-list" id="resourceContainer">
+              <!-- 第一章 -->
+              <li class="chapter-item" data-chapter="1">
+                <div class="chapter-header">
+                  <span class="chapter-title">第一章：网络基础</span>
+                  <span class="toggle-icon">▼</span>
+                </div>
+                <ul class="subsection-list">
+                  <li class="subsection-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span>1.1 网络拓扑结构</span>
+                      <div class="resource-buttons">
+                        <button class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#pptModal"
+                          data-ppt="/ppts/ch1-1.pptx">
+                          <i class="bi bi-file-earmark-ppt-fill text-danger"></i>
+                        </button>
+                        <button class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#videoModal"
+                          data-video="https://example.com/videos/ch1-1.mp4">
+                          <i class="bi bi-play-circle-fill text-primary"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                  <!-- 更多子章节... -->
+                </ul>
+              </li>
+              <!-- 更多章节... -->
+            </ul>
+          </div>
+
+          <!-- 新增PPT预览区 -->
+          <div class="ppt-preview mt-4 p-3 border rounded">
+            <h5><i class="bi bi-file-earmark-ppt"></i> 最新课件</h5>
+            <div class="ppt-thumbnail" data-bs-toggle="modal" data-bs-target="#pptModal" style="cursor: pointer;">
+              <img src="/images/ppt-thumbnail.jpg" class="img-fluid rounded" alt="课件预览">
+              <div class="ppt-title mt-2">第二章路由协议.pptx</div>
+            </div>
+          </div>
+
+          <!-- 新增视频列表 -->
+          <div class="video-list mt-4">
+            <h5><i class="bi bi-play-btn"></i> 精选视频</h5>
+            <div class="list-group">
+              <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="modal"
+                data-bs-target="#videoModal" data-video="https://example.com/videos/ospf.mp4">
+                <i class="bi bi-film"></i> OSPF协议详解
+              </a>
+              <!-- 更多视频项... -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 模态框 -->
+    <div class="modal fade" id="pptModal">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">课件预览</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div id="pptViewer" style="height: 600px;">
+              <!-- 此处可嵌入Google Docs预览或PDF.js -->
+              <iframe id="pptFrame" class="w-100 h-100"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="videoModal">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">视频教学</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="ratio ratio-16x9">
+              <video id="videoPlayer" controls class="w-100">
+                <source src="" type="video/mp4">
+              </video>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      /* 自定义样式 */
+      .resource-buttons {
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .subsection-item:hover .resource-buttons {
+        opacity: 1;
+      }
+
+      .ppt-preview {
+        background: #f8f9fa;
+        transition: transform 0.2s;
+      }
+
+      .ppt-preview:hover {
+        transform: translateY(-3px);
+      }
+
+      .video-list .list-group-item {
+        border-left: 3px solid transparent;
+        transition: all 0.3s;
+      }
+
+      .video-list .list-group-item:hover {
+        border-left-color: #00a1ff;
+        background: #f8f9fa;
+      }
+    </style>
+
+    <script>
+      // 初始化模态框交互
+      document.addEventListener('DOMContentLoaded', function () {
+        // PPT模态框处理
+        const pptModal = document.getElementById('pptModal')
+        pptModal.addEventListener('show.bs.modal', function (event) {
+          const button = event.relatedTarget
+          const pptUrl = button.getAttribute('data-ppt')
+          document.getElementById('pptFrame').src =
+            `https://docs.google.com/gview?url=${encodeURIComponent(pptUrl)}&embedded=true`
+        })
+
+        // 视频模态框处理
+        const videoModal = document.getElementById('videoModal')
+        videoModal.addEventListener('show.bs.modal', function (event) {
+          const button = event.relatedTarget
+          const videoUrl = button.getAttribute('data-video')
+          const videoPlayer = document.getElementById('videoPlayer')
+          videoPlayer.src = videoUrl
+          videoPlayer.load()
+        })
+
+        // 资源选项卡切换
+        document.querySelectorAll('.resource-tabs button').forEach(btn => {
+          btn.addEventListener('click', function () {
+            document.querySelectorAll('#resourceContainer > *').forEach(el => {
+              el.style.display = this.dataset.resource === 'catalog' ? 'block' : 'none'
+            })
+            document.querySelector('.ppt-preview').style.display =
+              this.dataset.resource === 'ppt' ? 'block' : 'none'
+            document.querySelector('.video-list').style.display =
+              this.dataset.resource === 'video' ? 'block' : 'none'
+          })
+        })
+      })
+    </script>
+
+  </div>
+  </div>
+
+  <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+  <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/js/sidebarmenu.js"></script>
+  <script src="../assets/js/app.min.js"></script>
+  <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+  <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+  <script src="../assets/js/dashboard.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+  <script>
+      // 知识图谱
+      // 知识图谱模块
+      (function () {
+        // 1. 实例化对象
+        var myChart = echarts.init(document.querySelector(".knowledge-graph "));
+
+        mockGraphData = [
+          {
+            id: 0,
+            name: "解析法",
+            category: "未掌握 需重点关注",
+            value: 5,
+          },
+          {
+            id: 1,
+            name: "诱导公式",
+            value: 21,
+            category: "未掌握 需重点关注",
+          },
+          {
+            id: 2,
+            name: "函数的概念",
+            category: "未掌握 需重点关注",
+            value: 29,
+          },
+          {
+            id: 3,
+            name: "图像法",
+            category: "未掌握 需重点关注",
+            value: 15,
+          },
+          {
+            id: 4,
+            name: "三角函数的概念和性质",
+            category: "未掌握 需重点关注",
+            value: 12,
+          },
+          {
+            id: 5,
+            name: "正弦函数的概念",
+            category: "未掌握 需重点关注",
+            value: 15,
+          },
+          {
+            id: 6,
+            name: "函数的性质",
+            category: "未掌握 需重点关注",
+            value: 13,
+          },
+          {
+            id: 7,
+            name: "三角函数的概念",
+            category: "部分掌握",
+            value: 30,
+          },
+          {
+            id: 8,
+            name: "余弦函数的概念",
+            category: "部分掌握",
+            value: 45,
+          },
+          {
+            id: 9,
+            name: "函数的性质",
+            category: "部分掌握",
+            value: 55,
+          },
+          {
+            id: 10,
+            name: "解析法",
+            category: "基本掌握",
+            value: 75,
+          },
+          {
+            id: 11,
+            name: "同三角函数的基本",
+            category: "基本掌握",
+            value: 93,
+          },
+          {
+            id: 12,
+            name: "函数的性质",
+            category: "基本掌握",
+            value: 90,
+          },
+          {
+            id: 13,
+            name: "函数的值域",
+            category: "熟练掌握",
+            value: 10,
+          },
+          {
+            id: 14,
+            name: "函数的定义域",
+            category: "熟练掌握",
+            value: 10,
+          },
+          {
+            id: 15,
+            name: "函数的表示",
+            category: "熟练掌握",
+            value: 10,
+          },
+          {
+            id: 16,
+            name: "三角函数",
+            category: "熟练掌握",
+            value: 10,
+          },
+          {
+            id: 17,
+            name: "函数的概念与表示",
+            category: "熟练掌握",
+            value: 10,
+          },
+          {
+            id: 18,
+            name: "函数的概念与性质",
+            category: "熟练掌握",
+            value: 10,
+          },
+          {
+            id: 19,
+            name: "函数",
+            category: "熟练掌握",
+            value: 10,
+          },
+        ];
+        mockLink = [
+          {
+            source: "11",
+            target: "1",
+            type: "相关关系",
+          },
+          {
+            source: "7",
+            target: "8",
+            type: "相关关系",
+          },
+          {
+            source: "7",
+            target: "5",
+            type: "相关关系",
+          },
+          {
+            source: "7",
+            target: "19",
+            type: "相关关系",
+          },
+          {
+            source: "5",
+            target: "8",
+            type: "前置关系",
+          },
+          {
+            source: "4",
+            target: "7",
+            type: "前置关系",
+          },
+          {
+            source: "4",
+            target: "19",
+            type: "相关关系",
+          },
+          {
+            source: "16",
+            target: "4",
+            type: "前置关系",
+          },
+          {
+            source: "4",
+            target: "9",
+            type: "相关关系",
+          },
+          {
+            source: "3",
+            target: "9",
+            type: "前置关系",
+          },
+          {
+            source: "3",
+            target: "6",
+            type: "相关关系",
+          },
+          {
+            source: "18",
+            target: "17",
+            type: "相关关系",
+          },
+          {
+            source: "17",
+            target: "15",
+            type: "相关关系",
+          },
+          {
+            source: "17",
+            target: "10",
+            type: "相关关系",
+          },
+          {
+            source: "14",
+            target: "10",
+            type: "前置关系",
+          },
+          {
+            source: "13",
+            target: "10",
+            type: "相关关系",
+          },
+          {
+            source: "2",
+            target: "13",
+            type: "前置关系",
+          },
+        ];
+        const rawData = mockGraphData.map((item) => {
+          if (item.category === "未掌握 需重点关注") {
+            return {
+              ...item,
+              itemStyle: {
+                normal: {
+                  color: "#ff575f",
+                },
+              },
+              // label: {
+              //   textBorderColor: "#ff575f",
+              // },
+            };
+          } else if (item.category === "部分掌握") {
+            return {
+              ...item,
+              itemStyle: {
+                normal: {
+                  color: "#ffca56",
+                },
+              },
+            };
+          } else if (item.category === "基本掌握") {
+            return {
+              ...item,
+              itemStyle: {
+                normal: {
+                  color: "#00ccc1",
+                },
+              },
+            };
+          } else if (item.category === "熟练掌握") {
+            return {
+              ...item,
+              itemStyle: {
+                normal: {
+                  color: "#4f9ef5",
+                },
+              },
+            };
+          } else if (item.category === "前置节点") {
+            return {
+              ...item,
+              symbolSize: [80, 80],
+              itemStyle: {
+                normal: {
+                  color: "#f4b7be",
+                },
+              },
+              label: {
+                show: true,
+                position: 'inside',
+                color: "#000",
+                textBorderWidth: 1,
+                formatter: "{a|{b}}",
+                rich: {
+                  a: {
+                    color: "#000",
+                    lineHeight: 30,
+                  },
+
+                },
+              },
+            };
+          } else if (item.category === "本次未考核") {
+            return {
+              ...item,
+              itemStyle: {
+                normal: {
+                  color: "#ffffff",
+                  borderWidth: 2,
+                  borderColor: "#ec808d",
+                },
+              },
+              label: {
+                show: true,
+                position: 'inside',
+                color: "#000",
+                textBorderWidth: 1,
+                formatter: ["{b|历史掌\n握程度\n{c}%}", "{a|{b}}"].join("\n"),
+                rich: {
+                  a: {
+                    color: "#000",
+                    lineHeight: 30,
+                  },
+                  b: {
+
+                    color: "#000",
+                    align: "center",
+                    lineHeight: 15,
+                  },
+                },
+                offset: [0, 20]
+              },
+            };
+          } else {
+            return {
+              ...item,
+              itemStyle: {
+                normal: {
+                  color: "#4f9ef5",
+                },
+              },
+            };
+          }
+        });
+        const rawLink = mockLink.map((item) => {
+          if (item.type === "相关关系") {
+            return {
+              ...item,
+              tooltip: { formatter: "相关关系" },
+            };
+          } else if (item.type === "前置关系") {
+            return {
+              ...item,
+              tooltip: { formatter: "前置关系" },
+              symbolSize: [10, 10],
+            };
+          } else if (item.type === "包含关系") {
+            return {
+              ...item,
+              tooltip: { formatter: "包含关系" },
+              lineStyle: { type: "dashed" },
+            };
+          } else {
+            return {
+              ...item,
+            };
+          }
+        });
+        option = {
+          title: {
+            text: "知识图谱",
+            subtext: "Default layout",
+            top: "bottom",
+            left: "right",
+          },
+          color: ["#ff575f", "#ffca56", "#00ccc1", "#4f9ef5"],
+          tooltip: {
+            trigger: "item",
+            formatter: "{b}  {c}%",
+          },
+          legend: {
+            selectedMode: "true",
+            orient: "vertical",
+            top: 10,
+            show: true,
+            data: [
+              {
+                name: "未掌握 需重点关注",
+              },
+              {
+                name: "部分掌握",
+              },
+              {
+                name: "基本掌握",
+              },
+              {
+                name: "熟练掌握",
+              },
+            ],
+            left: 10,
+            // itemStyle:{color: 'inherit'},
+            // selector: [
+            //   {
+            //     type: "inverse",
+            //     title: "反选",
+            //   },
+            // ],
+          },
+
+          animationDuration: 1000,
+          animationEasingUpdate: "quinticInOut",
+          series: [
+            {
+              name: "",
+              type: "graph",
+              layout: "force",
+              edgeSymbol: ["none", "arrow"],
+              edgeSymbolSize: [0, 0],
+              draggable: false,
+              zoom: 1, // 数据多的情况下控制显示区域大小
+              // itemStyle: {
+              //   normal: {
+              //     // borderWidth: 2
+              //   },
+              // },
+              symbolSize: [60, 60],
+              force: {
+                // 布局配置
+                repulsion: 600,
+                edgeLength: 120,
+                layoutAnimation: true,
+                friction: 0.6
+              },
+              data: rawData,
+              links: rawLink,
+              categories: [
+                {
+                  name: "未掌握 需重点关注",
+                },
+                {
+                  name: "部分掌握",
+                },
+                {
+                  name: "基本掌握",
+                },
+                {
+                  name: "熟练掌握",
+                },
+                {
+                  name: "前置节点",
+                },
+                {
+                  name: "本次未考核",
+                },
+              ],
+              roam: true, // 是否开启平移缩放
+              // edgeLabel: {
+              //   normal: {
+              //     show: true,
+              //     formatter: function (x: any) {
+              //       return x.data.name;
+              //     },
+              //   },
+              // },
+              label: {
+                normal: {
+                  show: true,
+                  // position: ["125%", "100%"],
+                  position: "inside",
+                  color: "#fff",
+                  textBorderWidth: 1,
+                  formatter: ["{b|{c}%}", "{a|{b}}"].join("\n"),
+                  rich: {
+                    a: {
+                      color: "#000",
+                      height: 0,
+                      // lineHeight: 10
+                    },
+                    b: {
+                      color: "#fff",
+                      align: "center",
+                      lineHeight: 80,
+                    },
+                  },
+                },
+              },
+              lineStyle: {
+                normal: {
+                  color: "#000",
+                  curveness: 0.3,
+                  type: "solid",
+                },
+              },
+              emphasis: {
+                focus: "adjacency",
+                lineStyle: {
+                  width: 5,
+                },
+              },
+            },
+          ],
+        };
+
+
+
+
+        // 3. 把配置项
+        myChart.setOption(option);
+        // 获取输入框内容
+        function getInputs() {
+          var name = document.getElementById("input1").value.trim();
+          var value = parseInt(document.getElementById("input2").value.trim(), 10);
+          return { name, value };
+        }
+
+        // 增加节点
+        document.getElementById("add-btn").addEventListener("click", function () {
+          var { name, value } = getInputs();
+          if (name && !isNaN(value)) {
+            var newNode = {
+              id: mockGraphData.length,
+              name: name,
+              category: "未掌握 需重点关注",
+              value:
+                value
+            };
+            mockGraphData
+              .push(newNode);
+            initChart();
+          } else {
+            alert("请输入有效的节点名称和值！");
+          }
+        });
+
+        // 删除节点
+        document.getElementById("delete-btn").addEventListener("click", function () {
+          var { name } = getInputs();
+          if (name) {
+            mockGraphData
+              = mockGraphData.filter(node => node.name !== name);
+            initChart();
+          } else {
+            alert("请输入要删除的节点名称！");
+          }
+        });
+
+        // 修改节点
+        document.getElementById("fix-btn").addEventListener("click", function () {
+          var { name, value } = getInputs();
+          if (name && !isNaN(value)) {
+            var node = mockGraphData.find(node => node.name === name);
+            if (node) {
+              node
+                .value = value;
+              initChart();
+            } else {
+              alert("未找到指定的节点！");
+            }
+          } else {
+            alert("请输入有效的节点名称和值！");
+          }
+        });
+
+
+        // 初始化图表
+        initChart();
+        // 4. 让图表跟随屏幕自动的去适应
+        window.addEventListener("resize", function () {
+          myChart.resize();
+        });
+      })();
+
+  </script>
+
+
+</body>
+
+</html>

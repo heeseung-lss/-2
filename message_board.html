@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>留言板</title>
+    <link rel="stylesheet" href="../assets/css/styles.min.css" />
+
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* 基础变量定义 */
+        :root {
+            --primary: #2563eb;
+            --secondary: #4f46e5;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --border-color: #e2e8f0;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+
+        /* 标签页内容区 */
+        .tab-content {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+        }
+
+        /* 问答区 */
+        .qa-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            position: relative;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .tab-btn.active::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        /* 提问/回复列表 */
+        .post-list,
+        .answer-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .comment-section {
+            width: 100%;
+            margin: 20px auto;
+        }
+
+        #pills-tabContent {
+            flex: 1;
+            min-height: 0;
+            /* 修复flex布局滚动问题 */
+        }
+
+        /* 聊天容器设置 */
+        #pills-contact {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .post-item,
+        .answer-item {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .post-item:hover,
+        .answer-item:hover {
+            transform: translateY(-3px);
+        }
+
+        .post-header,
+        .answer-header {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge {
+            background: #dcfce7;
+            color: #166534;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+        }
+
+        .resource-grid {
+            display: grid;
+            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        }
+
+        .resource-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .meta {
+            font-size: 0.9em;
+            color: #64748b;
+        }
+
+        .post-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .post-actions button {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+
+        .post-actions button:hover {
+            color: var(--primary);
+        }
+
+        .chat-container {
+            flex: 1;
+            min-height: 0;
+            /* 重要：允许内容溢出 */
+            display: flex;
+            flex-direction: column;
+            border: none;
+            border-radius: 0;
+        }
+
+        .chat-history {
+            flex: 1;
+            max-height: none !important;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .comment-block {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 15px;
+            padding: 15px;
+            transition: transform 0.2s;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e0e7ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            margin-right: 12px;
+        }
+
+        .comment-meta {
+            flex: 1;
+        }
+
+        .comment-user {
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .comment-time {
+            color: #64748b;
+            font-size: 0.9em;
+        }
+
+        .like-btn,
+        .reply-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #64748b;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .like-btn:hover {
+            color: #dc2626;
+        }
+
+        .reply-btn:hover {
+            color: #2563eb;
+        }
+
+        .comment-content {
+            color: #334155;
+            line-height: 1.6;
+            margin-left: 44px;
+        }
+
+        /* 上传表单样式 */
+        .upload-form {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .upload-form h3 {
+            margin-bottom: 20px;
+            color: #1e293b;
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group input[type="file"] {
+            display: none;
+        }
+
+        .form-group label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f1f5f9;
+            color: #334155;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .form-group input[type="text"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn-upload {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-upload:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* 已上传文件列表样式 */
+        .uploaded-files {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+        }
+
+        .uploaded-files h4 {
+            margin-bottom: 20px;
+            color: #1e293b;
+            font-size: 18px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .file-meta {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .file-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #64748b;
+            transition: color 0.3s;
+        }
+
+        .file-actions button:hover {
+            color: #2563eb;
+        }
+
+        /* 聊天区域样式 */
+        .chat-container {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 15px;
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-history {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 500px;
+        }
+
+        /* 聊天消息 */
+        .message {
+            max-width: 80%;
+            margin-bottom: 15px;
+            display: flex;
+        }
+
+        .message.received {
+            background-color: #f8fafc;
+            border-radius: 0 12px 12px 12px;
+        }
+
+        .message-avatar {
+            margin-right: 10px;
+        }
+
+        .message-avatar img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .message-content {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 12px 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .message-sender {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .message-text {
+            margin-bottom: 5px;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        /* 点赞和回复按钮 */
+        .message-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* 修改操作按钮容器为绝对定位 */
+        .action-bar {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        /* 调整评论块为相对定位 */
+        .comment-block {
+            position: relative;
+            padding-right: 120px;
+            /* 给右侧按钮留出空间 */
+        }
+
+        /* 优化按钮样式 */
+        .like-btn,
+        .reply-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .action-bar {
+                position: static;
+                margin-top: 12px;
+            }
+
+            .comment-block {
+                padding-right: 15px;
+            }
+        }
+
+        /* 回复消息特殊样式 */
+        .reply-message {
+            margin-left: 50px;
+        }
+
+        .time {
+            font-size: 12px;
+            color: #64748b;
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .answer-list {
+            padding: 20px 0;
+        }
+
+        .answer-item {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .answer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #1e293b;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            color: #2563eb;
+        }
+
+        .answer-content {
+            margin-bottom: 10px;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        .answer-meta {
+            display: flex;
+            align-items: center;
+            color: #64748b;
+            font-size: 0.9em;
+        }
+
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .btn-send {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .btn-send:hover {
+            background-color: #1d4ed8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed">
+        <aside class="left-sidebar">
+            <!-- Sidebar scroll-->
+            <div>
+              <div class="brand-logo d-flex align-items-center justify-content-between">
+                <a href="./index.html" class="text-nowrap logo-img">
+                  <img src="../assets/images/logos/logo.svg" alt="" />
+                </a>
+                <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+                  <i class="ti ti-x fs-8"></i>
+                </div>
+              </div>
+              <!-- Sidebar navigation-->
+              <!-- Sidebar navigation-->
+              <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+                <ul id="sidebarnav">
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">个人空间</span>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" style="width:150px" href="index.html" aria-expanded="false">
+                      <iconify-icon icon="solar:widget-add-line-duotone" >
+                      </iconify-icon>
+                      <span class="hide-menu" >学习进度</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" style="width:150px" href="personal_profile.html" aria-expanded="false">
+                      <iconify-icon icon="solar:widget-add-line-duotone">
+                      </iconify-icon>
+                      <span class="hide-menu">个人画像</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" style="width:150px" href="message_board.html" aria-expanded="false">
+                      <iconify-icon icon="solar:widget-add-line-duotone" style="color:#00a1ff ;">
+                      </iconify-icon>
+                      <span class="hide-menu" style="color:#00a1ff ;">留言板</span>
+                    </a>
+                  </li>
+                  <li>
+                    <span class="sidebar-divider lg" style="width: 150px;"></span>
+                  </li>
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">AI助教</span>
+                  </li>
+      
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="ai_qa.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">AI问答</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="ai_exercise.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">AI出题</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="error_analysis.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">习题分析</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" style="width:150px" href="work.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+      
+                      <span class="hide-menu">智能岗位</span>
+                    </a>
+                  </li>
+      
+                  <!-- 三 -->
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">课程导读</span>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="pre_school_preparation.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">学前准备</span>
+                    </a>
+                  </li>
+      
+      
+                  <!-- 三 -->
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">课程学习</span>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="knowledge_graph.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">知识图谱</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="course_analysis.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">课程资源</span>
+                    </a>
+                  </li>
+      
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="homework.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">我的作业</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="exam.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">我的考试</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="laboratory.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">我的实验</span>
+                    </a>
+                  </li>
+      
+                  <li>
+                    <span style="width: 150px;" class="sidebar-divider lg"></span>
+                  </li>
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">学后助手</span>
+                  </li>
+      
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="practice_project.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">实践项目</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="authentication.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">考试认证</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="contest_notice.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">比赛通知</span>
+                    </a>
+                  </li>
+      
+                  <!-- </li> -->
+      
+                  <li>
+                    <span class="sidebar-divider lg" style="width: 150px;"></span>
+                  </li>
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">查看首页</span>
+                  </li>
+      
+                </ul>
+                <div style="width: 230px;"
+                  class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+                  <div class="me-2 flex-shrink-0" style="width: 160px;">
+                    <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+                    <a style="width: 150px;"
+                      href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33" target="_blank"
+                      class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+                  </div>
+                  <div class="unlimited-access-img" style="width: 230px;">
+                    <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+                  </div>
+                </div>
+              </nav>
+              <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+          </aside>
+        <div class="body-wrapper">
+
+            <div class="body-wrapper-inner" style="margin: 0;">
+                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" href="#pills-home"
+                            role="tab" aria-controls="pills-home" aria-selected="true">问答区</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" href="#pills-profile"
+                            role="tab" aria-controls="pills-profile" aria-selected="false">资料区</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" href="#pills-contact"
+                            role="tab" aria-controls="pills-contact" aria-selected="false">聊天区</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="pills-tabContent">
+                    <!-- 我的提问标签页 -->
+                    <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
+                        aria-labelledby="pills-home-tab">
+                        <div class="qa-tabs">
+                            <button class="tab-btn active" data-tab="my-questions">我的提问（3）</button>
+                            <button class="tab-btn" data-tab="my-answers">我的回复（5）</button>
+                        </div>
+
+                        <!-- 我的提问内容 -->
+                        <div class="tab-content active" id="my-questions">
+                            <div class="post-list">
+                                <!-- 提问项目一：OSI模型问题 -->
+                                <div class="post-item">
+                                    <div class="post-header">
+                                        <span class="badge solved">已解决</span>
+                                        <h3>OSI七层模型数据封装问题</h3> <!-- 修改标题 -->
+                                        <div class="meta">
+                                            <span class="topic-tag">网络基础</span> <!-- 修改分类 -->
+                                            <i class="fas fa-clock"></i> 2小时前
+                                        </div>
+                                    </div>
+                                    <div class="post-body">
+                                        <p>在数据链路层与网络层之间如何进行有效的帧封装？需要特别注意哪些字段的封装顺序？</p> <!-- 修改内容 -->
+                                    </div>
+                                    <div class="post-actions">
+                                        <button class="btn-icon">
+                                            <i class="fas fa-comments"></i> 查看回复（3）
+                                        </button>
+                                        <!-- 保留操作按钮 -->
+                                    </div>
+                                </div>
+
+                                <!-- 提问项目二：BGP路由问题 -->
+                                <div class="post-item">
+                                    <div class="post-header">
+                                        <span class="badge unsolved">未解决</span>
+                                        <h3>BGP路由反射器配置</h3> <!-- 修改标题 -->
+                                        <div class="meta">
+                                            <span class="topic-tag">路由技术</span> <!-- 修改分类 -->
+                                            <i class="fas fa-clock"></i> 1天前
+                                        </div>
+                                    </div>
+                                    <div class="post-body">
+                                        <p>在多宿主AS环境中，如何配置BGP路由反射器才能避免路由环路？</p> <!-- 修改内容 -->
+                                    </div>
+                                </div>
+
+                                <!-- 新增网络技术问题 -->
+                                <div class="post-item">
+                                    <div class="post-header">
+                                        <span class="badge unsolved">未解决</span>
+                                        <h3>VLAN间路由配置问题</h3>
+                                        <div class="meta">
+                                            <span class="topic-tag">交换技术</span>
+                                            <i class="fas fa-clock"></i> 3小时前
+                                        </div>
+                                    </div>
+                                    <div class="post-body">
+                                        <p>使用三层交换机实现VLAN间路由时，如何优化ACL规则提升转发效率？</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 我的回复内容 -->
+                        <div class="tab-content" id="my-answers">
+                            <div class="answer-list">
+                                <!-- 回复项目一：STP协议 -->
+                                <div class="answer-item">
+                                    <div class="answer-header">
+                                        <span class="question-title">【回复】生成树协议配置</span> <!-- 修改标题 -->
+                                        <span class="vote-count">获赞数：8</span>
+                                    </div>
+                                    <div class="answer-content">
+                                        <p>建议采用RSTP快速生成树协议，将边缘端口配置为portfast，同时启用BPDU防护功能...</p> <!-- 修改内容 -->
+                                        <div class="answer-meta">
+                                            <i class="fas fa-clock"></i> 1天前 ·
+                                            <i class="fas fa-thumbs-up"></i> 采纳回答
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 回复项目二：IPv6配置 -->
+                                <div class="answer-item">
+                                    <div class="answer-header">
+                                        <span class="question-title">【回复】IPv6地址分配问题</span>
+                                        <span class="vote-count">获赞数：5</span>
+                                    </div>
+                                    <div class="answer-content">
+                                        <p>在部署IPv6时，建议使用EUI-64方法生成接口标识，同时注意关闭不必要的自动地址配置功能...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 上传技术文档标签页 -->
+                        <div class="tab-pane fade" id="pills-profile" role="tabpanel"
+                            aria-labelledby="pills-profile-tab">
+                            <div class="upload-form">
+                                <h3>上传技术文档</h3> <!-- 修改标题 -->
+                                <form id="uploadForm" enctype="multipart/form-data">
+                                    <div class="form-group">
+                                        <input type="file" id="fileInput" name="file" required
+                                            accept=".pdf,.doc,.docx,.pkt"> <!-- 添加.pkt支持 -->
+                                        <label for="fileInput">选择文件</label>
+                                        <span class="file-info">(支持PDF/Word/拓扑文件，最大20MB)</span> <!-- 修改提示 -->
+                                    </div>
+
+                                    <div class="form-group">
+                                        <input type="text" id="fileName" name="filename"
+                                            placeholder="输入文件名称（示例：OSPF配置手册）"> <!-- 修改示例 -->
+                                        <span class="input-tip">包含协议版本号更利于搜索（如：BGPv4配置指南）</span>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <select id="knowledgeType" name="knowledge" required>
+                                            <option value="">选择协议类型</option> <!-- 修改分类 -->
+                                            <option value="routing">路由协议</option>
+                                            <option value="security">网络安全</option>
+                                            <option value="wan">广域网技术</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <textarea id="fileDescription" name="description"
+                                            placeholder="添加文档说明（可选）：适用设备型号、协议版本等"></textarea>
+                                        <!-- 修改提示 -->
+                                    </div>
+
+                                    <button type="submit" class="btn-upload">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        上传技术文档 <!-- 修改按钮文字 -->
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- 已上传技术文档 -->
+                            <div class="uploaded-files">
+                                <h4>已上传文档（3）</h4>
+                                <div class="file-list">
+                                    <!-- 文档一：协议详解 -->
+                                    <div class="file-item">
+                                        <span class="file-name">TCP_IP协议栈详解.pdf</span> <!-- 修改文件名 -->
+                                        <span class="file-meta">
+                                            <i class="fas fa-download"></i> 32次下载 ·
+                                            <i class="fas fa-thumbs-up"></i> 15次点赞
+                                        </span>
+                                    </div>
+
+                                    <!-- 文档二：实验指南 -->
+                                    <div class="file-item">
+                                        <span class="file-name">Cisco_ACL配置实验.pkt</span> <!-- 添加拓扑文件 -->
+                                        <span class="file-meta">
+                                            <i class="fas fa-download"></i> 28次下载
+                                        </span>
+                                    </div>
+
+                                    <!-- 文档三：协议手册 -->
+                                    <div class="file-item">
+                                        <span class="file-name">OSPFv3实施指南.docx</span>
+                                        <span class="file-meta">
+                                            <i class="fas fa-download"></i> 18次下载 ·
+                                            <i class="fas fa-thumbs-up"></i> 9次点赞
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 实时聊天标签页 -->
+                        <div class="tab-pane fade" id="pills-contact" role="tabpanel"
+                            aria-labelledby="pills-contact-tab">
+                            <div class="chat-container">
+
+                                <div class="chat-history">
+
+                                    <div class="chat-input">
+                                        <input type="text" id="messageInput" placeholder="输入消息...">
+                                        <button class="btn-send">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        // 导航栏切换逻辑
+                        document.querySelectorAll('.nav-item').forEach(navItem => {
+                            navItem.addEventListener('click', () => {
+                                // 移除所有 active 类
+                                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                                document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+
+                                // 添加 active 类到点击的目标分区和对应的内容区
+                                navItem.classList.add('active');
+                                const targetSectionId = navItem.getAttribute('data-target');
+                                document.getElementById(targetSectionId).classList.add('active');
+                            });
+                        });
+
+                        // 问答区的标签切换逻辑
+                        document.querySelectorAll('.tab-btn').forEach(tabBtn => {
+                            tabBtn.addEventListener('click', () => {
+                                // 移除所有 active 类
+                                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+                                // 添加 active 类到点击的标签和对应的内容区
+                                tabBtn.classList.add('active');
+                                const targetContentId = tabBtn.getAttribute('data-tab');
+                                document.getElementById(targetContentId).classList.add('active');
+                            });
+                        });
+
+                        // 资料区上传表单逻辑
+                        document.getElementById('uploadForm').addEventListener('submit', function (e) {
+                            e.preventDefault();
+
+                            const formData = new FormData(this);
+
+                            // 这里添加上传逻辑（需要后端接口支持）
+                            fetch('/upload-endpoint', {
+                                method: 'POST',
+                                body: formData
+                            }).then(response => {
+                                // 处理上传成功后的响应
+                                alert('上传成功！');
+                                this.reset();
+                            }).catch(error => {
+                                console.error('上传失败:', error);
+                            });
+                        });
+
+                        const comments = [
+                            {
+                                id: 1,
+                                user: "李老师",
+                                avatar: "李",
+                                content: "这个问题可以从积分的基本性质入手分析",
+                                time: "10:30 AM",
+                                likes: 12,
+                                replies: [
+                                    {
+                                        id: 3,
+                                        user: "王同学",
+                                        avatar: "王",
+                                        content: "具体是指哪条性质呢？",
+                                        time: "10:35 AM",
+                                        likes: 2,
+                                        replyTo: "李老师"
+                                    }
+                                ]
+                            },
+                            {
+                                id: 2,
+                                user: "张助教",
+                                avatar: "张",
+                                content: "参考教材第三章例题5的解法",
+                                time: "10:32 AM",
+                                likes: 8,
+                                replies: []
+                            }
+                        ];
+
+                        function generateMessage(message) {
+                            const container = document.createElement("div");
+                            container.className = `message ${message.type}`;
+
+                            const contentDiv = document.createElement("div");
+                            contentDiv.className = "message-content";
+
+                            // 添加用户信息（仅接收消息显示）
+                            if (message.type === "received" && message.user) {
+                                const userSpan = document.createElement("span");
+                                userSpan.className = "message-user";
+                                userSpan.textContent = message.user + "：";
+                                contentDiv.appendChild(userSpan);
+                            }
+
+                            const contentP = document.createElement("p");
+                            contentP.textContent = message.content;
+
+                            const timeSpan = document.createElement("span");
+                            timeSpan.className = "time";
+                            timeSpan.textContent = message.time;
+
+                            contentDiv.appendChild(contentP);
+                            contentDiv.appendChild(timeSpan);
+                            container.appendChild(contentDiv);
+
+                            return container;
+                        }
+
+                        document.addEventListener("DOMContentLoaded", () => {
+                            const chatHistory = document.querySelector(".chat-history");
+
+                            // 添加现有消息
+                            chatSamples.forEach(msg => {
+                                chatHistory.appendChild(generateMessage(msg));
+                            });
+
+                            // 自动滚动到底部
+                            chatHistory.scrollTop = chatHistory.scrollHeight;
+                        });
+
+                        // 消息时间格式化函数（可复用）
+                        function formatTime(date = new Date()) {
+                            const hours = date.getHours().toString().padStart(2, '0');
+                            const minutes = date.getMinutes().toString().padStart(2, '0');
+                            return `${hours}:${minutes}`;
+                        }
+
+                    </script>
+                    <!-- 生成逻辑 -->
+                    <script>
+                        function renderComments() {
+                            const container = document.createElement('div');
+                            container.className = 'comment-section';
+
+                            comments.forEach(comment => {
+                                const commentBlock = document.createElement('div');
+                                commentBlock.className = 'comment-block';
+
+                                // 头部信息
+                                const header = `
+            <div class="comment-header">
+              <div class="user-avatar">${comment.avatar}</div>
+              <div class="comment-meta">
+                <div class="comment-user">${comment.user}</div>
+                <div class="comment-time">${comment.time}</div>
+              </div>
+            </div>
+            <div class="comment-content">${comment.content}</div>
+          `;
+
+                                // 操作栏
+                                const actions = `
+            <div class="action-bar">
+              <div class="like-btn">
+                <i class="fas fa-thumbs-up"></i>
+                <span>${comment.likes}</span>
+              </div>
+              <div class="reply-btn">
+                <i class="fas fa-reply"></i>
+                <span>回复</span>
+              </div>
+            </div>
+          `;
+
+                                // 回复内容
+                                let repliesHTML = '';
+                                if (comment.replies.length > 0) {
+                                    repliesHTML += '<div class="reply-section">';
+                                    comment.replies.forEach(reply => {
+                                        repliesHTML += `
+                <div class="comment-block">
+                  <div class="comment-header">
+                    <div class="user-avatar">${reply.avatar}</div>
+                    <div class="comment-meta">
+                      <div class="comment-user">${reply.user}
+                        <span class="reply-tag">回复 ${reply.replyTo}</span>
+                      </div>
+                      <div class="comment-time">${reply.time}</div>
+                    </div>
+                  </div>
+                  <div class="comment-content">${reply.content}</div>
+                  <div class="action-bar">
+                    <div class="like-btn">
+                      <i class="fas fa-thumbs-up"></i>
+                      <span>${reply.likes}</span>
+                    </div>
+                  </div>
+                </div>
+              `;
+                                    });
+                                    repliesHTML += '</div>';
+                                }
+
+                                commentBlock.innerHTML = header + actions + repliesHTML;
+                                container.appendChild(commentBlock);
+                            });
+
+                            return container;
+                        }
+
+                        // 初始化渲染
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const chatContainer = document.querySelector('.chat-history');
+                            chatContainer.appendChild(renderComments());
+                        });
+                    </script>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/sidebarmenu.js"></script>
+    <script src="../assets/js/app.min.js"></script>
+    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+    <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+
+    <!-- solar icons -->
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>知识图谱</title>
+  <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+  <link rel="stylesheet" href="../assets/css/styles.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    /* 全局样式增强 */
+    body {
+      background: #f8faff;
+      font-family: 'Segoe UI', 'Open Sans', sans-serif;
+    }
+
+    /* 实验导航栏升级 */
+    .experiment-nav {
+      right: 20px;
+      top: 100px;
+      width: 260px;
+      border: 1px solid rgba(0, 175, 255, 0.1);
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+      border-radius: 16px;
+      transition: all 0.3s;
+    }
+
+    .nav-list a {
+      padding: 12px;
+      border-radius: 8px;
+      background: linear-gradient(to right, transparent 50%, #f3f9ff);
+      transition: transform 0.2s;
+    }
+
+    .nav-list a:hover {
+      transform: translateX(8px);
+      background: linear-gradient(to right, #e3f2ff 50%, #f3f9ff);
+    }
+
+    /* 面板样式重构 */
+    .panel1,
+    .panel2,
+    .panel3,
+    .panel4,
+    .panel5 {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+      margin-bottom: 40px;
+      padding: 40px;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .panel1:hover,
+    .panel2:hover,
+    .panel3:hover,
+    .panel4:hover,
+    .panel5:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 40px rgba(52, 152, 219, 0.15);
+    }
+
+    /* 标题样式增强 */
+    h1 {
+      font-size: 2.4rem;
+      color: #2c3e50;
+      border-bottom: 3px solid #3498db;
+      padding-bottom: 15px;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    h1:after {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 120px;
+      height: 3px;
+      background: #e74c3c;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      color: #34495e;
+      padding-left: 1rem;
+      border-left: 4px solid #2ecc71;
+      margin: 2rem 0;
+    }
+
+    /* 代码块3D效果 */
+    pre {
+      background: #2d3748;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    pre:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px 12px 0 0;
+    }
+
+    code {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.95em;
+    }
+
+    /* 表格现代风格 */
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    th {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+      padding: 16px;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 14px;
+      border-bottom: 1px solid #f0f4f8;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* 视频列表卡片化 */
+    .video-list li {
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      margin: 20px 0;
+      transition: all 0.3s;
+    }
+
+    .video-list li:hover {
+      transform: translateX(10px);
+      box-shadow: 0 8px 16px rgba(52, 152, 219, 0.15);
+    }
+
+    /* 按钮样式升级 */
+    .btn {
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      border: none;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+      border: none;
+      color: white;
+    }
+
+    /* 响应式优化 */
+    @media (max-width: 768px) {
+      .experiment-nav {
+        position: static;
+        width: 100%;
+        margin-bottom: 2rem;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .panel1,
+      .panel2,
+      .panel3,
+      .panel4,
+      .panel5 {
+        padding: 20px;
+      }
+    }
+
+    /* 动态元素 */
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-8px);
+      }
+
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
+    .video-list li:hover i {
+      animation: float 1.2s ease infinite;
+    }
+
+
+
+
+    /* 为h1标题增加颜色和样式 */
+    h1 {
+      color: #2c3e50;
+      /* 设置标题颜色 */
+      border-bottom: 2px solid #3498db;
+      /* 添加底部边框 */
+      padding-bottom: 10px;
+      /* 设置边框与文字的间距 */
+      margin-bottom: 25px;
+      /* 设置标题与下文的间距 */
+      font-size: 2.2rem;
+      /* 设置字体大小 */
+      position: relative;
+      /* 为定位其他元素做准备 */
+    }
+
+    /* 为h2标题增加颜色和样式 */
+    h2 {
+      color: #3498db;
+      /* 设置标题颜色 */
+      border-left: 4px solid #2ecc71;
+      /* 添加左侧边框 */
+      padding-left: 12px;
+      /* 设置边框与文字的间距 */
+      margin-bottom: 20px;
+      /* 设置标题与下文的间距 */
+      font-size: 1.8rem;
+      /* 设置字体大小 */
+    }
+
+    /* 为h3标题增加颜色和样式 */
+    h3 {
+      color: #e67e22;
+      /* 设置标题颜色 */
+      margin-bottom: 15px;
+      /* 设置标题与下文的间距 */
+      font-size: 1.5rem;
+      /* 设置字体大小 */
+      padding: 8px 0;
+      /* 设置内边距 */
+      background: linear-gradient(to right, #e74c3c, #c0392b);
+      /* 添加背景渐变 */
+      -webkit-background-clip: text;
+      /* 使用背景剪裁文字 */
+      background-clip: text;
+      color: transparent;
+      /* 设置文字颜色为透明，以便显示背景 */
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      /* 添加文字阴影 */
+    }
+
+    /* 为h4标题增加颜色和样式 */
+    h4 {
+      color: #f1c40f;
+      /* 设置标题颜色 */
+      margin-bottom: 15px;
+      /* 设置标题与下文的间距 */
+      font-size: 1.3rem;
+      /* 设置字体大小 */
+      text-decoration: underline;
+      /* 添加下划线 */
+      text-decoration-color: #f39c12;
+      /* 设置下划线颜色 */
+    }
+
+    /* 为h5标题增加颜色和样式 */
+    h5 {
+      color: #9b59b6;
+      /* 设置标题颜色 */
+      margin-bottom: 10px;
+      /* 设置标题与下文的间距 */
+      font-size: 1.1rem;
+      /* 设置字体大小 */
+      font-weight: 600;
+      /* 设置字体粗细 */
+    }
+
+    /* 为h6标题增加颜色和样式 */
+    h6 {
+      color: #e67e22;
+      /* 设置标题颜色 */
+      margin-bottom: 10px;
+      /* 设置标题与下文的间距 */
+      font-size: 1rem;
+      /* 设置字体大小 */
+      font-style: italic;
+      /* 设置字体为斜体 */
+    }
+
+    .section {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .video-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .video-list li {
+      margin: 10px 0;
+    }
+
+    code {
+      background: #ecf0f1;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+
+    .note {
+      color: #7f8c8d;
+      font-style: italic;
+    }
+
+    .experiment-nav {
+      position: fixed;
+      right: 30px;
+      top: 120px;
+      width: 240px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      z-index: 1000;
+      backdrop-filter: blur(8px);
+    }
+
+    .experiment-nav h3 {
+      color: #2c3e50;
+      border-left: 4px solid #3498db;
+      padding-left: 12px;
+      margin-bottom: 15px;
+    }
+
+    .nav-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .nav-list li {
+      margin: 8px 0;
+      position: relative;
+    }
+
+    .nav-list a {
+      color: #34495e;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: all 0.3s;
+    }
+
+    .nav-list a:hover {
+      background: #f8f9fa;
+      transform: translateX(6px);
+    }
+
+    .nav-list a::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      background: #3498db;
+      border-radius: 50%;
+      margin-right: 10px;
+      opacity: 0.6;
+    }
+
+    /* 增强实验面板样式 */
+    .panel1,
+    .panel2,
+    .panel3,
+    .panel4,
+    .panel5 {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      margin-bottom: 30px;
+      padding: 30px;
+      position: relative;
+      transition: transform 0.3s;
+    }
+
+    .panel1:hover,
+    .panel2:hover,
+    .panel3:hover,
+    .panel4:hover,
+    .panel5:hover {
+      transform: translateY(-5px);
+    }
+
+    h1 {
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 15px;
+      margin-bottom: 25px;
+      font-size: 2.2rem;
+    }
+
+    .section {
+      margin: 30px 0;
+      padding: 25px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border-left: 4px solid #3498db;
+    }
+
+    .video-list li {
+      margin: 15px 0;
+      padding: 15px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    code {
+      background: #ecf0f1;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-family: 'Fira Code', monospace;
+    }
+
+    pre {
+      background: #2c3e50;
+      color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+
+    pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 0.9em;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    th {
+      background: #3498db;
+      color: #fff;
+      padding: 15px;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .note {
+      color: #7f8c8d;
+      border-top: 1px dashed #ddd;
+      padding-top: 15px;
+      margin-top: 30px;
+    }
+
+
+
+    /* 实验照片样式 */
+    .experiment-img {
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+
+    /* 视频列表样式优化 */
+    .video-list li {
+      display: flex;
+      align-items: center;
+    }
+
+    .video-list li i {
+      margin-right: 10px;
+      color: #3498db;
+    }
+  </style>
+
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-between">
+          <a href="./index.html" class="text-nowrap logo-img">
+            <img src="../assets/images/logos/logo.svg" alt="" />
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
+        </div>
+        <!-- Sidebar navigation-->
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">个人空间</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="index.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">学习进度</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="personal_profile.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">个人画像</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="message_board.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">留言板</span>
+              </a>
+            </li>
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">AI助教</span>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="ai_qa.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">AI问答</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="ai_exercise.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">AI出题</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="error_analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">习题分析</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="work.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+
+                <span class="hide-menu">智能岗位</span>
+              </a>
+            </li>
+
+            <!-- 三 -->
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程导读</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="pre_school_preparation.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">学前准备</span>
+              </a>
+            </li>
+
+
+            <!-- 三 -->
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程学习</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="knowledge_graph.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">知识图谱</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="course_analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">课程资源</span>
+              </a>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="homework.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">我的作业</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="exam.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">我的考试</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="laboratory.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone" style="color:#00a1ff ;"></iconify-icon>
+                <span class="hide-menu" style="color:#00a1ff ;">我的实验</span>
+              </a>
+            </li>
+
+            <li>
+              <span style="width: 150px;" class="sidebar-divider lg"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">学后助手</span>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="practice_project.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">实践项目</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="authentication.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">考试认证</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="contest_notice.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">比赛通知</span>
+              </a>
+            </li>
+
+            <!-- </li> -->
+
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">查看首页</span>
+            </li>
+
+          </ul>
+          <div style="width: 230px;"
+            class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+            <div class="me-2 flex-shrink-0" style="width: 160px;">
+              <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+              <a style="width: 150px;"
+                href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33" target="_blank"
+                class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+            </div>
+            <div class="unlimited-access-img" style="width: 230px;">
+              <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+            </div>
+          </div>
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+    <div class="body-wrapper" style="height: 1300px; margin-top: 0;">
+
+
+
+      <div class="body-wrapper"
+        style="flex: 2; padding: 40px; margin-left: 10px; background-color: #fff; text-align: left;">
+        <div class="experiment-nav">
+          <h3>实验导航</h3>
+          <ul class="nav-list">
+            <li><a href="#panel1"><i class="fa-solid fa-network-wired"></i> 交换机基础配置</a></li>
+            <li><a href="#panel2"><i class="fa-solid fa-layer-group"></i> VLAN与中继配置</a></li>
+            <li><a href="#panel3"><i class="fa-solid fa-router"></i> 单臂路由器配置</a></li>
+            <li><a href="#panel4"><i class="fa-solid fa-link"></i> 以太通道实施</a></li>
+            <li><a href="#panel5"><i class="fa-solid fa-bug"></i> VLAN路由排错</a></li>
+          </ul>
+        </div>
+        <div class="container mt-4">
+          <div class="panel1" id="panel1">
+            <h1>交换机基础配置实验指南</h1>
+
+            <div class="section">
+              <h2>实验简介</h2>
+              <!-- 添加实验照片 -->
+              <!-- <img src="path/to/experiment1.jpg" alt="交换机基础配置实验照片" class="experiment-img"> -->
+              <p>本实验基于Cisco Packet Tracer
+                7.0及以上环境，重点掌握企业级交换机的初始化配置、VLAN划分、中继链路设置及基础安全策略。实验内容涵盖从物理连接到远程管理的完整流程，适用于网络工程、信息安全等专业学生及企业IT人员。
+              </p>
+              <p>实验周期：建议4-6课时完成基础配置，进阶内容可扩展至8课时。</p>
+              <!-- 添加不同颜色的按钮 -->
+
+            </div>
+
+            <div class="section">
+              <h2><i class="fa-brands fa-bilibili"></i> B站精选教学视频</h2>
+              <ul class="video-list">
+                <li>
+                  <!-- <i class="fa-solid fa-video"></i> -->
+                  <a href="https://www.bilibili.com/video/BV1qW411u78k" target="_blank">
+                    Cisco交换机基础配置全流程演示（2023新版）
+                  </a>
+                  <p>涵盖Console连接、密码设置、VLAN划分及中继链路配置。</p>
+                </li>
+
+                <li>
+                  <a href="https://www.bilibili.com/video/BV1z5411j7qW" target="_blank">
+                    VLAN与中继链路实战案例（含PT仿真）
+                  </a>
+                  <p>通过企业级拓扑演示VLAN间通信配置，包含常见错误排查。</p>
+                </li>
+                <li>
+                  <a href="https://www.bilibili.com/video/BV16a4y1j7rX" target="_blank">
+                    交换机安全配置与攻防演示
+                  </a>
+                  <p>讲解端口安全、BPDU防护及DHCP监听等防护策略。</p>
+                </li>
+              </ul>
+            </div>
+
+            <div class="section">
+              <h2>核心配置代码示例</h2>
+
+              <h3>1. 基础系统配置</h3>
+              <pre><code>
+        enable
+        configure terminal
+        hostname SW-Office
+        enable secret class123
+        service password-encryption
+        ip default-gateway 192.168.1.254
+        line console 0
+         password console_pass
+         login
+        line vty 0 4
+         password telnet_pass
+         login
+        exit
+        copy running-config startup-config
+                </code></pre>
+
+              <h3>2. VLAN与中继配置</h3>
+              <pre><code>
+        vlan 10
+         name Sales
+        vlan 20
+         name HR
+        interface GigabitEthernet0/1
+         switchport mode access
+         switchport access vlan 10
+        interface GigabitEthernet0/24
+         switchport mode trunk
+         switchport trunk native vlan 99
+         switchport trunk allowed vlan 10,20
+                </code></pre>
+
+              <h3>3. 安全增强配置</h3>
+              <pre><code>
+        interface GigabitEthernet0/1
+         switchport port-security
+         switchport port-security maximum 3
+         switchport port-security violation restrict
+        spanning-tree bpduguard enable
+        ip dhcp snooping
+        ip dhcp snooping trust interface GigabitEthernet0/24
+                </code></pre>
+            </div>
+
+            <div class="section">
+              <h2>实验注意事项</h2>
+              <ul>
+                <li>初始配置必须通过Console端口，建议使用Putty或SecureCRT工具</li>
+                <li>管理VLAN建议使用非默认ID（如VLAN 99），并配置ACL限制访问</li>
+                <li>中继链路两端需保持封装协议（802.1Q）和本征VLAN一致</li>
+                <li>密码设置遵循复杂度要求，定期更换管理密码</li>
+                <li>配置变更后执行`show running-config`检查，确保无遗漏</li>
+              </ul>
+            </div>
+
+            <footer>
+              <p class="note">注：本文档基于2023-2024年最新网络技术发展整理，实际操作需结合具体设备型号调整配置参数。</p>
+            </footer>
+          </div>
+          <div class="panel2" id="panel2">
+            <h1>VLAN与中继配置实验指南（2023-2024）</h1>
+
+            <div class="section">
+              <h2>实验简介</h2>
+              <p>本实验基于Cisco Packet Tracer
+                7.3环境，通过双交换机拓扑掌握VLAN划分、802.1Q中继配置及VLAN间通信原理。实验包含VLAN创建、端口分配、中继协商及本征VLAN配置等核心内容，适合网络工程专业学生及企业网络管理员。</p>
+              <p>实验周期：建议6-8课时，含进阶配置（如VLAN修剪、DTP模式分析）。</p>
+            </div>
+
+            <div class="section">
+              <h2>B站精选教学视频</h2>
+              <ul class="video-list">
+                <li>
+                  <a href="https://www.bilibili.com/video/BV1yW411d7uX" target="_blank">
+                    VLAN与中继链路配置实战（含PT仿真）
+                  </a>
+                  <p>涵盖VLAN创建、端口分配及802.1Q中继配置全流程。</p>
+                </li>
+                <li>
+                  <a href="https://www.bilibili.com/video/BV1q5411d7yL" target="_blank">
+                    本征VLAN配置与安全防护
+                  </a>
+                  <p>详解本征VLAN作用及配置注意事项，附攻击演示。</p>
+                </li>
+                <li>
+                  <a href="https://www.bilibili.com/video/BV1zE411z7iY" target="_blank">
+                    DTP协议原理与配置案例
+                  </a>
+                  <p>分析动态中继协议工作机制，演示不同协商模式效果。</p>
+                </li>
+              </ul>
+            </div>
+
+            <div class="section">
+              <h2>核心配置代码示例</h2>
+
+              <h3>1. 基础系统配置</h3>
+              <pre><code>
+    enable
+    configure terminal
+    hostname SW-Core
+    enable secret class123
+    service password-encryption
+    ip default-gateway 192.168.1.254
+    line console 0
+     password console_pass
+     login
+    line vty 0 4
+     password telnet_pass
+     login
+    exit
+    copy running-config startup-config
+            </code></pre>
+
+              <h3>2. VLAN创建与端口分配</h3>
+              <pre><code>
+    vlan 10
+     name Sales
+    vlan 20
+     name HR
+    interface GigabitEthernet0/1
+     switchport mode access
+     switchport access vlan 10
+    interface GigabitEthernet0/2
+     switchport mode access
+     switchport access vlan 20
+            </code></pre>
+
+              <h3>3. 802.1Q中继配置</h3>
+              <pre><code>
+    interface GigabitEthernet0/24
+     switchport mode trunk
+     switchport trunk native vlan 99
+     switchport trunk allowed vlan 10,20
+    spanning-tree portfast trunk
+            </code></pre>
+
+              <h3>4. 本征VLAN安全增强</h3>
+              <pre><code>
+    interface GigabitEthernet0/24
+     switchport trunk native vlan 999
+     switchport nonegotiate
+     spanning-tree bpdufilter enable
+            </code></pre>
+            </div>
+
+            <div class="section">
+              <h2>实验注意事项</h2>
+              <ul>
+                <li>中继链路两端必须使用相同的封装类型（802.1Q）</li>
+                <li>本征VLAN建议使用非默认ID（如VLAN 999）</li>
+                <li>配置trunk前确保两端端口模式匹配（如dynamic desirable/dynamic auto）</li>
+                <li>使用`switchport nonegotiate`关闭DTP协商提高安全性</li>
+                <li>删除VLAN前需先将端口分配到其他VLAN</li>
+                <li>通过`show interfaces trunk`命令验证中继状态</li>
+              </ul>
+            </div>
+
+            <div class="section">
+              <h2>常见故障处理</h2>
+              <table border="1" cellspacing="0" cellpadding="8">
+                <tr>
+                  <th>故障现象</th>
+                  <th>可能原因</th>
+                  <th>解决方案</th>
+                </tr>
+                <tr>
+                  <td>PC无法跨VLAN通信</td>
+                  <td>未配置三层路由</td>
+                  <td>添加SVI接口或配置路由器子接口</td>
+                </tr>
+                <tr>
+                  <td>中继链路协商失败</td>
+                  <td>模式不匹配</td>
+                  <td>设置`switchport mode trunk`强制中继</td>
+                </tr>
+                <tr>
+                  <td>VLAN流量未通过中继</td>
+                  <td>允许列表错误</td>
+                  <td>使用`switchport trunk allowed vlan`调整</td>
+                </tr>
+                <tr>
+                  <td>本征VLAN不一致</td>
+                  <td>配置错误</td>
+                  <td>检查`switchport trunk native vlan`</td>
+                </tr>
+              </table>
+            </div>
+
+            <footer>
+              <p class="note">注：实验配置基于Cisco IOS 15.2(2)，不同设备型号可能存在命令差异。</p>
+            </footer>
+          </div>
+          <div class="panel3" id="panel3">
+            <h1>单臂路由器 VLAN 间路由实验指南（2023-2024）</h1>
+
+            <div class="section">
+              <h2>实验简介</h2>
+              <p>本实验基于Cisco Packet Tracer 7.3环境，通过单臂路由器架构实现VLAN间通信。重点掌握子接口配置、802.1Q中继及路由策略，适合网络工程专业学生及企业网络管理员。</p>
+              <p>实验周期：建议8-10课时，含进阶配置（如ACL访问控制、DHCP中继）。</p>
+            </div>
+
+            <div class="section">
+              <h2>实验目标</h2>
+              <ul>
+                <li>构建网络并配置设备基本设置</li>
+                <li>创建VLAN并分配交换机端口</li>
+                <li>配置802.1Q中继链路</li>
+                <li>实现单臂路由器VLAN间路由</li>
+                <li>验证端到端通信</li>
+              </ul>
+            </div>
+
+            <div class="section">
+              <h2>地址分配表</h2>
+              <table>
+                <tr>
+                  <th>设备</th>
+                  <th>接口</th>
+                  <th>IP 地址</th>
+                  <th>子网掩码</th>
+                  <th>默认网关</th>
+                </tr>
+                <tr>
+                  <td>R1</td>
+                  <td>G0/0/1.3</td>
+                  <td>192.168.3.1</td>
+                  <td>255.255.255.0</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td>S1</td>
+                  <td>VLAN 3</td>
+                  <td>192.168.3.11</td>
+                  <td>255.255.255.0</td>
+                  <td>192.168.3.1</td>
+                </tr>
+                <tr>
+                  <td>PC-A</td>
+                  <td>NIC</td>
+                  <td>192.168.3.3</td>
+                  <td>255.255.255.0</td>
+                  <td>192.168.3.1</td>
+                </tr>
+              </table>
+            </div>
+
+            <div class="section">
+              <h2>核心配置代码示例</h2>
+
+              <h3>1. 路由器子接口配置</h3>
+              <pre><code>
+        enable
+        configure terminal
+        interface GigabitEthernet0/0/1.3
+         description Management Network
+         encapsulation dot1q 3
+         ip address 192.168.3.1 255.255.255.0
+        interface GigabitEthernet0/0/1.4
+         description Operations Network
+         encapsulation dot1q 4
+         ip address 192.168.4.1 255.255.255.0
+                </code></pre>
+
+              <h3>2. 交换机中继配置</h3>
+              <pre><code>
+        interface FastEthernet0/1
+         switchport mode trunk
+         switchport trunk native vlan 8
+         switchport trunk allowed vlan 3,4,8
+                </code></pre>
+
+              <h3>3. VLAN间路由验证</h3>
+              <pre><code>
+        show ip route
+        show interfaces trunk
+        ping 192.168.4.3
+                </code></pre>
+            </div>
+
+            <div class="section">
+              <h2>实验注意事项</h2>
+              <ul>
+                <li>子接口封装类型必须与VLAN ID匹配</li>
+                <li>中继链路两端本征VLAN需一致</li>
+                <li>启用路由器接口的IP路由功能</li>
+                <li>验证ARP表确保地址解析正常</li>
+                <li>使用`debug ip packet`跟踪路由过程</li>
+              </ul>
+            </div>
+
+            <div class="section">
+              <h2>B站教学视频</h2>
+              <ul class="video-list">
+                <li>
+                  <a href="https://www.bilibili.com/video/BV123456789" target="_blank">
+                    单臂路由器VLAN间路由配置演示
+                  </a>
+                  <p>涵盖子接口配置、中继链路设置及故障排查</p>
+                </li>
+                <li>
+                  <a href="https://www.bilibili.com/video/BV987654321" target="_blank">
+                    VLAN间路由常见问题解析
+                  </a>
+                  <p>演示ARP故障、封装错误等典型问题处理</p>
+                </li>
+              </ul>
+            </div>
+
+            <div class="section">
+              <h2>GitHub资源</h2>
+              <ul>
+                <li>
+                  <a href="https://github.com/username/network-experiments/tree/main/vlan-routing" target="_blank">
+                    实验完整配置文件
+                  </a>
+                  <p>包含路由器和交换机的配置脚本</p>
+                </li>
+                <li>
+                  <a href="https://github.com/username/network-experiments/blob/main/LICENSE" target="_blank">
+                    实验/LICENSE文件
+                  </a>
+                  <p>遵循MIT开源协议</p>
+                </li>
+              </ul>
+            </div>
+
+            <footer>
+              <p class="note">注：实验配置基于Cisco IOS XE 16.9.4，不同设备型号可能存在命令差异。</p>
+            </footer>
+          </div>
+          <div class="panel4" id="panel4">
+            <h1>实施以太通道实验指南（2023-2024）</h1>
+
+            <div class="section">
+              <h2>实验简介</h2>
+              <p>本实验基于Cisco Packet Tracer 7.3环境，通过双交换机配置链路聚合（LACP）实现带宽扩展与冗余。重点掌握以太通道配置、中继链路优化及聚合状态验证。</p>
+              <p>实验周期：建议6-8课时，含进阶配置（如PAgP协议分析、负载均衡策略）。</p>
+            </div>
+
+            <div class="section">
+              <h2>实验目标</h2>
+              <ul>
+                <li>构建网络并配置设备基本设置</li>
+                <li>创建VLAN并分配交换机端口</li>
+                <li>配置802.1Q中继链路</li>
+                <li>实现LACP以太通道</li>
+                <li>验证链路聚合状态</li>
+              </ul>
+            </div>
+
+            <div class="section">
+              <h2>地址分配表</h2>
+              <table>
+                <tr>
+                  <th>设备</th>
+                  <th>接口</th>
+                  <th>IP 地址</th>
+                  <th>子网掩码</th>
+                </tr>
+                <tr>
+                  <td>S1</td>
+                  <td>VLAN 10</td>
+                  <td>192.168.10.11</td>
+                  <td>255.255.255.0</td>
+                </tr>
+                <tr>
+                  <td>PC-A</td>
+                  <td>NIC</td>
+                  <td>192.168.20.3</td>
+                  <td>255.255.255.0</td>
+                </tr>
+              </table>
+            </div>
+
+            <div class="section">
+              <h2>核心配置代码示例</h2>
+
+              <h3>1. 交换机基本配置</h3>
+              <pre><code>
+        enable
+        configure terminal
+        hostname SW1
+        enable secret class123
+        service password-encryption
+        ip default-gateway 192.168.1.254
+                </code></pre>
+
+              <h3>2. 以太通道配置</h3>
+              <pre><code>
+        interface range FastEthernet0/1-2
+         switchport mode trunk
+         switchport trunk native vlan 1000
+         switchport trunk allowed vlan 10,20,1000
+         channel-group 1 mode active
+                </code></pre>
+
+              <h3>3. 验证命令</h3>
+              <pre><code>
+        show etherchannel summary
+        show interfaces trunk
+        show ip interface brief
+                </code></pre>
+            </div>
+
+            <div class="section">
+              <h2>实验注意事项</h2>
+              <ul>
+                <li>物理端口必须属于同一模块且速率/双工一致</li>
+                <li>确保两端交换机的LACP模式匹配</li>
+                <li>本征VLAN需与中继配置一致</li>
+                <li>使用`channel-group`命令前先配置中继参数</li>
+                <li>验证`Port-channel`接口状态</li>
+              </ul>
+            </div>
+
+            <div class="section">
+              <h2>B站教学视频</h2>
+              <ul class="video-list">
+                <li>
+                  <a href="https://www.bilibili.com/video/BV123456789" target="_blank">
+                    以太通道配置实战演示
+                  </a>
+                  <p>涵盖LACP配置、故障排查及流量测试</p>
+                </li>
+                <li>
+                  <a href="https://www.bilibili.com/video/BV987654321" target="_blank">
+                    链路聚合常见问题解析
+                  </a>
+                  <p>演示端口不兼容、模式错误等典型问题处理</p>
+                </li>
+              </ul>
+            </div>
+
+            <div class="section">
+              <h2>GitHub资源</h2>
+              <ul>
+                <li>
+                  <a href="https://github.com/username/network-experiments/tree/main/etherchannel" target="_blank">
+                    实验完整配置文件
+                  </a>
+                  <p>包含交换机配置脚本及验证命令</p>
+                </li>
+              </ul>
+            </div>
+
+            <footer>
+              <p class="note">注：实验配置基于Cisco IOS 15.2(2)，不同设备型号可能存在命令差异。</p>
+            </footer>
+          </div>
+          <div class="panel5" id="panel5">
+            <h1>VLAN间路由故障排除实验指南（2023-2024）</h1>
+
+            <div class="section">
+              <h2>实验简介</h2>
+              <p>本实验基于Cisco Packet Tracer 7.3环境，通过预配置故障场景掌握VLAN间路由排错方法。重点学习路由表分析、中继配置检查及常见错误修复。</p>
+              <p>实验周期：建议8-10课时，含进阶内容（如ACL调试、DHCP中继问题处理）。</p>
+            </div>
+
+            <div class="section">
+              <h2>实验目标</h2>
+              <ul>
+                <li>评估网络初始状态</li>
+                <li>收集配置信息并分析故障</li>
+                <li>修复VLAN间路由配置错误</li>
+                <li>验证端到端连通性</li>
+              </ul>
+            </div>
+
+            <div class="section">
+              <h2>地址分配表</h2>
+              <table>
+                <tr>
+                  <th>设备</th>
+                  <th>接口</th>
+                  <th>IP 地址</th>
+                  <th>子网掩码</th>
+                  <th>默认网关</th>
+                </tr>
+                <tr>
+                  <td>R1</td>
+                  <td>G0/0/1.3</td>
+                  <td>10.3.0.1</td>
+                  <td>255.255.255.0</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td>PC-A</td>
+                  <td>NIC</td>
+                  <td>10.4.0.50</td>
+                  <td>255.255.255.0</td>
+                  <td>10.4.0.1</td>
+                </tr>
+              </table>
+            </div>
+
+            <div class="section">
+              <h2>核心修复命令示例</h2>
+
+              <h3>1. 路由器配置修复</h3>
+              <pre><code>
+    interface g0/0/1.8
+     encapsulation dot1q 8 native
+     exit
+            </code></pre>
+
+              <h3>2. 交换机配置修复</h3>
+              <pre><code>
+    default interface f0/5
+    interface f0/5
+     switchport mode trunk
+     switchport trunk allowed vlan 3,4,8,13
+            </code></pre>
+
+              <h3>3. 验证命令</h3>
+              <pre><code>
+    show running-config
+    show ip route
+    ping 10.13.0.50
+            </code></pre>
+            </div>
+
+            <div class="section">
+              <h2>实验注意事项</h2>
+              <ul>
+                <li>检查VLAN是否存在及端口分配</li>
+                <li>确认中继链路本征VLAN一致性</li>
+                <li>验证子接口封装与VLAN ID匹配</li>
+                <li>使用`debug`命令跟踪数据包</li>
+                <li>注意ACL对流量的隐含拒绝</li>
+              </ul>
+            </div>
+
+            <div class="section">
+              <h2>B站教学视频</h2>
+              <ul class="video-list">
+                <li>
+                  <a href="https://www.bilibili.com/video/BV123456789" target="_blank">
+                    VLAN间路由故障排查实战
+                  </a>
+                  <p>演示常见配置错误及逐步排错流程</p>
+                </li>
+                <li>
+                  <a href="https://www.bilibili.com/video/BV987654321" target="_blank">
+                    路由表分析与故障定位
+                  </a>
+                  <p>通过抓包工具解析流量路径</p>
+                </li>
+              </ul>
+            </div>
+
+            <div class="section">
+              <h2>GitHub资源</h2>
+              <ul>
+                <li>
+                  <a href="https://github.com/username/network-experiments/tree/main/vlan-troubleshooting"
+                    target="_blank">
+                    实验预配置文件
+                  </a>
+                  <p>包含初始错误配置及修复脚本</p>
+                </li>
+              </ul>
+            </div>
+
+            <footer>
+              <p class="note">注：实验配置基于Cisco IOS XE 16.9.4，不同设备型号可能存在命令差异。</p>
+            </footer>
+          </div>
+        </div>
+
+      </div>
+      <script>
+        // 添加平滑滚动效果
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+          anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          });
+        });
+
+        // 面板交互动画
+        document.querySelectorAll('.panel1, .panel2, .panel3, .panel4, .panel5').forEach(panel => {
+          panel.addEventListener('mousemove', (e) => {
+            const rect = panel.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            panel.style.setProperty('--x', `${x}px`);
+            panel.style.setProperty('--y', `${y}px`);
+          });
+        });
+      </script>
+      <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+      <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+      <script src="../assets/js/sidebarmenu.js"></script>
+      <script src="../assets/js/app.min.js"></script>
+      <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+      <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+      <script src="../assets/js/dashboard.js"></script>
+      <!-- solar icons -->
+      <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+
+</html>

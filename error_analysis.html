@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>收藏界面</title>
+  <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+  <link rel="stylesheet" href="../assets/css/styles.min.css" />
+  <style>
+    .question-item {
+      transition: 0.3s;
+    }
+
+    .question-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    .border-start {
+      border-left: 2px solid #dee2e6 !important;
+      padding-left: 1.5rem;
+    }
+
+    /* 添加删除动画 */
+    .question-item {
+      transition: all 0.3s ease !important;
+    }
+
+
+    .custom-select:hover {
+      background-color: #e6f7ff;
+      /* 悬停时背景颜色 */
+    }
+
+    .delete-btn {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+
+
+    .progress-indicator {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fill-blanks {
+      font-size: 1.1em;
+      line-height: 1.8;
+    }
+
+    .blank-answer {
+      border-bottom: 2px solid;
+      padding: 0 0.3em;
+      margin: 0 0.2em;
+    }
+
+    .correct {
+      border-color: #28a745;
+    }
+
+    .wrong {
+      border-color: #dc3545;
+    }
+
+    .code-section pre {
+      background: #f8f9fa;
+      padding: 1em;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      font-size: 0.9em;
+    }
+
+
+    .icon {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      /* background-color: rgba(96, 165, 250, 1); */
+      padding: 0.5rem;
+      color: rgba(255, 255, 255, 1);
+    }
+
+    .question-card {
+      border-radius: 12px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .question-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 操作按钮容器 */
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 100px;
+    }
+
+    /* 重新答题按钮 */
+    .btn-retry {
+      background: linear-gradient(135deg, #4a90e2, #63b4ff);
+      border: 1px solid #90caf9;
+      color: white;
+      /* padding: 8px 16px; */
+      transform: scale(0.9);
+      padding: 0.25rem 0.5rem;
+      border-radius: 20px;
+      transition: all 0.3s;
+    }
+
+    .alert-warning {
+      background: #fff3cd;
+      border-color: #ffeeba;
+    }
+
+    .alert-success {
+      background: #d4edda;
+      border-color: #c3e6cb;
+    }
+
+    .form-check-input:checked {
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+    }
+
+    .btn-retry:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+    }
+
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .border-start {
+        border-left: none !important;
+        padding-left: 0;
+        margin-top: 1rem;
+      }
+
+      .action-buttons {
+        flex-direction: row;
+        justify-content: flex-end;
+        width: 100%;
+        margin-top: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-between">
+          <a href="./index.html" class="text-nowrap logo-img">
+            <img src="../assets/images/logos/logo.svg" alt="" />
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
+        </div>
+        <!-- Sidebar navigation-->
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">个人空间</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="index.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">学习进度</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="personal_profile.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">个人画像</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="message_board.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">留言板</span>
+              </a>
+            </li>
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">AI助教</span>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="ai_qa.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">AI问答</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="ai_exercise.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">AI出题</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="error_analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone" style="color:#00a1ff ;"></iconify-icon>
+                <span class="hide-menu" style="color:#00a1ff ;">习题分析</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="work.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+
+                <span class="hide-menu">智能岗位</span>
+              </a>
+            </li>
+
+            <!-- 三 -->
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程导读</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="pre_school_preparation.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">学前准备</span>
+              </a>
+            </li>
+
+
+            <!-- 三 -->
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程学习</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="knowledge_graph.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">知识图谱</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="course_analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">课程资源</span>
+              </a>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="homework.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">我的作业</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="exam.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">我的考试</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="laboratory.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">我的实验</span>
+              </a>
+            </li>
+
+            <li>
+              <span style="width: 150px;" class="sidebar-divider lg"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">学后助手</span>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="practice_project.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">实践项目</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="authentication.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">考试认证</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="contest_notice.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">比赛通知</span>
+              </a>
+            </li>
+
+            <!-- </li> -->
+
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">查看首页</span>
+            </li>
+
+          </ul>
+          <div style="width: 230px;"
+            class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+            <div class="me-2 flex-shrink-0" style="width: 160px;">
+              <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+              <a style="width: 150px;"
+                href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33" target="_blank"
+                class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+            </div>
+            <div class="unlimited-access-img" style="width: 230px;">
+              <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+            </div>
+          </div>
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+    <div class="body-wrapper">
+      <div class="body-wrapper-inner" style="margin-top: 0;min-height: 100vh;">
+        <nav>
+          <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" href="#nav-home" role="tab"
+              aria-controls="nav-home" aria-selected="true">作业错题<a>
+                <a class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" href="#nav-profile" role="tab"
+                  aria-controls="nav-profile" aria-selected="false">考试错题</a>
+
+          </div>
+        </nav>
+
+        <!-- 作业错题 -->
+        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+          <div class="container mt-4" id="home-container">
+
+          </div>
+        </div>
+
+        <!-- 考试错题 -->
+        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+          <div class="container mt-4" id="profile-container">
+
+          </div>
+        </div>
+
+        <!-- 练习模态框 -->
+        <div class="modal fade" id="practiceModal" tabindex="-1">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <form id="practiceForm">
+                <div class="modal-body" id="modalBody"></div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">提交答案</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+      <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+      <script src="../assets/js/sidebarmenu.js"></script>
+      <script src="../assets/js/app.min.js"></script>
+      <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+      <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+      <script src="../assets/js/dashboard.js"></script>
+      <!-- solar icons -->
+      <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+      <!-- 修改script部分 -->
+      <script>
+        // 添加ACE编辑器资源
+        document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"><\/script>');
+
+        // 自定义样式
+        const customStyles = `
+    .fill-blank-input { 
+      width: 120px;
+      display: inline-block;
+      margin: 0 5px; 
+    }
+    .code-editor {
+      height: 300px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .progress-bar {
+      min-width: 40px;
+    }
+  `;
+        const styleTag = document.createElement('style');
+        styleTag.innerHTML = customStyles;
+        document.head.appendChild(styleTag);
+        // 增强后的题目数据结构
+        const homeworkQuestions = [
+          {
+            id: 1,
+            type: 'choice',
+            title: '网络互联的主要目的是什么？',
+            options: ['A. 增加通信量', 'B. 提高网络安全性', 'C. 扩展网络覆盖范围', 'D. 所有以上选项'],
+            userAnswer: 'D',
+            correctAnswer: 'D',
+            analysis: '网络互联的主要目的是扩展网络覆盖范围，使不同网络之间的设备能够相互通信',
+            progress: 75,
+            attempts: 3
+          },
+          {
+            id: 3,
+            type: 'choice',
+            title: '在TCP/IP协议中，负责将IP地址转换为对应的MAC地址的是（  ）',
+            options: ['A. ARP协议', 'B. RARP协议', 'C. ICMP协议', 'D. IGMP协议'],
+            userAnswer: 'A',
+            correctAnswer: 'A',
+            analysis: 'ARP协议用于将IP地址解析为MAC地址',
+            progress: 55,
+            attempts: 3
+          },
+          {
+            id: 4,
+            type: 'choice',
+            title: '下列哪个协议用于在局域网中实现动态地址分配（  ）',
+            options: ['A. DHCP', 'B. DNS', 'C. HTTP', 'D. FTP'],
+            userAnswer: 'B',
+            correctAnswer: 'A',
+            analysis: 'DHCP协议负责动态分配IP地址',
+            progress: 77,
+            attempts: 8
+          },
+          {
+            id: 5,
+            type: 'fill',
+            title: 'TCP/IP模型中，__1__层处理路由选择，__2__层提供端到端传输',
+            userAnswer: ['网络', '传输'],
+            correctAnswer: ['网络', '传输'],
+            analysis: '网络层负责路由选择，传输层提供端到端的数据传输服务',
+            progress: 65,
+            attempts: 4
+          },
+          {
+            id: 11,
+            type: 'choice',
+            title: '以下哪种协议工作在TCP/IP模型的传输层？',
+            options: ['A. HTTP', 'B. TCP', 'C. IP', 'D. DNS'],
+            userAnswer: '',
+            correctAnswer: 'B',
+            analysis: 'TCP工作在传输层，HTTP和DNS工作在应用层，IP工作在网络层',
+            progress: 0,
+            attempts: 0
+          },
+          {
+            id: 12,
+            type: 'choice',
+            title: 'IPv6地址的表示方法中，哪个是正确的？',
+            options: ['A. 2001:0db8:85a3::8a2e:0370:7334', 'B. 2001:db8:85a3::8a2e:370:7334', 'C. 2001:0db8:85a3:0000:0000:8a2e:0370:7334', 'D. 以上都是正确的'],
+            userAnswer: '',
+            correctAnswer: 'D',
+            analysis: 'IPv6支持省略连续的零段，选项A和C都是合法的IPv6地址表示方法',
+            progress: 0,
+            attempts: 0
+          },
+          {
+            id: 13,
+            type: 'fill',
+            title: '在OSPF协议中，__1__是负责区域间路由选择的路由器，__2__是负责与其它自治系统交换路由信息的路由器',
+            userAnswer: ['', ''],
+            correctAnswer: ['ABR', 'ASBR'],
+            analysis: 'ABR（Area Border Router）是区域边界路由器，ASBR（Autonomous System Boundary Router）是自治系统边界路由器',
+            progress: 0,
+            attempts: 0
+          },
+          {
+            id: 14,
+            type: 'choice',
+            title: '以下哪种设备工作在网络层？',
+            options: ['A. 交换机', 'B. 路由器', 'C. 集线器', 'D. 网桥'],
+            userAnswer: '',
+            correctAnswer: 'B',
+            analysis: '路由器工作在网络层，交换机工作在数据链路层，集线器工作在物理层，网桥工作在数据链路层',
+            progress: 0,
+            attempts: 0
+          },
+          {
+            id: 15,
+            type: 'program',
+            title: '使用Python实现一个简单的HTTP客户端请求',
+            userCode: '',
+            correctCode: 'import requests\n\ndef http_request(url):\n    try:\n        response = requests.get(url)\n        return response.status_code\n    except:\n        return -1',
+            analysis: '可以使用requests库来简化HTTP请求的实现',
+            progress: 0,
+            attempts: 0
+          },
+          {
+            id: 16,
+            type: 'choice',
+            title: '以下哪项不是TCP协议的特性？',
+            options: ['A. 面向连接', 'B. 可靠传输', 'C. 无连接', 'D. 流量控制'],
+            userAnswer: '',
+            correctAnswer: 'C',
+            analysis: 'TCP是面向连接的协议，提供可靠传输和流量控制。UDP是无连接的协议',
+            progress: 0,
+            attempts: 0
+          },
+          {
+            id: 17,
+            type: 'fill',
+            title: '在TCP三次握手过程中，第一次握手发送的是__1__包，第二次握手发送的是__2__包，第三次握手发送的是__3__包',
+            userAnswer: ['', '', ''],
+            correctAnswer: ['SYN', 'SYN-ACK', 'ACK'],
+            analysis: 'TCP三次握手过程：客户端发送SYN包，服务器回应SYN-ACK包，客户端发送ACK包完成握手',
+            progress: 0,
+            attempts: 0
+          }
+        ];
+        // 在homeworkQuestions下方添加考试错题数据
+        const examQuestions = [
+          {
+            id: 2,
+            type: 'choice',
+            title: '在TCP/IP模型中，哪一层负责数据的实际传输？',
+            options: ['A. 应用层', 'B. 传输层', 'C. 网络层', 'D. 数据链路层'],
+            userAnswer: 'C',
+            correctAnswer: 'B',
+            analysis: '传输层负责端到端的通信和数据传输',
+            progress: 60,
+            attempts: 2
+          },
+          {
+            id: 7,
+            type: 'fill',
+            title: 'OSI模型中负责路由选择的层是__1__层，负责数据格式转换的是__2__层',
+            userAnswer: ['网络', '表示'],
+            correctAnswer: ['网络', '表示'],
+            analysis: '网络层负责路由选择，表示层负责数据格式转换',
+            progress: 55,
+            attempts: 3
+          },
+          {
+            id: 8,
+            type: 'program',
+            title: '使用Python实现Ping功能检测网络连通性',
+            userCode: 'import os\n\ndef ping(host):\n    return os.system(f"ping -c 4 {host}")',
+            correctCode: 'import subprocess\n\ndef ping(host):\n    try:\n        subprocess.check_output(["ping", "-c", "4", host])\n        return True\n    except:\n        return False',
+            analysis: '推荐使用subprocess模块实现更安全的命令执行',
+            progress: 30,
+            attempts: 2
+          },
+          {
+            id: 9,
+            type: 'fill',
+            title: 'IPv4地址由__1__位二进制组成，IPv6地址由__2__位二进制组成',
+            userAnswer: ['32', '64'],
+            correctAnswer: ['32', '128'],
+            analysis: 'IPv4使用32位地址，IPv6使用128位地址',
+            progress: 50,
+            attempts: 3
+          },
+          {
+            id: 10,
+            type: 'program',
+            title: '使用Python实现TCP客户端连接测试',
+            userCode: 'import socket\n\ns = socket.socket()\ns.connect(("example.com", 80))',
+            correctCode: 'import socket\n\ndef test_connection(host, port):\n    try:\n        with socket.socket() as s:\n            s.settimeout(2)\n            s.connect((host, port))\n            return True\n    except:\n        return False',
+            analysis: '应封装为函数并添加异常处理',
+            progress: 35,
+            attempts: 2
+          }
+
+        ];
+
+        // 修改后的题目卡片生成器
+        function createQuestionCard(question) {
+          let contentHtml = '';
+          let answerCompareHtml = '';
+
+          // 根据题型生成不同内容
+          switch (question.type) {
+            case 'fill':
+              answerCompareHtml = `
+    <div class="row mt-3">
+      <div class="col-md-6">
+        <div class="alert alert-warning small p-2 mb-2">
+          你的答案：${question.userAnswer.join(', ') || '未作答'}
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="alert alert-success small p-2 mb-2">
+          正确答案：${question.correctAnswer.join(', ') || '未作答'}
+        </div>
+      </div>
+    </div>`;
+              break;
+
+            case 'program':
+              contentHtml = `
+    <div class="row">
+      
+    </div>`;
+              answerCompareHtml = `
+    <div class="row mt-3">
+      <div class="col-md-6">
+        <div class="alert alert-warning small p-2 mb-2">
+          你的代码：
+          <pre>${question.userCode || '未作答'}</pre>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="alert alert-success small p-2 mb-2">
+          正确代码：
+          <pre>${question.correctCode}</pre>
+        </div>
+      </div>
+    </div>`;
+              break;
+
+            default:  // 单选题
+              contentHtml = `
+    <div class="row">
+      <div class="col-md-8">
+        <div class="mb-3">
+          ${question.options.map(opt => `
+            <div class="form-check">
+              <input class="form-check-input" type="radio" 
+                ${opt.startsWith(question.userAnswer) ? 'checked' : ''}
+                disabled>
+              <label class="form-check-label">${opt}</label>
+            </div>
+          `).join('')}
+
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="alert alert-success small p-2 h-100">
+          正确答案：${question.correctAnswer}
+        </div>
+      </div>
+    </div>`;
+          }
+
+          return `
+  <div class="card mb-4 question-card" data-id="${question.id}">
+    <!-- 重新练习按钮 -->
+    <button class="btn btn-retry btn-sm position-absolute" 
+            style="top:15px; right:15px; z-index:1">
+      <iconify-icon icon="solar:restart-linear"></iconify-icon>
+      重新练习
+    </button>
+    
+    <div class="card-body position-relative">
+      <h5 class="text-primary mb-4">${question.title}</h5>
+      
+      ${contentHtml}
+      ${answerCompareHtml}
+  
+      <!-- 删除按钮 -->
+      <div class="position-absolute" style="bottom:15px; right:15px">
+        <button class="btn btn-danger btn-sm delete-btn">
+          <iconify-icon icon="solar:trash-bin-trash-linear"></iconify-icon>
+          删除
+        </button>
+      </div>
+  
+     <!-- 修改后的解析部分 -->
+<div class="collapse" id="analysis-${question.id}">
+  <div class="pt-3 border-top">
+    <h6 class="text-muted">详细解析</h6>
+    <p>${question.analysis}</p>
+    <div class="text-end small text-muted">
+      已练习次数：<span class="attempts-count">${question.attempts}</span>次
+      <div class="progress mt-2" style="height: 20px;">
+        <div class="progress-bar" role="progressbar" 
+          style="width: ${question.progress}%" 
+          aria-valuenow="${question.progress}" 
+          aria-valuemin="0" 
+          aria-valuemax="100">
+          ${question.progress}%
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+      <!-- 展开按钮 -->
+      <a class="d-block text-center small text-primary mt-2" 
+          data-bs-toggle="collapse" 
+          href="#analysis-${question.id}">
+          查看解析 ↓
+      </a>
+    </div>
+  </div>`;
+        }
+
+        // 初始化渲染
+        function renderQuestions() {
+          const containers = {
+            'home-container': homeworkQuestions,
+            'profile-container': examQuestions
+          };
+
+          Object.entries(containers).forEach(([containerId, questions]) => {
+            const container = document.getElementById(containerId);
+            container.innerHTML = questions.map(q => createQuestionCard(q)).join('');
+          });
+
+          bindEvents();
+        }
+        // 生成练习表单的函数
+        function generatePracticeForm(question) {
+          let formHtml = '';
+          switch (question.type) {
+            case 'choice':
+              formHtml = `
+        <div class="mb-3">
+          ${question.options.map((opt, index) => `
+            <div class="form-check">
+              <input class="form-check-input" type="radio" 
+                name="answer" id="opt${index}" value="${opt[0]}">
+              <label class="form-check-label" for="opt${index}">
+                ${opt}
+              </label>
+            </div>
+          `).join('')}
+        </div>`;
+              break;
+
+            case 'fill':
+              formHtml = question.title.replace(/__\d+__/g, (match) => `
+        <input type="text" class="form-control form-control-sm fill-blank-input" 
+          data-blank="${match.replace(/\D/g, '')}">
+      `) + '<div class="mt-3 small text-muted">请按顺序填写所有空白处</div>';
+              break;
+
+            case 'program':
+              formHtml = `
+        <div class="mb-3">
+          <div id="editor" class="code-editor">${question.userCode || ''}</div>
+          <textarea name="code" class="d-none"></textarea>
+        </div>`;
+              break;
+          }
+          return formHtml;
+        }
+
+        // 显示练习模态框
+        function showPracticeModal(question) {
+          const modalTitle = document.getElementById('modalTitle');
+          const modalBody = document.getElementById('modalBody');
+
+          modalTitle.textContent = `重新练习 (${question.type === 'choice' ? '选择题' :
+            question.type === 'fill' ? '填空题' : '编程题'})`;
+
+          modalBody.innerHTML = generatePracticeForm(question);
+
+          // 初始化代码编辑器（如果是编程题）
+          if (question.type === 'program') {
+            const editor = ace.edit("editor");
+            editor.setTheme("ace/theme/chrome");
+            editor.session.setMode("ace/mode/python");
+            editor.session.on('change', () => {
+              document.querySelector('textarea[name="code"]').value = editor.getValue();
+            });
+          }
+
+          const modal = new bootstrap.Modal('#practiceModal');
+          modal.show();
+
+          // 表单提交处理
+          document.getElementById('practiceForm').onsubmit = (e) => {
+            e.preventDefault();
+            handlePracticeSubmit(question, modal);
+          };
+        }
+        // 处理答案提交
+        function handlePracticeSubmit(question, modal) {
+          // 更新练习次数
+          question.attempts += 1;
+
+          // 获取用户答案
+          let isCorrect = false;
+          switch (question.type) {
+            case 'choice':
+              const selected = document.querySelector('input[name="answer"]:checked');
+              isCorrect = selected ? selected.value === question.correctAnswer : false;
+              if (selected) question.userAnswer = selected.value;
+              break;
+
+            case 'fill':
+              const inputs = Array.from(document.querySelectorAll('.fill-blank-input'));
+              const userAnswers = inputs.sort((a, b) =>
+                a.dataset.blank - b.dataset.blank).map(i => i.value.trim());
+              isCorrect = userAnswers.every((ans, i) =>
+                ans.toLowerCase() === question.correctAnswer[i].toLowerCase());
+              question.userAnswer = userAnswers;
+              break;
+
+            case 'program':
+              const userCode = document.querySelector('textarea[name="code"]').value;
+              // 简单验证（实际需要更复杂的代码检查）
+              isCorrect = userCode.includes(question.correctCode.split('(')[0]);
+              question.userCode = userCode;
+              break;
+          }
+
+          // 更新进度（简单逻辑示例）
+          question.progress = Math.min(
+            question.progress + (isCorrect ? 25 : -10),
+            100
+          );
+          if (question.progress < 0) question.progress = 0;
+
+          // 更新卡片显示
+          updateQuestionCard(question);
+          modal.hide();
+        }
+
+        // 更新卡片函数
+        function updateQuestionCard(question) {
+          try {
+            const card = document.querySelector(`.question-card[data-id="${question.id}"]`);
+            if (!card) return;
+
+            // 更新练习次数
+            const attemptsElement = card.querySelector('.attempts-count');
+            if (attemptsElement) {
+              attemptsElement.textContent = question.attempts;
+            }
+
+            // 更新进度条
+            const progressBar = card.querySelector('.progress-bar');
+            if (progressBar) {
+              progressBar.style.width = `${question.progress}%`;
+              progressBar.textContent = `${question.progress}%`;
+              progressBar.className = `progress-bar ${question.progress >= 80 ? 'bg-success' :
+                question.progress >= 50 ? 'bg-warning' : 'bg-danger'
+                }`;
+            }
+
+            // 更新答案显示...
+          } catch (e) {
+            console.error('更新卡片失败:', e);
+          }
+        }
+        // 事件绑定
+        function bindEvents() {
+          // 删除功能
+          document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+              const card = this.closest('.question-card');
+              const questionId = card.dataset.id;
+              if (confirm('确定要删除这个题目吗？')) {
+                card.style.transition = '0.3s';
+                card.style.opacity = '0';
+                card.style.transform = 'translateX(100px)';
+                setTimeout(() => card.remove(), 300);
+              }
+            });
+          });
+
+          // 重新答题功能
+          // 修改后的重新练习功能
+          document.querySelectorAll('.btn-retry').forEach(btn => {
+            btn.addEventListener('click', function () {
+              try {
+                const card = this.closest('.question-card');
+                const questionId = parseInt(card.dataset.id);
+                const isHomework = !!card.closest('#nav-home');
+
+                const questionPool = isHomework ? homeworkQuestions : examQuestions;
+                const question = questionPool.find(q => q.id === questionId);
+
+                if (question) {
+                  showPracticeModal(question);
+                } else {
+                  alert('题目不存在或已被删除');
+                }
+              } catch (e) {
+                console.error('重新练习出错:', e);
+              }
+            });
+          });
+        }
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', () => {
+          renderQuestions();
+
+          // 选项卡切换时重新绑定事件
+          document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('shown.bs.tab', () => {
+              setTimeout(bindEvents, 50);
+            });
+          });
+        });
+      </script>
+
+    </div>
+  </div>
+</body>
+
+</html>

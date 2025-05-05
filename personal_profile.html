@@ -1,0 +1,1095 @@
+<!doctype html>
+<html lang="China">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>学生端主页</title>
+    <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+    <link rel="stylesheet" href="../assets/css/styles.min.css" />
+    <!-- <link rel="stylesheet" href="/src/teacher_html/myEcharts/css/index.css"> -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        .grade-panel {
+            display: flex;
+            min-height: 300px;
+            width: 100%;
+        }
+
+
+
+        /* 自定义样式 */
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+
+        .hover-scale:hover {
+            transform: translateY(-3px);
+        }
+
+
+
+
+        /* 辅助文字 */
+        .radial-progress-sm small {
+            font-size: 0.7rem;
+        }
+
+        .metric-box {
+            transition: all 0.2s ease;
+            background: rgba(248, 250, 252, 0.5);
+        }
+
+        .metric-box:hover {
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
+        }
+
+        .icon-wrapper {
+            transition: background 0.3s ease;
+        }
+
+        .dis {
+            justify-items: center;
+            align-items: center;
+            /* margin-bottom: 0 */
+            /* margin-top: 10px; */
+        }
+
+
+
+        .col-lg-7,
+        .col-lg-5 {
+            /* padding: 0; */
+            padding: 10px;
+
+            /* 移除内边距 */
+        }
+
+
+        .col-lg-7>div,
+        .col-lg-5>div {
+            margin: 15px;
+            /* 增加外边距 */
+        }
+
+        /* 新增样式 */
+        .advice-item {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .advice-item:hover {
+            transform: translateX(5px);
+        }
+
+        .avatar-sm {
+            width: 40px;
+            height: 40px;
+        }
+
+        .border-dashed {
+            border: 2px dashed rgba(0, 133, 255, 0.15);
+        }
+
+        .text-purple {
+            color: #8c6cf7 !important;
+        }
+
+        .avatar-blue {
+            background-color: #e3f2ff;
+            color: #467fcf;
+        }
+
+        .avatar-pink {
+            background-color: #fce4ef;
+            color: #e94f86;
+        }
+
+        .alert-light {
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        /* 新增样式 */
+        .progress-bar-container {
+            width: 70%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 3px;
+        }
+
+        .progress-bar {
+            height: 20px;
+            border-radius: 15px;
+            transition: width 0.3s ease;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .online {
+            background: #4caf50;
+        }
+
+        .offline {
+            background: #ff5722;
+        }
+
+        .knowledge-radar-card {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.1);
+            transition: transform 0.3s ease;
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        }
+
+        .knowledge-radar-card:hover {
+            transform: translateY(-5px);
+        }
+
+        #knowledgeRadar {
+            margin: 2rem 0;
+        }
+
+        .todo-list {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .todo-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .todo-list li:last-child {
+            border-bottom: none;
+        }
+
+        .todo-list .btn-outline-warning {
+            width: 100px;
+        }
+
+        /* 新增全局样式 */
+        .body-wrapper-inner {
+            background: linear-gradient(135deg, #fff 0%, #fbfdff 100%);
+            padding: 20px 0;
+        }
+
+        /* 左侧主卡片美化 */
+        .card.w-100 {
+            min-height: 550px;
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
+            transition: transform 0.3s ease;
+        }
+
+        .card.w-100:hover {
+            transform: translateY(-5px);
+        }
+
+
+        /* 标题样式优化 */
+        h6.fw-medium {
+            color: #2c3e50 !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.5px;
+            position: relative;
+            padding-left: 12px;
+        }
+
+        h6.fw-medium:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 60%;
+            background: #00a1ff;
+            border-radius: 2px;
+        }
+
+        /* 间距优化 */
+        .row.gap-4 {
+            gap: 1.5rem !important;
+        }
+
+        /* 数据卡片装饰 */
+        .card-body {
+            position: relative;
+        }
+
+        .card-body:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00a1ff 0%, #8c6cf7 100%);
+            opacity: 0.15;
+        }
+
+        .card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        #radarChart {
+            width: 100%;
+            height: 320px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+        }
+
+        /* 新增样式，用于将三个盒子放在同一行 */
+        .equal-height-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .equal-height-row>.col {
+            display: flex;
+        }
+
+        .equal-height-row>.col>.card {
+            width: 100%;
+        }
+
+        .text-gradient-primary {
+            background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-gradient-purple {
+            background: linear-gradient(45deg, #6f42c1, #d63384);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 时间轴样式 */
+        .timeline-wrapper {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10px;
+            width: 2px;
+            height: 100%;
+            background-color: #fff;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+
+        }
+
+        .timeline-badge {
+            position: absolute;
+            left: -25px;
+            top: 0;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .timeline-content {
+            padding-left: 20px;
+        }
+
+        /* 推荐卡片样式 */
+        .recommend-card {
+            padding: 15px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .recommend-card.hover-scale:hover {
+            transform: scale(1.03);
+        }
+
+        /* 细进度条样式 */
+        .progress.thin {
+            height: 8px;
+        }
+
+        /* 统一仪表盘样式 */
+
+
+        /* 统一响应式调整 */
+        @media (max-width: 768px) {
+            .dashboard-progress-lg {
+                width: 100px;
+                height: 100px;
+            }
+
+            .study-info .h5 {
+                font-size: 1.1rem;
+            }
+
+            .study-info .h4 {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* 统一交互效果 */
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            transition: all 0.2s;
+        }
+
+
+        .inner-circle {
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .col-md-4 .card {
+            flex: 1;
+            height: 260px;
+            background-color: #fff;
+            /* border: #467fcf solid 1px; */
+            /* background: linear-gradient(to right, #b7d6ff, #3b82f6); */
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            background-color: #fff;
+        }
+
+        .card-title {
+            font-size: 18px;
+            margin-left: 10px;
+            /* color: #0056b3; */
+            /* 蓝色文字 */
+        }
+    </style>
+
+</head>
+
+<body>
+    <!--  Body Wrapper -->
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed">
+        <aside class="left-sidebar">
+            <!-- Sidebar scroll-->
+            <div>
+                <div class="brand-logo d-flex align-items-center justify-content-between">
+                    <a href="./index.html" class="text-nowrap logo-img">
+                        <img src="../assets/images/logos/logo.svg" alt="" />
+                    </a>
+                    <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+                        <i class="ti ti-x fs-8"></i>
+                    </div>
+                </div>
+                <!-- Sidebar navigation-->
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+                    <ul id="sidebarnav">
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">个人空间</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" style="width:150px" href="index.html" aria-expanded="false">
+                                <iconify-icon icon="solar:widget-add-line-duotone">
+                                </iconify-icon>
+                                <span class="hide-menu">学习进度</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" style="width:150px" href="personal_profile.html"
+                                aria-expanded="false">
+                                <iconify-icon icon="solar:widget-add-line-duotone" style="color:#00a1ff ;">
+                                </iconify-icon>
+                                <span class="hide-menu" style="color:#00a1ff ;">个人画像</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" style="width:150px" href="message_board.html" aria-expanded="false">
+                                <iconify-icon icon="solar:widget-add-line-duotone">
+                                </iconify-icon>
+                                <span class="hide-menu">留言板</span>
+                            </a>
+                        </li>
+                        <li>
+                            <span class="sidebar-divider lg" style="width: 150px;"></span>
+                        </li>
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">AI助教</span>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="ai_qa.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                                <span class="hide-menu">AI问答</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="ai_exercise.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                                <span class="hide-menu">AI出题</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="error_analysis.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                                <span class="hide-menu">习题分析</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" style="width:150px" href="work.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+
+                                <span class="hide-menu">智能岗位</span>
+                            </a>
+                        </li>
+
+                        <!-- 三 -->
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">课程导读</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="pre_school_preparation.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">学前准备</span>
+                            </a>
+                        </li>
+
+
+                        <!-- 三 -->
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">课程学习</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="knowledge_graph.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">知识图谱</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="course_analysis.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">课程资源</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="homework.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">我的作业</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="exam.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">我的考试</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="laboratory.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">我的实验</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <span style="width: 150px;" class="sidebar-divider lg"></span>
+                        </li>
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">学后助手</span>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="practice_project.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                                <span class="hide-menu">实践项目</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="authentication.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                                <span class="hide-menu">考试认证</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="contest_notice.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                                <span class="hide-menu">比赛通知</span>
+                            </a>
+                        </li>
+
+                        <!-- </li> -->
+
+                        <li>
+                            <span class="sidebar-divider lg" style="width: 150px;"></span>
+                        </li>
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">查看首页</span>
+                        </li>
+
+                    </ul>
+                    <div style="width: 230px;"
+                        class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+                        <div class="me-2 flex-shrink-0" style="width: 160px;">
+                            <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+                            <a style="width: 150px;"
+                                href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33"
+                                target="_blank" class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+                        </div>
+                        <div class="unlimited-access-img" style="width: 230px;">
+                            <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+                        </div>
+                    </div>
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </aside>
+        <!--  Sidebar End -->
+        <!--  Main wrapper -->
+        <div class="body-wrapper">
+
+
+            <div class="body-wrapper-inner" style="margin: 0;min-height: 100vh;flex-direction: column">
+                <!-- 统计上线次数 时长 知识点掌握热力图 -->
+                <div class="parent-container">
+                    <!-- 上部容器 -->
+                    <div class="progress-container" style="display: flex;">
+                        <!-- 学习进度卡片 -->
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <iconify-icon icon="solar:pie-chart-linear"
+                                        class="fs-4 text-primary me-2"></iconify-icon>
+                                    <h6 class="card-title">课程章节进度</h6>
+                                </div>
+                                <div class="progress-info">
+                                    <div class="text-center mb-3">
+                                        <div class="circular-progress-sm" data-percent="75"
+                                            style="width: 120px; height: 70px; margin: 0 auto;">
+                                            <span class="h6"
+                                                style="line-height: 120px; font-size: 36px; font-weight: bold;">75%</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-muted small">当前章节</div>
+                                        <h5 class="text-primary mb-0">第三章 数据结构</h5>
+                                        <div class="border-top pt-3">
+
+                                        </div>
+                                        <a href="/src/html/" class="btn btn-primary btn-sm w-75">
+                                            继续学习 →
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 上线统计卡片 -->
+                        <div class="col-md-4">
+                            <div class="card" style="justify-content: center;">
+                                <div class="card-header">
+                                    <iconify-icon icon="solar:pie-chart-linear"
+                                        class="fs-4 text-primary me-2"></iconify-icon>
+                                    <h6 class="card-title">今日上线统计</h6>
+                                </div>
+                                <div class="progress-info">
+                                    <div class="text-center mb-3">
+                                        <div class="radial-progress" style="--value:85; --size:12rem">
+
+                                        </div>
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-6">
+                                            <div class="metric-box border p-2 rounded">
+                                                <div class="text-muted small mb-1">平均次数</div>
+                                                <div class="h3 mb-0 text-primary">3.2</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="metric-box border p-2 rounded">
+                                                <div class="text-muted small mb-1">同比变化</div>
+                                                <div class="h3 mb-0 text-success">+18% ↑</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div style="text-align: center; padding: 15px 0;">
+                                        <button class="btn btn-sm btn-outline-primary">
+                                            查看详细记录
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 学习时间卡片 -->
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <iconify-icon icon="solar:clock-circle-linear"
+                                        class="fs-4 text-info me-2"></iconify-icon>
+                                    <h6 class="card-title">学习时长统计</h6>
+                                </div>
+                                <div class="progress-info"
+                                    style="display: flex; justify-content: space-between; padding: 0 10px;">
+                                    <!-- 总学习时长 -->
+
+                                    <!-- 今日学习时长 -->
+                                    <div class="data-card"
+                                        style=" flex:1;padding: 20px; width: 30%; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+                                        <div
+                                            style="text-align: center; margin-bottom: 10px; color: #495057; font-size: 14px;">
+                                            今日学习时长</div>
+                                        <div class="h4"
+                                            style="color: #6eacea; font-size: 24px; font-weight: bold; text-align: center;">
+                                            2.4h</div>
+                                        <div
+                                            style="flex: 1; width: 100%; height: 6px; margin: 10px auto; background-color: #c3e6cb; border-radius: 3px; position: relative;">
+                                            <div
+                                                style="position: absolute; width: 70%; height: 100%; background-color: #afd4ec; border-radius: 3px;">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 持续学习天数 -->
+                                    <div class="data-card"
+                                        style="border-radius: 10px; padding: 20px; width: 30%; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+                                        <div
+                                            style="text-align: center; margin-bottom: 10px; color: #495057; font-size: 14px;">
+                                            持续学习天数</div>
+                                        <div class="h4"
+                                            style="color: #ccbbff; font-size: 24px; font-weight: bold; text-align: center;">
+                                            12天</div>
+                                    </div>
+                                </div>
+                                <div style="text-align: center; padding: 15px 0;">
+                                    <button class="btn btn-sm btn-outline-secondary">学习时间分析</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <!-- 考试 作业正确率 -->
+                <!-- 还要加个每个知识点的掌握热力图 -->
+                <div class="grade-panel" style="flex: 2; display: flex; height: 400px;margin-top: 30px;">
+                    <!-- 作业时间和得分的散点图 -->
+                    <div class="exam-chart" style="flex: 1; height: 100%;">
+                        <!-- <span>作业时间和得分的散点图</span> -->
+                    </div>
+                    <!-- 改为个人画像的总结 -->
+                </div>
+
+            </div>
+            <!-- 弹窗 Modal -->
+            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">今日上线记录</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table table-bordered text-center">
+                                <thead>
+                                    <tr>
+                                        <th>上线时间</th>
+                                        <th>下线时间</th>
+                                        <th>单次学习时长</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>09:00</td>
+                                        <td>10:30</td>
+                                        <td>1.5 小时</td>
+                                    </tr>
+                                    <tr>
+                                        <td>14:00</td>
+                                        <td>15:15</td>
+                                        <td>1.25 小时</td>
+                                    </tr>
+                                    <tr>
+                                        <td>19:00</td>
+                                        <td>20:00</td>
+                                        <td>1 小时</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 新增的上线记录统计弹窗 -->
+            <div class="modal fade" id="loginStatsModal" tabindex="-1" aria-labelledby="loginStatsModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="loginStatsModalLabel">上线记录统计</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table table-bordered text-center">
+                                <thead>
+                                    <tr>
+                                        <th>序号</th>
+                                        <th>上线时间</th>
+                                        <th>上线时长</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>09:00</td>
+                                        <td>1.5 小时</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>14:00</td>
+                                        <td>1.25 小时</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>19:00</td>
+                                        <td>1 小时</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div>
+
+
+
+        </div>
+
+    </div>
+    </div>
+
+    </div>
+
+    <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/sidebarmenu.js"></script>
+    <script src="../assets/js/app.min.js"></script>
+    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+    <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+
+    <!-- solar icons -->
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+
+    <script>
+        // 作业时间和得分的散点图
+        (function () {
+            // 1实例化对象
+            var myChart = echarts.init(document.querySelector(".exam-chart"));
+            // 模拟数据：作业完成时间和得分
+            const jobData = [
+                { name: '作业1', completeTime: 3.5, score: 85 },
+                { name: '作业2', completeTime: 4.2, score: 92 },
+                { name: '作业3', completeTime: 2.8, score: 78 },
+                { name: '作业4', completeTime: 5.1, score: 98 },
+                { name: '作业5', completeTime: 3.2, score: 81 },
+                { name: '作业6', completeTime: 2.9, score: 75 },
+                { name: '作业7', completeTime: 1.0, score: 88 },
+                { name: '作业8', completeTime: 4.5, score: 94 },
+                { name: '作业9', completeTime: 1.3, score: 70 },
+                { name: '作业10', completeTime: 3.0, score: 79 },
+                { name: '作业11', completeTime: 3.7, score: 84 },
+                { name: '作业12', completeTime: 4.9, score: 91 },
+                { name: '作业13', completeTime: 2.5, score: 72 },
+                { name: '作业14', completeTime: 3.3, score: 80 },
+                { name: '作业15', completeTime: 1.1, score: 87 },
+                { name: '作业16', completeTime: 3.8, score: 86 },
+                { name: '作业17', completeTime: 2.7, score: 76 },
+                { name: '作业18', completeTime: 4.4, score: 90 },
+                { name: '作业19', completeTime: 3.1, score: 77 },
+                { name: '作业20', completeTime: 3.6, score: 83 },
+            ];
+
+            // 转换数据为ECharts需要的格式
+            const transformedData = jobData.map(item => {
+                return [item.completeTime, item.score, item.name];
+            });
+
+            option = {
+                title: {
+                    text: '作业完成时间与得分关系',
+                    left: '5%',
+                    top: '0%',
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function (params) {
+                        return `${params.data[2]}<br>完成时间: ${params.data[0]} 小时<br>得分: ${params.data[1]} 分`;
+                    }
+                },
+                legend: {
+                    data: ['作业完成情况'],
+                    right: '10%',
+                    top: '3%',
+                },
+                grid: {
+                    left: '8%',
+                    top: '10%',
+                    right: '8%',
+                    bottom: '8%',
+                },
+                xAxis: {
+                    name: '完成时间（小时）',
+                    type: 'value',
+                    splitLine: {
+                        lineStyle: {
+                            type: 'dashed',
+                        },
+                    },
+                },
+                yAxis: {
+                    name: '得分（分）',
+                    type: 'value',
+                    splitLine: {
+                        lineStyle: {
+                            type: 'dashed',
+                        },
+                    },
+                    scale: true,
+                },
+                series: [
+                    {
+                        name: '作业完成情况',
+                        data: transformedData,
+                        type: 'scatter',
+                        symbolSize: function (data) {
+                            // 根据得分调整点的大小
+                            return data[1] / 5;
+                        },
+                        itemStyle: {
+                            color: function (params) {
+                                // 根据得分设置不同的颜色，偏向浅蓝色和绿色
+                                const score = params.data[1];
+                                if (score >= 90) return '#91cc75'; // 浅绿色
+                                if (score >= 80) return '#638dd3'; // 浅蓝色
+                                if (score >= 60) return '#9adbef'; // 更浅的蓝色
+                                return '#c6e4f2'; // 最浅的蓝色
+                            },
+                        },
+                        label: {
+                            show: false,
+                            formatter: function (params) {
+                                return params.data[2];
+                            },
+                            position: 'top',
+                        },
+                        emphasis: {
+                            focus: 'series',
+                            label: {
+                                show: true,
+                            },
+                        },
+                    },
+                ],
+            }; myChart.setOption(option);
+            // 4. 让图表跟随屏幕自动的去适应
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        })();
+
+        // 考试成绩双图联合
+        (function () {
+            // 1实例化对象
+            var myChart = echarts.init(document.querySelector(".exam-chart2"))  // 数据
+
+            var chapters = [
+                '网络基础',
+                '路由技术',
+                'IPv6技术',
+                '网络安全',
+                '网络管理',
+                '网络实验'
+            ];
+
+            var sections = [
+                ['1.1 网络协议', '1.2 网络模型', '1.3 IP地址', '1.4 传输介质', '1.5 网络设备'],
+                ['2.1 静态路由', '2.2 动态路由', '2.3 路由协议', '2.4 路由配置', '2.5 路由管理'],
+                ['3.1 IPv6基础', '3.2 IPv6路由', '3.3 IPv6过渡', '3.4 IPv6安全', '3.5 IPv6配置'],
+                ['4.1 访问控制', '4.2 防火墙', '4.3 安全协议', '4.4 安全配置', '4.5 安全管理'],
+                ['5.1 设备配置', '5.2 网络监控', '5.3 故障排查', '5.4 性能优化', '5.5 网络工具'],
+                ['6.1 实验环境', '6.2 实验配置', '6.3 实验验证', '6.4 实验分析', '6.5 实验报告']
+            ];
+
+            // 生成模拟数据（章节索引，小节索引，掌握度）
+            var data = [];
+            chapters.forEach((_, chapIndex) => {
+                sections[chapIndex].forEach((_, secIndex) => {
+                    data.push([
+                        chapIndex,
+                        secIndex,
+                        Math.floor(Math.random() * 100)
+                    ]);
+                });
+            });
+
+            option = {
+                tooltip: {
+                    formatter: function (params) {
+                        const section = sections[params.value[0]][params.value[1]];
+                        return `${section}<br>掌握度: <strong>${params.value[2]}%</strong>`;
+                    }
+                },
+                title: {
+                    text: '知识点掌握热力图',
+                    left: '5%',
+                    top: '0%',
+                },
+                grid: {
+                    top: 30,
+                    bottom: 80,
+                    left: 80
+                },
+                xAxis: {
+                    type: 'category',
+                    data: chapters,
+                    axisLabel: {
+                        interval: 0,
+                        rotate: 45,
+                        fontSize: 14,
+                        color: '#2c3e50'
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: '#90e0ef'
+                        }
+                    }
+                },
+                yAxis: {
+                    type: 'category',
+                    // data: ['小节1', '小节2', '小节3', '小节4', '小节5'],
+                    axisLabel: {
+                        fontSize: 12,
+                        color: '#666'
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            type: 'dashed',
+                            color: '#eee'
+                        }
+                    }
+                },
+                visualMap: {
+                    min: 0,
+                    max: 100,
+                    calculable: true,
+                    orient: 'horizontal',
+                    left: 'center',
+                    bottom: 20,
+                    inRange: {
+                        color: ['#f0f4f8', '#b3d3e6', '#6baed6', '#2171b5']
+                    }
+                },
+                series: [{
+                    type: 'heatmap',
+                    data: data,
+                    itemStyle: {
+                        borderColor: '#fff',
+                        borderWidth: 2,
+                        borderRadius: 4
+                    },
+                    label: {
+                        show: true,
+                        color: 'black',
+                        fontSize: 12,
+                        formatter: function (params) {
+                            // const chapter = chapters[params.value[0]];
+                            const section = sections[params.value[0]][params.value[1]];
+                            return `${section}`;
+                        }
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 8,
+                            shadowColor: 'rgba(33,113,181,0.3)'
+                        }
+                    }
+                }]
+            };
+            // 3. 把配置项给实例对象
+            myChart.setOption(option);
+            // 4. 让图表跟随屏幕自动的去适应                  
+            window.addEventListener("resize", function () {
+                myChart.resize();
+            });
+        })();   
+    </script>
+
+</body>
+
+</html>

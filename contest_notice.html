@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="China">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>学生端主页</title>
+    <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+    <link rel="stylesheet" href="../assets/css/styles.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        .main-container {
+            display: flex;
+            width: 100%;
+            gap: 20px;
+            margin: 0 auto;
+        }
+
+        .competition-section {
+            overflow: scroll;
+        }
+
+        .competition-section,
+        .right-panel {
+            flex: 1;
+            height: 800px;
+            /* 设置固定高度 */
+        }
+
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header {
+            background-color: #2865f2;
+            color: #fff;
+            padding: 16px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .card-body {
+            padding: 16px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .competition-list {
+            list-style: none;
+        }
+
+        .competition-item {
+            padding: 15px;
+            border-bottom: 1px solid #e8eaed;
+            transition: background-color 0.3s;
+        }
+
+        .competition-item:last-child {
+            border-bottom: none;
+        }
+
+        .competition-item:hover {
+            background-color: #f5f9ff;
+        }
+
+        .competition-header {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2865f2;
+        }
+
+        .competition-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 8px;
+        }
+
+        .meta-item {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        .competition-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .tag-team {
+            background-color: #e3f2fd;
+            color: #2865f2;
+        }
+
+        .tag-individual {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .calendar-title {
+            font-size: 1.1em;
+            color: #2865f2;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .calendar-nav button {
+            background-color: #f0f3f7;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .calendar-nav button:hover {
+            background-color: #e0e6ec;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .calendar-day-name {
+            text-align: center;
+            padding: 8px 0;
+            font-weight: bold;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1/1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            background-color: #fff;
+            border-radius: 6px;
+            padding: 5px;
+            cursor: pointer;
+            position: relative;
+            font-size: 0.9em;
+        }
+
+        .calendar-day:hover {
+            background-color: #f0f3f7;
+        }
+
+        .calendar-day-number {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .calendar-event {
+            width: 100%;
+            padding: 2px 0;
+            border-radius: 3px;
+            font-size: 0.7em;
+            text-align: center;
+            margin-top: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .event-competition {
+            background-color: #e1f5fe;
+            color: #0288d1;
+        }
+
+        .event-workshop {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .event-deadline {
+            background-color: #fff8e1;
+            color: #f57c00;
+        }
+
+        .today {
+            background-color: #e3f2fd;
+            border: 1px solid #bbdefb;
+        }
+
+        .other-month {
+            color: #aaa;
+        }
+
+        .event-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 12px;
+            height: 12px;
+            background: #2865f2;
+            border-radius: 50%;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .competition-section,
+            .calendar-section {
+                width: 100%;
+            }
+        }
+
+        .competition-body {
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .calendar-body {
+            flex: 1;
+        }
+
+        .calendar-section .comp {
+            flex: 1;
+
+        }
+
+        .add-contest-container {
+            margin-top: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        .submit-btn {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <!--  Body Wrapper -->
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed">
+        <aside class="left-sidebar">
+            <!-- Sidebar scroll-->
+            <div>
+                <div class="brand-logo d-flex align-items-center justify-content-between">
+                    <a href="./index.html" class="text-nowrap logo-img">
+                        <img src="../assets/images/logos/logo.svg" alt="" />
+                    </a>
+                    <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+                        <i class="ti ti-x fs-8"></i>
+                    </div>
+                </div>
+                <!-- Sidebar navigation-->
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+                    <ul id="sidebarnav">
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">个人空间</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" style="width:150px" href="index.html" aria-expanded="false">
+                                <iconify-icon icon="solar:widget-add-line-duotone">
+                                </iconify-icon>
+                                <span class="hide-menu">学习进度</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" style="width:150px" href="personal_profile.html"
+                                aria-expanded="false">
+                                <iconify-icon icon="solar:widget-add-line-duotone">
+                                </iconify-icon>
+                                <span class="hide-menu">个人画像</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" style="width:150px" href="message_board.html" aria-expanded="false">
+                                <iconify-icon icon="solar:widget-add-line-duotone">
+                                </iconify-icon>
+                                <span class="hide-menu">留言板</span>
+                            </a>
+                        </li>
+                        <li>
+                            <span class="sidebar-divider lg" style="width: 150px;"></span>
+                        </li>
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">AI助教</span>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="ai_qa.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                                <span class="hide-menu">AI问答</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="ai_exercise.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                                <span class="hide-menu">AI出题</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="error_analysis.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                                <span class="hide-menu">习题分析</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" style="width:150px" href="work.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+
+                                <span class="hide-menu">智能岗位</span>
+                            </a>
+                        </li>
+
+                        <!-- 三 -->
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">课程导读</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="pre_school_preparation.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">学前准备</span>
+                            </a>
+                        </li>
+
+
+                        <!-- 三 -->
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">课程学习</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="knowledge_graph.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">知识图谱</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="course_analysis.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">课程资源</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="homework.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">我的作业</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="exam.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">我的考试</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="laboratory.html" aria-expanded="false">
+                                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                                <span class="hide-menu">我的实验</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <span style="width: 150px;" class="sidebar-divider lg"></span>
+                        </li>
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">学后助手</span>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="practice_project.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                                <span class="hide-menu">实践项目</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="authentication.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                                <span class="hide-menu">考试认证</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link" href="contest_notice.html" aria-expanded="false">
+                                <iconify-icon icon="solar:login-3-line-duotone" style="color:#00a1ff ;"></iconify-icon>
+                                <span class="hide-menu" style="color:#00a1ff ;">比赛通知</span>
+                            </a>
+                        </li>
+
+                        <!-- </li> -->
+
+                        <li>
+                            <span class="sidebar-divider lg" style="width: 150px;"></span>
+                        </li>
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">查看首页</span>
+                        </li>
+
+                    </ul>
+                    <div style="width: 230px;"
+                        class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+                        <div class="me-2 flex-shrink-0" style="width: 160px;">
+                            <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+                            <a style="width: 150px;"
+                                href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33"
+                                target="_blank" class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+                        </div>
+                        <div class="unlimited-access-img" style="width: 230px;">
+                            <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+                        </div>
+                    </div>
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </aside>
+
+        <div class="body-wrapper">
+            <div class="main-container">
+                <!-- 比赛列表部分 -->
+                <div class="competition-section">
+                    <div class="card">
+                        <div class="card-header">
+                            🏆 比赛列表
+                        </div>
+                        <div class="card-body competition-body">
+                            <ul class="competition-list" id="contestList">
+                                <!-- 动态生成比赛项目 -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-panel">
+                    <!-- 日历部分 -->
+                    <div class="calendar-section">
+                        <div class="card">
+                            <div class="card-header">
+                                📅 比赛日历
+                            </div>
+                            <div class="card-body calendar-body">
+                                <div class="calendar-header">
+                                    <div class="calendar-title" id="calendarTitle">2025年4月</div>
+                                    <div class="calendar-nav">
+                                        <button id="prevMonth">上个月</button>
+                                        <button id="nextMonth">下个月</button>
+                                    </div>
+                                </div>
+                                <div class="calendar-grid-container">
+                                    <div class="calendar-grid">
+                                        <div class="calendar-day-name">日</div>
+                                        <div class="calendar-day-name">一</div>
+                                        <div class="calendar-day-name">二</div>
+                                        <div class="calendar-day-name">三</div>
+                                        <div class="calendar-day-name">四</div>
+                                        <div class="calendar-day-name">五</div>
+                                        <div class="calendar-day-name">六</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 自己添加比赛 -->
+                    <div class="comp">
+                        <div class="card add-contest-container">
+                            <div class="card-header">
+                                ➕ 添加比赛
+                            </div>
+                            <div class="card-body">
+                                <form id="addContestForm">
+                                    <div class="form-group">
+                                        <label for="contestName">比赛名称</label>
+                                        <input type="text" id="contestName" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contestDate">比赛日期</label>
+                                        <input type="date" id="contestDate" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contestType">比赛类型</label>
+                                        <select id="contestType" required>
+                                            <option value="competition">比赛</option>
+                                            <option value="workshop">工作坊</option>
+                                            <option value="deadline">截止日期</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="submit-btn">添加比赛</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // 比赛数据
+                let contests = [
+                    { name: "ACM国际大学生程序设计竞赛", date: "2023-10-15", type: "competition" },
+                    { name: "LeetCode周赛", date: "2023-10-22", type: "competition" },
+                    { name: "技术工作坊", date: "2023-10-08", type: "workshop" },
+                    { name: "项目截止日期", date: "2023-10-29", type: "deadline" }
+                ];
+
+                // 比赛列表数据
+                const contestList = [
+                    {
+                        name: "ACM国际大学生程序设计竞赛",
+                        date: "每年上半年",
+                        requirements: "算法、数据结构",
+                        type: "团队赛（3人）"
+                    },
+                    {
+                        name: "LeetCode周赛/双周赛",
+                        date: "每周/双周",
+                        requirements: "算法题",
+                        type: "个人赛"
+                    },
+                    {
+                        name: "蓝桥杯",
+                        date: "一年一次",
+                        requirements: "算法与程序设计",
+                        type: "个人赛"
+                    },
+                    {
+                        name: "华为软件精英挑战赛",
+                        date: "每年4月",
+                        requirements: "华为相关技术",
+                        type: "个人赛"
+                    },
+                    {
+                        name: "Kaggle平台竞赛",
+                        date: "一年一次",
+                        requirements: "数据挖掘",
+                        type: "个人/团队"
+                    },
+                    {
+                        name: "Hackathon（黑客马拉松）",
+                        date: "两天内",
+                        requirements: "大数据创新",
+                        type: "团队赛（3人）"
+                    },
+                    {
+                        name: "阿里天池竞赛",
+                        date: "不定期",
+                        requirements: "算法与应用",
+                        type: "个人/团队"
+                    },
+                    {
+                        name: "团体程序设计天梯赛",
+                        date: "每年一次",
+                        requirements: "基础知识",
+                        type: "团队赛"
+                    }
+                ];
+
+                // 初始化日历
+                let currentDate = new Date();
+                renderCalendar(currentDate);
+
+                // 上个月按钮
+                document.getElementById('prevMonth').addEventListener('click', function () {
+                    currentDate.setMonth(currentDate.getMonth() - 1);
+                    renderCalendar(currentDate);
+                });
+
+                // 下个月按钮
+                document.getElementById('nextMonth').addEventListener('click', function () {
+                    currentDate.setMonth(currentDate.getMonth() + 1);
+                    renderCalendar(currentDate);
+                });
+
+                // 渲染日历
+                function renderCalendar(date) {
+                    const year = date.getFullYear();
+                    const month = date.getMonth();
+
+                    // 更新日历标题
+                    document.getElementById('calendarTitle').textContent = `${year}年${month + 1}月`;
+
+                    // 获取并清空日历网格
+                    const calendarGrid = document.querySelector('.calendar-grid');
+                    calendarGrid.innerHTML = '';
+                    const dayNameRows = [
+                        "日", "一", "二", "三", "四", "五", "六"
+                    ];
+                    dayNameRows.forEach(dayName => {
+                        const newDayName = document.createElement('div');
+                        newDayName.className = 'calendar-day-name';
+                        newDayName.textContent = dayName;
+                        calendarGrid.appendChild(newDayName);
+                    });
+
+                    // 获取当月第一天
+                    const firstDay = new Date(year, month, 1);
+                    const firstDayIndex = firstDay.getDay();
+                    const lastDay = new Date(year, month + 1, 0).getDate();
+
+                    // 获取上个月的最后几天
+                    const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+                    // 填充上个月的日期
+                    for (let i = firstDayIndex; i > 0; i--) {
+                        const dayElement = document.createElement('div');
+                        dayElement.className = 'calendar-day other-month';
+                        dayElement.innerHTML = `<div class="calendar-day-number">${prevMonthLastDay - i + 1}</div>`;
+                        calendarGrid.appendChild(dayElement);
+                    }
+
+                    // 填充当月的日期
+                    for (let i = 1; i <= lastDay; i++) {
+                        const dayElement = document.createElement('div');
+                        dayElement.className = 'calendar-day';
+                        dayElement.innerHTML = `<div class="calendar-day-number">${i}</div>`;
+
+                        // 检查是否是今天
+                        const today = new Date();
+                        if (
+                            today.getDate() === i &&
+                            today.getMonth() === month &&
+                            today.getFullYear() === year
+                        ) {
+                            dayElement.classList.add('today');
+                        }
+
+                        // 检查是否有事件
+                        const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                        const events = contests.filter(contest => contest.date === formattedDate);
+                        if (events.length > 0) {
+                            events.forEach(event => {
+                                const eventElement = document.createElement('div');
+                                eventElement.className = `calendar-event event-${event.type}`;
+                                eventElement.textContent = event.name;
+                                dayElement.appendChild(eventElement);
+                            });
+                        }
+
+                        calendarGrid.appendChild(dayElement);
+                    }
+                }
+
+                // 渲染比赛列表
+                const contestListElement = document.getElementById('contestList');
+                contestListElement.innerHTML = '';
+
+                contestList.forEach(contest => {
+                    const li = document.createElement('li');
+                    li.className = 'competition-item';
+                    li.innerHTML = `
+                            <div class="competition-header">${contest.name}</div>
+                            <div class="competition-meta">
+                                <div class="meta-item"><strong>时间:</strong> ${contest.date}</div>
+                                <div class="meta-item"><strong>要求:</strong> ${contest.requirements}</div>
+                                <div class="meta-item"><strong>类型:</strong> ${contest.type}</div>
+                            </div>
+                            <span class="competition-tag">
+                                ${contest.type.includes('团队') ? '团队赛' : '个人赛'}
+                            </span>
+                        `;
+                    contestListElement.appendChild(li);
+                });
+
+                // 添加比赛的功能
+                document.getElementById('addContestForm').addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    const contestName = document.getElementById('contestName').value;
+                    const contestDate = document.getElementById('contestDate').value;
+                    const contestType = document.getElementById('contestType').value;
+
+                    contests.push({
+                        name: contestName,
+                        date: contestDate,
+                        type: contestType
+                    });
+
+                    // 清空输入框
+                    document.getElementById('contestName').value = '';
+                    document.getElementById('contestDate').value = '';
+                    document.getElementById('contestType').value = 'competition';
+
+                    // 重新渲染日历
+                    renderCalendar(currentDate);
+                });
+            });
+        </script>
+
+    </div>
+
+
+
+
+
+    <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/sidebarmenu.js"></script>
+    <script src="../assets/js/app.min.js"></script>
+    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+    <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+
+    <!-- solar icons -->
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+
+</body>
+
+</html>

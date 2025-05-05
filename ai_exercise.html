@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI问答</title>
+  <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+  <link rel="stylesheet" href="../assets/css/styles.min.css" />
+  <style>
+    .body-wrapper-inner {
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      /* max-width: 800px; */
+      margin: 50px auto;
+    }
+
+    .container-fluid {
+      text-align: center;
+    }
+
+    #collection-display {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+
+    #collection-items {
+      margin-top: 10px;
+      font-size: 1.2em;
+      color: #333;
+    }
+
+    .card {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .questions-display {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: white;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+    }
+
+    #generate-questions-btn {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #generate-questions-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-between">
+          <a href="./index.html" class="text-nowrap logo-img">
+            <img src="../assets/images/logos/logo.svg" alt="" />
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
+        </div>
+        <!-- Sidebar navigation-->
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">个人空间</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="index.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">学习进度</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="personal_profile.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">个人画像</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="message_board.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">留言板</span>
+              </a>
+            </li>
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">AI助教</span>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="ai_qa.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">AI问答</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="ai_exercise.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone" style="color:#00a1ff ;"> </iconify-icon>
+                <span class="hide-menu" style="color:#00a1ff ;">AI出题</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="error_analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">习题分析</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="work.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+
+                <span class="hide-menu">智能岗位</span>
+              </a>
+            </li>
+
+            <!-- 三 -->
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程导读</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="pre_school_preparation.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">学前准备</span>
+              </a>
+            </li>
+
+
+            <!-- 三 -->
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程学习</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="knowledge_graph.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">知识图谱</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="course_analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">课程资源</span>
+              </a>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="homework.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">我的作业</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="exam.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">我的考试</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="laboratory.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">我的实验</span>
+              </a>
+            </li>
+
+            <li>
+              <span style="width: 150px;" class="sidebar-divider lg"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">学后助手</span>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="practice_project.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">实践项目</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="authentication.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">考试认证</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="contest_notice.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">比赛通知</span>
+              </a>
+            </li>
+
+            <!-- </li> -->
+
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">查看首页</span>
+            </li>
+
+          </ul>
+          <div style="width: 230px;"
+            class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+            <div class="me-2 flex-shrink-0" style="width: 160px;">
+              <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+              <a style="width: 150px;"
+                href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33" target="_blank"
+                class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+            </div>
+            <div class="unlimited-access-img" style="width: 230px;">
+              <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+            </div>
+          </div>
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+    <div class="body-wrapper">
+
+
+      <!-- 顶部导航栏 -->
+      <!--  Header Start -->
+      <header class="app-header">
+        <nav class="navbar navbar-expand-lg navbar-light">
+          <ul class="navbar-nav">
+            <li class="nav-item d-block d-xl-none">
+              <a class="nav-link sidebartoggler " id="headerCollapse" href="javascript:void(0)">
+                <i class="ti ti-menu-2"></i>
+              </a>
+            </li>
+            <!-- 放的菜单组件 -->
+            <li class="nav-item">
+              <a class="nav-link " href="javascript:void(0)">
+                <iconify-icon icon="solar:bell-linear" class="fs-6"></iconify-icon>
+                <div class="notification bg-primary rounded-circle"></div>
+              </a>
+            </li>
+          </ul>
+
+          <!-- 头导航栏中间放置搜索框 -->
+          <div class="search-warpper mx-auto">
+
+
+          </div>
+          <!-- 后面还要加个下拉列表进行选择ai功能 -->
+          <div class="selected-AIc ">
+            <!-- <div class="shadow p-3 mbbg-body-tertiary rounded"></div> -->
+            <select class="form-select form-select-sm" aria-label=".form-select-sm example">
+              <option selected>AI工具箱</option>
+              <option value="3"><a href="#">公式识别</a></option>
+              <option value="1">翻译</option>
+              <option value="2">资源推荐</option>
+
+            </select>
+          </div>
+          <!-- 头导航栏右侧放置用户头像和下拉菜单 -->
+          <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
+            <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+              <!-- 放头像 -->
+              <li class="nav-item">
+                <a class="nav-link " href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <img src="../assets/images/profile/user-1.jpg" alt="" width="35" height="35" class="rounded-circle">
+                </a>
+
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </header>
+      <!--  Header End -->
+
+
+
+      <script
+        src="https://agi-dev-platform-web.bj.bcebos.com/ai_apaas/embed/output/embedFullSDK.js?responseExpires=0"></script>
+      <script>
+        new EmbedWebSDK({
+          appId: '5ad38301-6b86-4129-b179-b5ced1524be3',
+          code: 'embedlJHY9UYxpcf1y6ijhILM',
+          renderConfig: {
+            parentElement: document.getElementById('ai-container'), // 绑定容器
+            width: '1800px',
+            height: '700px',
+            margin: {
+              top: '10px',
+
+              left: '300px',
+
+            },
+            backgroundColor: '#f0f0f0', // 注意：CSS 属性名在 JavaScript 对象中应使用驼峰命名法
+
+          }
+        });
+      </script>
+
+
+      <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+      <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+      <script src="../assets/js/sidebarmenu.js"></script>
+      <script src="../assets/js/app.min.js"></script>
+      <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+      <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+      <script src="../assets/js/dashboard.js"></script>
+      <!-- solar icons -->
+      <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+
+</html>

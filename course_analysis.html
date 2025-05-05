@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> 课程解析 </title>
+    <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+    <link rel="stylesheet" href="../assets/css/styles.min.css" />
+    <link rel="icon" href="https://img.alicdn.com/tfs/TB1_ZXuNcfpK1RjSZFOXXa6nFXa-32.ico" type="image/x-icon" />
+    <link
+        href="//g.alicdn.com/??aliyun/dbl-official-ui/2.0.1/css/index.css,dawn/ace-element/0.0.60/index.css,hmod/ace-grid-layout-2023/0.0.5/index.css"
+        rel="stylesheet" />
+    <link
+        href="//g.alicdn.com??code/npm/@ali/hmod-ace-2023-box/0.1.0/index.css,code/npm/@ali/hmod-ace-2023-service-contact-us/0.0.24/index.css,code/npm/@ali/hmod-aliyun-com-floating-toolbar/0.1.6/index.css,code/npm/@ali/hmod-aliyun-com-global-nav-search/0.5.10/index.css,code/npm/@ali/hmod-aliyun-com-global-nav/0.1.20/index.css,hmod/ace-2023-homepage-banner/0.1.11/index.css,hmod/ace-2023-homepage-news/0.1.5/index.css,hmod/ace-common-aliyun-index-title/0.0.4/index.css,hmod/ace-common-row-aliyun-free-trial/0.0.4/index.css,hmod/ace-common-row-aliyun-standard/0.0.8/index.css,hmod/ace-common-row-basic-product-datas/0.0.6/index.css,hmod/ace-common-row-entry-alicloud-service/0.0.6/index.css,hmod/ace-customer-case-home/0.1.1/index.css,hmod/ace-dpl-home-map/0.1.0/index.css,hmod/ace-dpl-home-product-category/0.1.0/index.css,hmod/ace-dpl-home-row-best-practices/0.0.10/index.css,hmod/ace-dpl-new-to-link/0.0.8/index.css,hmod/ace-homepage-2020-hmod-footer/0.1.5/index.css,hmod/ace-index-card-product-trial-service/0.0.5/index.css"
+        rel="stylesheet" />
+
+</head>
+<style>
+    .tech-front-card {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .card-header {
+        background-color: #f8f9fa;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-header h5 {
+        margin: 0;
+    }
+
+    .progress-container {
+        margin-bottom: 15px;
+    }
+
+    .progress {
+        height: 30px;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-bottom: 10px;
+        position: relative;
+    }
+
+    .progress-bar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+    }
+
+    .progress-bar::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 1px;
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .progress:last-child.progress-bar::after {
+        display: none;
+    }
+
+    .card-body p {
+        margin-bottom: 0;
+    }
+
+    .btn-group-sm>.btn,
+    .btn-sm {
+        padding: 6px 12px;
+    }
+
+    .bg-indigo-gradient {
+        background: linear-gradient(135deg, #3f51b5 0%, #6573C3 100%);
+    }
+
+    .bg-teal-gradient {
+        background: linear-gradient(135deg, #009688 0%, #4DB6AC 100%);
+    }
+
+    /* 悬停缩放效果 */
+    .hover-scale {
+        transition: transform 0.3s ease;
+    }
+
+    .hover-scale:hover {
+        transform: translateY(-5px) scale(1.02);
+    }
+
+    /* 云平台色系 */
+    .bg-aws {
+        background: #FF9900;
+    }
+
+    .bg-azure {
+        background: #008AD7;
+    }
+
+    .bg-gcp {
+        background: #4285F4;
+    }
+
+    .text-aws {
+        color: #FF9900;
+    }
+
+    .text-azure {
+        color: #008AD7;
+    }
+
+    .text-gcp {
+        color: #4285F4;
+    }
+
+    /* 架构图元素 */
+    .subnet {
+        padding: 2px 8px;
+        border-radius: 12px;
+        color: white;
+        font-size: 0.8em;
+    }
+
+    .perf-card {
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .chart-container {
+        height: 200px;
+        margin-bottom: 15px;
+    }
+
+    .btn-info {
+        margin-top: 10px;
+    }
+
+    .text-muted {
+        display: block;
+        margin-top: 5px;
+    }
+
+    .perf-card h6 {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .perf-card ul {
+        list-style-type: none;
+        padding: 0;
+        margin-top: 10px;
+    }
+
+    .perf-card ul li {
+        margin-bottom: 5px;
+    }
+
+    .perf-card ul li a {
+        text-decoration: none;
+        color: #007bff;
+    }
+
+    .perf-card ul li a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<body>
+    <!--  Body Wrapper -->
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed">
+        <aside class="left-sidebar">
+            <!-- Sidebar scroll-->
+            <div>
+              <div class="brand-logo d-flex align-items-center justify-content-between">
+                <a href="./index.html" class="text-nowrap logo-img">
+                  <img src="../assets/images/logos/logo.svg" alt="" />
+                </a>
+                <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+                  <i class="ti ti-x fs-8"></i>
+                </div>
+              </div>
+              <!-- Sidebar navigation-->
+              <!-- Sidebar navigation-->
+              <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+                <ul id="sidebarnav">
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">个人空间</span>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" style="width:150px" href="index.html" aria-expanded="false">
+                      <iconify-icon icon="solar:widget-add-line-duotone" >
+                      </iconify-icon>
+                      <span class="hide-menu" >学习进度</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" style="width:150px" href="personal_profile.html" aria-expanded="false">
+                      <iconify-icon icon="solar:widget-add-line-duotone">
+                      </iconify-icon>
+                      <span class="hide-menu">个人画像</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" style="width:150px" href="message_board.html" aria-expanded="false">
+                      <iconify-icon icon="solar:widget-add-line-duotone">
+                      </iconify-icon>
+                      <span class="hide-menu">留言板</span>
+                    </a>
+                  </li>
+                  <li>
+                    <span class="sidebar-divider lg" style="width: 150px;"></span>
+                  </li>
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">AI助教</span>
+                  </li>
+      
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="ai_qa.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">AI问答</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="ai_exercise.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">AI出题</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="error_analysis.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">习题分析</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" style="width:150px" href="work.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+      
+                      <span class="hide-menu">智能岗位</span>
+                    </a>
+                  </li>
+      
+                  <!-- 三 -->
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">课程导读</span>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="pre_school_preparation.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">学前准备</span>
+                    </a>
+                  </li>
+      
+      
+                  <!-- 三 -->
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">课程学习</span>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="knowledge_graph.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">知识图谱</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="course_analysis.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone" style="color:#00a1ff ;"></iconify-icon>
+                      <span class="hide-menu" style="color:#00a1ff ;">课程资源</span>
+                    </a>
+                  </li>
+      
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="homework.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">我的作业</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="exam.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">我的考试</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="laboratory.html" aria-expanded="false">
+                      <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                      <span class="hide-menu">我的实验</span>
+                    </a>
+                  </li>
+      
+                  <li>
+                    <span style="width: 150px;" class="sidebar-divider lg"></span>
+                  </li>
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">学后助手</span>
+                  </li>
+      
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="practice_project.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">实践项目</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="authentication.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">考试认证</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a class="sidebar-link" href="contest_notice.html" aria-expanded="false">
+                      <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                      <span class="hide-menu">比赛通知</span>
+                    </a>
+                  </li>
+      
+                  <!-- </li> -->
+      
+                  <li>
+                    <span class="sidebar-divider lg" style="width: 150px;"></span>
+                  </li>
+                  <li class="nav-small-cap">
+                    <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                    <span class="hide-menu">查看首页</span>
+                  </li>
+      
+                </ul>
+                <div style="width: 230px;"
+                  class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+                  <div class="me-2 flex-shrink-0" style="width: 160px;">
+                    <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+                    <a style="width: 150px;"
+                      href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33" target="_blank"
+                      class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+                  </div>
+                  <div class="unlimited-access-img" style="width: 230px;">
+                    <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+                  </div>
+                </div>
+              </nav>
+              <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+          </aside>
+        <style>
+            /* 新增全局样式 */
+            :root {
+                --primary-gradient: linear-gradient(135deg, #2c3e50, #4a5568);
+                --secondary-gradient: linear-gradient(135deg, #3498db, #5d88ff);
+                --accent-gradient: linear-gradient(135deg, #e74c3c, #f368e0);
+                --card-bg: rgba(255, 255, 255, 0.95);
+                --border-color: rgba(0, 0, 0, 0.075);
+            }
+
+            /* 卡片容器增强 */
+            .card {
+                border: none;
+                border-radius: 15px;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                margin-bottom: 2rem;
+            }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 30px rgba(52, 152, 219, 0.15);
+            }
+
+            /* 标题样式优化 */
+            .title {
+                color: var(--primary-gradient);
+                font-size: 2rem;
+                border-bottom: 3px solid var(--secondary-gradient);
+                padding-bottom: 0.8rem;
+                margin-bottom: 2rem;
+                position: relative;
+                background: linear-gradient(90deg, #fff 95%, var(--primary-gradient) 95%);
+            }
+
+            /* 技术模块增强 */
+            .tech-module {
+                padding: 3rem 2rem;
+                background: linear-gradient(145deg, #f8f9fa, #fff);
+                border-radius: 15px;
+                margin: 2rem 0;
+            }
+
+            /* 知识卡片增强 */
+            .card-1 {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+            }
+
+            /* 进度条样式 */
+            .progress-bar {
+                background: linear-gradient(135deg, #3498db, #5d88ff);
+                transition: width 0.5s ease, background 0.3s ease;
+            }
+
+            /* 技术原理深度剖析增强 */
+            .accordion-flush .accordion-collapse {
+                border: 1px solid rgba(52, 152, 219, 0.1);
+                border-radius: 8px;
+            }
+
+            /* 技术前沿模块增强 */
+            .tech-front-card {
+                position: relative;
+                overflow: hidden;
+                border-radius: 12px;
+                transition: transform 0.3s ease;
+            }
+
+            .tech-front-card:hover {
+                transform: perspective(1000px) rotateX(5deg);
+            }
+
+            /* 代码块样式 */
+            .code-snippet {
+                background: #f8f9fa;
+                border-radius: 8px;
+                padding: 1.5rem;
+                font-family: 'Fira Code', monospace;
+                overflow-x: auto;
+                border: 1px solid #eee;
+            }
+
+            /* 图标增强 */
+            .iconify-icon {
+                transition: transform 0.2s ease;
+            }
+
+            .iconify-icon:hover {
+                transform: scale(1.1);
+            }
+
+            /* 响应式调整 */
+            @media (max-width: 768px) {
+                .tech-module {
+                    padding: 2rem 1rem;
+                }
+
+                .card-1 {
+                    flex-direction: column-reverse;
+                }
+            }
+
+            .security-progress {
+                --protocol-icon-size: 32px;
+            }
+
+            .protocol-card {
+                background: var(--bs-white);
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                transition: all 0.3s ease;
+            }
+
+            .protocol-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+            }
+
+            .protocol-header {
+                padding: 1rem;
+                cursor: pointer;
+                background: linear-gradient(90deg,
+                        rgba(255, 255, 255, 0) 0%,
+                        rgba(255, 255, 255, 1) 100%);
+            }
+
+            .protocol-icon {
+                width: var(--protocol-icon-size);
+                height: var(--protocol-icon-size);
+                margin-right: 1rem;
+            }
+
+            .protocol-danger .protocol-icon {
+                color: var(--bs-danger);
+            }
+
+            .protocol-warning .protocol-icon {
+                color: var(--bs-warning);
+            }
+
+            .protocol-success .protocol-icon {
+                color: var(--bs-success);
+            }
+
+            .protocol-info h6 {
+                font-weight: 600;
+                color: var(--bs-dark);
+            }
+
+            .protocol-info small {
+                font-size: 0.8em;
+                opacity: 0.8;
+            }
+
+            .protocol-progress .progress {
+                overflow: visible;
+                background: rgba(0, 0, 0, 0.08);
+                border-radius: 20px;
+            }
+
+            .progress-bar {
+                position: relative;
+                border-radius: 20px;
+                overflow: visible;
+            }
+
+            .progress-label {
+                position: absolute;
+                right: 8px;
+                color: white;
+                font-size: 0.75em;
+                font-weight: 500;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            }
+
+            .protocol-detail {
+                border-top: 1px solid rgba(0, 0, 0, 0.05);
+                padding: 1rem;
+            }
+
+            .protocol-stats .badge {
+                margin: 2px;
+                font-size: 0.75em;
+                padding: 4px 8px;
+            }
+        </style>
+
+
+        <!-- 新增课程模块 -->
+        <div class="body-wrapper">
+            <div class="body-wrapper-inner" style="flex: 2; padding: 20px; margin: 0; min-height: 100vh;">
+                <h2 class="title mb-4">网络互联技术 - 深度课程体系</h2>
+                <div class="container-fluid tech-module">
+
+
+                    <!-- IPv6核心技术 -->
+                    <div class="card mb-4 shadow-sm border-purple h-100">
+                        <div class="card-header bg-purple text-white d-flex align-items-center">
+                            <iconify-icon icon="mdi:ip-network" class="me-2"></iconify-icon>
+                            <span>IPv6核心技术</span>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row g-4 h-100">
+                                <div class="col-md-12">
+                                    <div class="d-flex flex-column">
+                                        <div class="mb-3">
+                                            <h6>相关连接</h6>
+                                            <ul class="list-group list-group-flush">
+                                                <li class="list-group-item">
+                                                    <a href="https://datatracker.ietf.org/doc/html/rfc8200"
+                                                        target="_blank">RFC 8200: Internet Protocol, Version 6 (IPv6)
+                                                        Specification</a>
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <a href="https://www.w3.org/IPv6/" target="_blank">W3C IPv6 资源</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="mb-3">
+                                            <h6>实战项目连接</h6>
+                                            <ul class="list-group list-group-flush">
+                                                <li class="list-group-item">
+                                                    <strong>校园网IPv6升级项目</strong>：在校园网环境中，可实施IPv6升级项目。例如，北京大学在校园网IPv6升级过程中，首先对校园内网络设备进行IPv6双栈配置，通过在核心交换机和路由器上启用IPv6协议，配置全球单播地址和链路本地地址等。具体配置如在华为路由器上：
+                                                    <div class="code-snippet">
+                                                        <code>interface GigabitEthernet0/0
+    ipv6 enable
+    ipv6 address 2001:db8::1/64</code>
+                                                    </div>
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <strong>企业数据中心IPv6改造</strong>：以某大型企业数据中心为例，为满足业务全球化和网络扩展性需求，进行IPv6改造。先规划全球单播地址（2000::/3）用于公网通信，配置链路本地地址（FE80::/10）用于内部链路通信。同时，利用双栈技术在现有网络设备上同时运行IPv4和IPv6协议，在Cisco设备上配置如下：
+                                                    <div class="code-snippet">
+                                                        <code>interface GigabitEthernet0/0
+    ipv6 enable
+    ipv6 address 2001:db8::1/64
+    ip address 192.168.1.1 255.255.255.0</code>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 无线网络模块 -->
+                    <div class="card mb-4 shadow-sm border-orange">
+                        <div class="card-header bg-orange text-white">
+                            <iconify-icon icon="mdi:wifi" class="me-2"></iconify-icon>
+                            ⑤ 无线网络技术
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-4">
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="tech-front-card">
+                                        <div class="card-header">
+                                            Wi-Fi标准演进
+                                            <a href="https://ieeexplore.ieee.org/xpl/mostRecentIssue.jsp?punumber=99"
+                                                target="_blank" class="btn btn-sm btn-info ms-2">IEEE官方文档</a>
+                                            <a href="https://www.wi-fi.org/" target="_blank"
+                                                class="btn btn-sm btn-info ms-2">Wi-Fi Alliance官网</a>
+                                            <!-- 假设此处有对应的电子书购买链接，实际需替换为真实链接 -->
+                                            <a href="#" target="_blank"
+                                                class="btn btn-sm btn-info ms-2">《Wi-Fi标准详解》书籍</a>
+                                        </div>
+                                        <div class="card-body">
+                                            <ul class="timeline">
+                                                <li>802.11b (1999)：<a
+                                                        href="https://ieeexplore.ieee.org/xpl/mostRecentIssue.jsp?punumber=99"
+                                                        target="_blank">IEEE官方文档详细介绍其技术规范，如物理层特性等</a></li>
+                                                <li>802.11g (2003)：<a
+                                                        href="https://ieeexplore.ieee.org/xpl/mostRecentIssue.jsp?punumber=99"
+                                                        target="_blank">IEEE官方文档阐述其改进之处，包括对更高传输速率的支持</a></li>
+                                                <li>802.11n (2009)：<a
+                                                        href="https://ieeexplore.ieee.org/xpl/mostRecentIssue.jsp?punumber=99"
+                                                        target="_blank">IEEE官方文档深入讲解MIMO技术，提升传输速率和覆盖范围</a></li>
+                                                <li>802.11ac (2013)：<a
+                                                        href="https://ieeexplore.ieee.org/xpl/mostRecentIssue.jsp?punumber=99"
+                                                        target="_blank">在IEEE官方文档中可查看其在多用户MIMO等方面的技术进步</a></li>
+                                                <li>Wi-Fi 6 (2019)：<a href="https://www.wi-fi.org/"
+                                                        target="_blank">Wi-Fi
+                                                        Alliance官网介绍其在大型场馆、企业办公等场景下高并发、低延迟的应用优势</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="tech-front-card">
+                                        <div class="card-header">
+                                            企业级配置
+                                            <a href="https://www.cisco.com/c/en/us/support/wireless-controllers/products-documentation.html"
+                                                target="_blank" class="btn btn-sm btn-info ms-2">Cisco官方文档</a>
+                                            <a href="https://support.huawei.com/enterprise/" target="_blank"
+                                                class="btn btn-sm btn-info ms-2">华为企业网络文档</a>
+                                            <a href="https://www.juniper.net/documentation/en_US/" target="_blank"
+                                                class="btn btn-sm btn-info ms-2">Juniper无线网络配置指南</a>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="code-snippet">
+                                                <code># WLC基础配置
+config interface address management 192.168.1.10 255.255.255.0
+config mobility group name CampusWLAN
+config wlan create 1 SSID-Office</code>
+                                                <p class="mt-2">上述配置示例在 <a
+                                                        href="https://www.cisco.com/c/en/us/support/wireless-controllers/products-documentation.html"
+                                                        target="_blank">Cisco官方文档</a> 中有更详细的解释和相关配置扩展；<a
+                                                        href="https://support.huawei.com/enterprise/"
+                                                        target="_blank">华为企业网络文档</a>
+                                                    提供类似功能在华为设备上的配置方法，可实现无缝漫游、负载均衡等功能；<a
+                                                        href="https://www.juniper.net/documentation/en_US/"
+                                                        target="_blank">Juniper无线网络配置指南</a> 则针对Juniper设备，指导从初始化到各类配置的实现。
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-12">
+                                    <div class="tech-front-card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">安全协议</h5>
+                                            <div class="btn-group">
+                                                <a href="https://www.wi-fi.org/knowledge-center/security"
+                                                    target="_blank" class="btn btn-sm btn-info">Wi-Fi Alliance安全协议文档</a>
+                                                <!-- 假设此处有对应的电子书购买链接，实际需替换为真实链接 -->
+                                                <a href="#" target="_blank" class="btn btn-sm btn-info">《无线网络安全》书籍</a>
+                                                <a href="https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-157.pdf"
+                                                    target="_blank" class="btn btn-sm btn-info">NIST相关文档</a>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="security-progress">
+                                                <!-- WEP协议 -->
+                                                <div class="protocol-card protocol-danger mb-4">
+                                                    <div class="protocol-header" data-bs-toggle="collapse"
+                                                        href="#wepDetail">
+                                                        <div class="d-flex align-items-center">
+                                                            <iconify-icon icon="mdi:lock-remove"
+                                                                class="protocol-icon"></iconify-icon>
+                                                            <div class="protocol-info flex-grow-1">
+                                                                <h6 class="mb-0">WEP (有线等效加密)</h6>
+                                                                <small class="text-muted">1997年发布 · 已淘汰</small>
+                                                            </div>
+                                                            <div class="protocol-progress">
+                                                                <div class="progress"
+                                                                    style="width: 120px; height: 22px;">
+                                                                    <div class="progress-bar bg-danger"
+                                                                        role="progressbar" style="width: 30%"
+                                                                        aria-valuenow="30" aria-valuemin="0"
+                                                                        aria-valuemax="100">
+                                                                        <span class="progress-label">安全评分 30%</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="collapse protocol-detail" id="wepDetail">
+                                                        <div class="protocol-body">
+                                                            <div class="alert alert-danger py-2 mb-2">
+                                                                <iconify-icon icon="mdi:alert-circle"></iconify-icon>
+                                                                已知漏洞：IV初始化向量过短、密钥重用问题
+                                                            </div>
+                                                            <div class="d-flex justify-content-between">
+                                                                <a href="https://www.wi-fi.org/knowledge-center/security"
+                                                                    class="btn btn-sm btn-danger" target="_blank">
+                                                                    <iconify-icon
+                                                                        icon="mdi:file-document"></iconify-icon>
+                                                                    安全文档
+                                                                </a>
+                                                                <div class="protocol-stats">
+                                                                    <span class="badge bg-dark">RC4加密</span>
+                                                                    <span class="badge bg-dark">40/104-bit密钥</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- WPA协议 -->
+                                                <div class="protocol-card protocol-warning mb-4">
+                                                    <div class="protocol-header" data-bs-toggle="collapse"
+                                                        href="#wpaDetail">
+                                                        <div class="d-flex align-items-center">
+                                                            <iconify-icon icon="mdi:lock-alert"
+                                                                class="protocol-icon"></iconify-icon>
+                                                            <div class="protocol-info flex-grow-1">
+                                                                <h6 class="mb-0">WPA (Wi-Fi保护访问)</h6>
+                                                                <small class="text-muted">2003年发布 · 过渡方案</small>
+                                                            </div>
+                                                            <div class="protocol-progress">
+                                                                <div class="progress"
+                                                                    style="width: 120px; height: 22px;">
+                                                                    <div class="progress-bar bg-warning"
+                                                                        role="progressbar" style="width: 60%"
+                                                                        aria-valuenow="60" aria-valuemin="0"
+                                                                        aria-valuemax="100">
+                                                                        <span class="progress-label">安全评分 60%</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="collapse protocol-detail" id="wpaDetail">
+                                                        <div class="protocol-body">
+                                                            <div class="alert alert-warning py-2 mb-2">
+                                                                <iconify-icon icon="mdi:security"></iconify-icon>
+                                                                主要改进：TKIP加密、消息完整性检查
+                                                            </div>
+                                                            <div class="d-flex justify-content-between">
+                                                                <a href="https://www.wi-fi.org/knowledge-center/security"
+                                                                    class="btn btn-sm btn-warning" target="_blank">
+                                                                    <iconify-icon
+                                                                        icon="mdi:file-compare"></iconify-icon>
+                                                                    协议对比
+                                                                </a>
+                                                                <div class="protocol-stats">
+                                                                    <span class="badge bg-dark">TKIP加密</span>
+                                                                    <span class="badge bg-dark">MIC消息验证</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- WPA3协议 -->
+                                                <div class="protocol-card protocol-success">
+                                                    <div class="protocol-header" data-bs-toggle="collapse"
+                                                        href="#wpa3Detail">
+                                                        <div class="d-flex align-items-center">
+                                                            <iconify-icon icon="mdi:lock-check"
+                                                                class="protocol-icon"></iconify-icon>
+                                                            <div class="protocol-info flex-grow-1">
+                                                                <h6 class="mb-0">WPA3 (新一代加密标准)</h6>
+                                                                <small class="text-muted">2018年发布 · 推荐标准</small>
+                                                            </div>
+                                                            <div class="protocol-progress">
+                                                                <div class="progress"
+                                                                    style="width: 120px; height: 22px;">
+                                                                    <div class="progress-bar bg-success"
+                                                                        role="progressbar" style="width: 90%"
+                                                                        aria-valuenow="90" aria-valuemin="0"
+                                                                        aria-valuemax="100">
+                                                                        <span class="progress-label">安全评分 90%</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="collapse protocol-detail" id="wpa3Detail">
+                                                        <div class="protocol-body">
+                                                            <div class="alert alert-success py-2 mb-2">
+                                                                <iconify-icon icon="mdi:shield-star"></iconify-icon>
+                                                                核心特性：SAE握手协议、前向保密
+                                                            </div>
+                                                            <div class="row g-2">
+                                                                <div class="col-6">
+                                                                    <a href="https://www.wi-fi.org/knowledge-center/security"
+                                                                        class="btn btn-sm btn-success w-100"
+                                                                        target="_blank">
+                                                                        <iconify-icon
+                                                                            icon="mdi:certificate"></iconify-icon>
+                                                                        Wi-Fi认证
+                                                                    </a>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <a href="https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-157.pdf"
+                                                                        class="btn btn-sm btn-success w-100"
+                                                                        target="_blank">
+                                                                        <iconify-icon
+                                                                            icon="mdi:scale-balance"></iconify-icon>
+                                                                        NIST评估
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                            <div class="protocol-stats mt-2">
+                                                                <span class="badge bg-dark">192-bit加密</span>
+                                                                <span class="badge bg-dark">OWE过渡模式</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SDN与云网络组合模块 -->
+                    <div class="row g-4">
+                        <!-- SDN与自动化主卡 -->
+                        <div class="col-lg-8">
+                            <div class="card shadow-lg border-indigo h-100 hover-scale">
+                                <div class="card-header bg-indigo-gradient text-white py-3">
+                                    <div class="d-flex align-items-center">
+                                        <iconify-icon icon="mdi:brain" class="h4 mb-0 me-2"></iconify-icon>
+                                        <h5 class="mb-0">⑥ SDN与智能自动化</h5>
+                                        <div class="ms-auto">
+                                            <span class="badge bg-white text-indigo">Hot</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="row g-4">
+                                        <!-- 技术栈增强版 -->
+                                        <div class="col-md-5">
+                                            <div class="tech-stack-card border-end pe-3">
+                                                <h6 class="fw-bold mb-3 text-indigo">
+                                                    <iconify-icon icon="mdi:layers-triple"></iconify-icon>
+                                                    核心技术矩阵
+                                                </h6>
+                                                <div class="accordion" id="techStackAccordion">
+                                                    <!-- OpenFlow协议 -->
+                                                    <div class="accordion-item">
+                                                        <h6 class="accordion-header">
+                                                            <button class="accordion-button" type="button"
+                                                                data-bs-toggle="collapse" data-bs-target="#openflow">
+                                                                <iconify-icon icon="mdi:network"
+                                                                    class="me-2"></iconify-icon>
+                                                                OpenFlow协议
+                                                            </button>
+                                                        </h6>
+                                                        <div id="openflow" class="accordion-collapse collapse show">
+                                                            <div class="accordion-body">
+                                                                <p class="small">实现控制平面与数据平面分离的核心协议</p>
+                                                                <div class="d-grid gap-2">
+                                                                    <a href="https://opennetworking.org/ofp/"
+                                                                        class="btn btn-sm btn-indigo d-flex align-items-center">
+                                                                        <iconify-icon icon="mdi:file-document"
+                                                                            class="me-2"></iconify-icon>
+                                                                        协议规范 v1.5.1
+                                                                    </a>
+                                                                    <a href="#openflow-demo"
+                                                                        class="btn btn-sm btn-outline-indigo"
+                                                                        data-bs-toggle="collapse">
+                                                                        拓扑示例 →
+                                                                    </a>
+                                                                </div>
+                                                                <div class="collapse mt-2" id="openflow-demo">
+                                                                    <img src="openflow-topo.png" alt="OpenFlow拓扑"
+                                                                        class="img-fluid rounded">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- REST API增强内容 -->
+                                                    <div class="accordion-item">
+                                                        <h6 class="accordion-header">
+                                                            <button class="accordion-button collapsed" type="button"
+                                                                data-bs-toggle="collapse" data-bs-target="#restapi">
+                                                                <iconify-icon icon="mdi:api"
+                                                                    class="me-2"></iconify-icon>
+                                                                REST API 架构
+                                                            </button>
+                                                        </h6>
+                                                        <div id="restapi" class="accordion-collapse collapse">
+                                                            <div class="accordion-body">
+                                                                <div class="api-status d-flex mb-2">
+                                                                    <div class="badge bg-success me-2">HTTP/2</div>
+                                                                    <div class="badge bg-purple">OAuth2.0</div>
+                                                                </div>
+                                                                <pre><code class="language-http">GET /network/devices
+  Accept: application/json
+  Authorization: Bearer {token}</code></pre>
+                                                                <a href="https://swagger.io/specification/"
+                                                                    class="btn btn-sm btn-outline-indigo mt-2">
+                                                                    OpenAPI 规范文档
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 自动化案例增强版 -->
+                                        <div class="col-md-7">
+                                            <div class="automation-cases">
+                                                <h6 class="fw-bold mb-3 text-indigo">
+                                                    <iconify-icon icon="mdi:robot-industrial"></iconify-icon>
+                                                    智能自动化实践
+                                                </h6>
+                                                <!-- 案例导航 -->
+                                                <ul class="nav nav-pills mb-3" id="caseTabs">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link active" data-bs-toggle="pill"
+                                                            href="#financeCase">金融行业</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" data-bs-toggle="pill"
+                                                            href="#cloudCase">云网络</a>
+                                                    </li>
+                                                </ul>
+
+                                                <!-- 案例内容 -->
+                                                <div class="tab-content">
+                                                    <!-- 金融案例 -->
+                                                    <div class="tab-pane fade show active" id="financeCase">
+                                                        <div class="case-header d-flex mb-3">
+                                                            <div class="flex-grow-1">
+                                                                <h6>🏦 某银行网络自动化升级</h6>
+                                                                <div class="progress" style="height: 4px;">
+                                                                    <div class="progress-bar bg-success"
+                                                                        style="width: 80%"></div>
+                                                                </div>
+                                                            </div>
+                                                            <iconify-icon icon="mdi:finance"
+                                                                class="h3 text-success"></iconify-icon>
+                                                        </div>
+                                                        <ul class="case-stats row g-2">
+                                                            <li class="col-6">
+                                                                <div class="stat-card bg-light p-2 rounded">
+                                                                    <small class="text-muted">设备数量</small>
+                                                                    <h5 class="mb-0">1,200+</h5>
+                                                                </div>
+                                                            </li>
+                                                            <li class="col-6">
+                                                                <div class="stat-card bg-light p-2 rounded">
+                                                                    <small class="text-muted">配置时间</small>
+                                                                    <h5 class="mb-0">↓ 82%</h5>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                        <div class="code-preview mt-3">
+                                                            <pre><code class="language-python">def deploy_acl(net_devices):
+      with ThreadPoolExecutor() as executor:
+          futures = [executor.submit(configure_device, dev) 
+                     for dev in net_devices]
+          results = [f.result() for f in futures]
+      return analyze_results(results)</code></pre>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- 云网络案例 -->
+                                                    <div class="tab-pane fade" id="cloudCase">
+                                                        <div class="case-header d-flex mb-3">
+                                                            <div class="flex-grow-1">
+                                                                <h6>☁️ 混合云网络自动化</h6>
+                                                                <div class="progress" style="height: 4px;">
+                                                                    <div class="progress-bar bg-info"
+                                                                        style="width: 65%"></div>
+                                                                </div>
+                                                            </div>
+                                                            <iconify-icon icon="mdi:cloud-sync"
+                                                                class="h3 text-info"></iconify-icon>
+                                                        </div>
+                                                        <div class="cloud-arch mb-3">
+                                                            <img src="hybrid-cloud.png" alt="混合云架构"
+                                                                class="img-fluid rounded">
+                                                        </div>
+                                                        <ul class="tech-tags">
+                                                            <li><span class="badge bg-aws">AWS VPC</span></li>
+                                                            <li><span class="badge bg-azure">Azure ExpressRoute</span>
+                                                            </li>
+                                                            <li><span class="badge bg-gcp">GCP LB</span></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 云网络技术侧边卡 -->
+                        <div class="col-lg-4">
+                            <div class="card shadow-lg border-teal h-100 hover-scale">
+                                <div class="card-header bg-teal-gradient text-white py-3">
+                                    <div class="d-flex align-items-center">
+                                        <iconify-icon icon="mdi:cloud-braces" class="h4 mb-0 me-2"></iconify-icon>
+                                        <h5 class="mb-0">⑦ 云网络架构</h5>
+                                    </div>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="cloud-nav mb-3">
+                                        <div class="btn-group w-100">
+                                            <button type="button" class="btn btn-sm btn-teal active"
+                                                data-cloud="aws">AWS</button>
+                                            <button type="button" class="btn btn-sm btn-teal"
+                                                data-cloud="azure">Azure</button>
+                                            <button type="button" class="btn btn-sm btn-teal"
+                                                data-cloud="gcp">GCP</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- 云平台内容 -->
+                                    <div class="cloud-content">
+                                        <!-- AWS内容 -->
+                                        <div class="cloud-pane active" id="aws">
+                                            <div class="d-flex align-items-start mb-3">
+                                                <iconify-icon icon="mdi:aws" class="h3 me-2 text-aws"></iconify-icon>
+                                                <div>
+                                                    <h6>Amazon VPC 架构</h6>
+                                                    <div class="vpc-stats">
+                                                        <span class="badge bg-dark">CIDR规划</span>
+                                                        <span class="badge bg-purple">安全组</span>
+                                                        <span class="badge bg-success">NAT网关</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="arch-diagram mb-3">
+                                                <div class="vpc-core rounded bg-aws-light p-2 text-center mb-2">
+                                                    <small class="text-muted">VPC核心</small>
+                                                    <div class="d-flex justify-content-around my-1">
+                                                        <div class="subnet bg-aws">Public</div>
+                                                        <div class="subnet bg-aws">Private</div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-center">
+                                                    <iconify-icon icon="mdi:arrow-down"
+                                                        class="text-muted"></iconify-icon>
+                                                </div>
+                                                <div class="internet-gateway rounded bg-aws p-1 text-center">
+                                                    <small>Internet Gateway</small>
+                                                </div>
+                                            </div>
+                                            <a href="https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html"
+                                                class="btn btn-sm btn-aws w-100">
+                                                <iconify-icon icon="mdi:file-document-multiple"></iconify-icon>
+                                                架构白皮书
+                                            </a>
+                                        </div>
+
+                                        <!-- 其他云平台内容结构类似，通过JavaScript切换 -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 网络优化模块 -->
+                    <div class="card mt-4 border-pink">
+                        <div class="card-header bg-pink text-white">
+                            <iconify-icon icon="mdi:speedometer" class="me-2"></iconify-icon>
+                            ⑧ 网络性能优化
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-4">
+                                <div class="col-md-4">
+                                    <div class="perf-card">
+                                        <h6>QoS策略</h6>
+                                        <div class="code-snippet">
+                                            <code>class-map VOICE
+ match dscp ef
+policy-map WAN-QOS
+ class VOICE
+  priority percent 20</code>
+                                            <a href="https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/qos/configuration/15-mt/qos-15-mt-book/qos-cfg-dscp-based.html"
+                                                target="_blank" class="btn btn-sm btn-info ms-2">Cisco QoS配置文档</a>
+                                            <span class="text-muted ms-2">Cisco
+                                                QoS配置文档详细说明QoS策略的配置方法和原理，帮助理解上述代码和相关应用。</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="perf-card">
+                                        <h6>流量分析</h6>
+
+                                        <p>流量分析助力网络管理员洞察流量特征，定位问题并优化网络。</p>
+                                        <h6>常用工具</h6>
+                                        <ul>
+                                            <li><a href="https://www.wireshark.org/"
+                                                    target="_blank">Wireshark</a>：开源抓包分析工具，剖析数据包细节。</li>
+                                            <li><a href="https://www.solarwinds.com/network-performance-monitoring"
+                                                    target="_blank">SolarWinds NPM</a>：实时监控流量，提供性能指标与警报。</li>
+                                            <li><a href="https://www.paessler.com/prtg" target="_blank">PRTG Network
+                                                    Monitor</a>：全面监测流量，可视化界面直观呈现数据。</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="perf-card">
+                                        <h6>优化工具</h6>
+                                        <ul>
+                                            <li>
+                                                Wireshark抓包分析
+                                                <a href="https://www.wireshark.org/docs/" target="_blank"
+                                                    class="btn btn-sm btn-info ms-2">Wireshark官方文档</a>
+                                                <span class="text-muted ms-2">Wireshark官方文档提供抓包分析的详细教程和使用方法。</span>
+                                            </li>
+                                            <li>
+                                                SolarWinds监控
+                                                <a href="https://www.solarwinds.com/network-monitoring" target="_blank"
+                                                    class="btn btn-sm btn-info ms-2">SolarWinds官网产品介绍</a>
+                                                <span class="text-muted ms-2">SolarWinds官网介绍其网络监控产品的功能、特点和使用场景。</span>
+                                            </li>
+                                            <li>
+                                                PRTG流量监测
+                                                <a href="https://www.paessler.com/manuals/prtg" target="_blank"
+                                                    class="btn btn-sm btn-info ms-2">PRTG官方手册</a>
+                                                <span class="text-muted ms-2">PRTG官方手册讲解流量监测的配置和操作方法。</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <style>
+            /* 新增配色方案 */
+            .bg-purple {
+                background: linear-gradient(135deg, #6c5ce7, #8e7cc3);
+            }
+
+            .bg-orange {
+                background: linear-gradient(135deg, #ff6b6b, #ff9f43);
+            }
+
+            .bg-indigo {
+                background: linear-gradient(135deg, #5c6bc0, #7986cb);
+            }
+
+            .bg-teal {
+                background: linear-gradient(135deg, #26a69a, #4db6ac);
+            }
+
+            .bg-pink {
+                background: linear-gradient(135deg, #ec407a, #f48fb1);
+            }
+
+            /* 新增模块样式 */
+            .tech-stack li {
+                padding: 12px;
+                background: rgba(255, 255, 255, 0.9);
+                margin: 8px 0;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+            }
+
+            .cloud-tech-list li {
+                padding: 15px;
+                background: #f8f9fa;
+                margin: 10px 0;
+                border-radius: 8px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .perf-card {
+                background: #fff;
+                padding: 20px;
+                border-radius: 12px;
+                height: 100%;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            }
+
+            #trafficChart {
+                width: 100% !important;
+                height: 200px !important;
+            }
+
+            /* 动态效果增强 */
+            .tech-front-card:hover {
+                transform: perspective(1000px) rotateX(5deg) translateY(-5px);
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            }
+
+            .cloud-tech-list li:hover {
+                transform: scale(1.02);
+                background: linear-gradient(90deg, #f8f9fa, #fff);
+            }
+        </style>
+
+        <script>
+            // 云平台切换逻辑
+            document.querySelectorAll('[data-cloud]').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const platform = this.dataset.cloud;
+                    // 切换激活状态
+                    document.querySelectorAll('.cloud-pane').forEach(pane => {
+                        pane.classList.remove('active');
+                    });
+                    document.getElementById(platform).classList.add('active');
+                });
+            });
+        </script>
+        <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+        <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="../assets/js/sidebarmenu.js"></script>
+        <script src="../assets/js/app.min.js"></script>
+        <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+        <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+        <script src="../assets/js/dashboard.js"></script>
+        <!-- solar icons -->
+        <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+
+</html>

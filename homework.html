@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>作业界面</title>
+  <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+  <link rel="stylesheet" href="../assets/css/styles.min.css" />
+  <style>
+    /* 新增作业卡片专属样式 */
+    .homework-card {
+      border-radius: 12px;
+      transition: transform 0.2s;
+      border: 1px solid rgba(0, 161, 255, 0.1);
+      margin-bottom: 24px;
+    }
+
+    .homework-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 161, 255, 0.1);
+    }
+
+    .homework-header {
+      background: linear-gradient(135deg, #00a1ff, #6e40f2) !important;
+      border-radius: 12px 12px 0 0 !important;
+      padding: 1rem 1.25rem;
+      color: white;
+    }
+
+
+    .homework-status {
+      font-size: 0.9rem;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <!--  Body Wrapper -->
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+    <aside class="left-sidebar">
+      <!-- Sidebar scroll-->
+      <div>
+        <div class="brand-logo d-flex align-items-center justify-content-between">
+          <a href="./index.html" class="text-nowrap logo-img">
+            <img src="../assets/images/logos/logo.svg" alt="" />
+          </a>
+          <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
+            <i class="ti ti-x fs-8"></i>
+          </div>
+        </div>
+        <!-- Sidebar navigation-->
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav scroll-sidebar" style="width: 250px;" data-simplebar="">
+          <ul id="sidebarnav">
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">个人空间</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="index.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">学习进度</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="personal_profile.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">个人画像</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="message_board.html" aria-expanded="false">
+                <iconify-icon icon="solar:widget-add-line-duotone">
+                </iconify-icon>
+                <span class="hide-menu">留言板</span>
+              </a>
+            </li>
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">AI助教</span>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="ai_qa.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">AI问答</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="ai_exercise.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">AI出题</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="error_analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">习题分析</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" style="width:150px" href="work.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+
+                <span class="hide-menu">智能岗位</span>
+              </a>
+            </li>
+
+            <!-- 三 -->
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程导读</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="pre_school_preparation.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">学前准备</span>
+              </a>
+            </li>
+
+
+            <!-- 三 -->
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">课程学习</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="knowledge_graph.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">知识图谱</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="course_analysis.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">课程资源</span>
+              </a>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="homework.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone" style="color:#00a1ff ;"></iconify-icon>
+                <span class="hide-menu" style="color:#00a1ff ;">我的作业</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="exam.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">我的考试</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="laboratory.html" aria-expanded="false">
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">我的实验</span>
+              </a>
+            </li>
+
+            <li>
+              <span style="width: 150px;" class="sidebar-divider lg"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">学后助手</span>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="practice_project.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">实践项目</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="authentication.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">考试认证</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="contest_notice.html" aria-expanded="false">
+                <iconify-icon icon="solar:login-3-line-duotone"></iconify-icon>
+                <span class="hide-menu">比赛通知</span>
+              </a>
+            </li>
+
+            <!-- </li> -->
+
+            <li>
+              <span class="sidebar-divider lg" style="width: 150px;"></span>
+            </li>
+            <li class="nav-small-cap">
+              <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+              <span class="hide-menu">查看首页</span>
+            </li>
+
+          </ul>
+          <div style="width: 230px;"
+            class="unlimited-access d-flex align-items-center hide-menu bg-primary-subtle position-relative mb-7 mt-4 p-3 rounded">
+            <div class="me-2 flex-shrink-0" style="width: 160px;">
+              <!-- <h6 class="fw-semibold fs-4 mb-6 text-dark w-75">返回首页</h6> -->
+              <a style="width: 150px;"
+                href="https://www.wrappixel.com/templates/materialm-admin-dashboard-template/?ref=33" target="_blank"
+                class="btn btn-primary fs-2 fw-semibold lh-sm">首页</a>
+            </div>
+            <div class="unlimited-access-img" style="width: 230px;">
+              <img src="../assets/images/backgrounds/rupee.png" alt="" class="img-fluid">
+            </div>
+          </div>
+        </nav>
+        <!-- End Sidebar navigation -->
+      </div>
+      <!-- End Sidebar scroll-->
+    </aside>
+
+
+
+    <div class="body-wrapper">
+      <div class="body-wrapper-inner" style="display:flex;color: white;margin: 0;">
+        <div class="container-fluid">
+          <div id="homeworkList" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('homeworkList');
+
+        // 生成示例作业数据
+        const generateHomework = (index) => {
+          const isCompleted = Math.random() > 0.5;
+          const score = isCompleted ? Math.floor(Math.random() * 40 + 60) : null;
+          const deadline = new Date();
+          deadline.setDate(deadline.getDate() + Math.floor(Math.random() * 30));
+
+          return {
+            id: index + 1,
+            title: `第 ${index + 1} 章 网络技术作业`,
+            deadline: deadline, // 保留 Date 对象，便于排序
+            status: isCompleted ? 'completed' : 'pending',
+            score: score,
+            retryCount: Math.floor(Math.random() * 3),
+            chapter: `第 ${index + 1} 章`,
+            course: "网络互联技术"
+          };
+        };
+
+        // 生成5个作业数据
+        const homeworks = Array.from({ length: 5 }, (_, i) => generateHomework(i));
+
+        // 按照截止时间升序排序
+        homeworks.sort((a, b) => a.deadline - b.deadline);
+
+        // 渲染作业卡片
+        homeworks.forEach(homework => {
+          const col = document.createElement('div');
+          col.className = 'col';
+
+          col.innerHTML = `
+          <div class="card homework-card h-100 shadow-sm">
+            <div class="card-header homework-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0 text-truncate">${homework.title}</h5>
+              <span class="homework-status bg-${homework.status === 'completed' ? 'success' : 'danger'}">
+                ${homework.status === 'completed' ? '已完成' : '进行中'}
+              </span>
+            </div>
+            <div class="card-body">
+              <div class="d-flex flex-column gap-2">
+                <div class="d-flex align-items-center">
+                  <iconify-icon icon="solar:calendar-linear" class="me-2"></iconify-icon>
+                  <span>截止时间：${homework.deadline.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                </div>
+                <div class="d-flex align-items-center">
+                  <iconify-icon icon="solar:book-linear" class="me-2"></iconify-icon>
+                  <span>所属章节：${homework.chapter}</span>
+                </div>
+                ${homework.score
+              ? `
+                    <div class="d-flex align-items-center">
+                      <iconify-icon icon="solar:medal-star-linear" class="me-2"></iconify-icon>
+                      <span>当前得分：<strong class="text-primary">${homework.score}分</strong></span>
+                    </div>`
+              : ''
+            }
+                <div class="d-flex align-items-center">
+                  <iconify-icon icon="solar:refresh-linear" class="me-2"></iconify-icon>
+                  <span>剩余重做次数：${3 - homework.retryCount}次</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer bg-transparent border-top-0">
+              <button class="btn btn-${homework.status === 'completed' ? 'outline-secondary' : 'primary'} w-100"
+                onclick="handleHomeworkClick(${homework.id})">
+                ${homework.status === 'completed' ? '查看详情' : '开始作业'}
+              </button>
+            </div>
+          </div>
+        `;
+
+          container.appendChild(col);
+        });
+      });
+
+      // 作业点击处理函数
+      function handleHomeworkClick(homeworkId) {
+        console.log(`正在打开作业ID: ${homeworkId}`);
+        window.location.href = `作业界面.html?id=${homeworkId}`;
+      }
+    </script>
+
+    <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/sidebarmenu.js"></script>
+    <script src="../assets/js/app.min.js"></script>
+    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+    <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+    <!-- solar icons -->
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+
+
+</html>
